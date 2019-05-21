@@ -13,24 +13,23 @@ import java.sql.SQLException;
 public interface SqlDialect {
 
     /**
-     * 检查数据库状态，当返回为{@code null}时表示版本升级记录表不存在。
-     * 否则表示版本升级记录表已存在，且当前版本为{@link SqlStatus#getVersion()}下标为{@link SqlStatus#getIndex()}
+     * 查询数据库的最新版本升级记录，当返回为{@code null}时表示版本升级记录表没有任何记录。
      *
      * @param connection 连接
      * @param config     系统配置
      * @return 数据库状态
      * @throws SQLException SQL异常
      */
-    SqlStatus check(Connection connection, SqlConfig config) throws SQLException;
+    SqlVersion status(Connection connection, SqlConfig config) throws SQLException;
 
     /**
-     * 初始化版本升级记录表
+     * 安装版本升级记录表
      *
      * @param connection 连接
      * @param config     系统配置
      * @throws SQLException SQL异常
      */
-    void initialize(Connection connection, SqlConfig config) throws SQLException;
+    void install(Connection connection, SqlConfig config) throws SQLException;
 
     /**
      * 升级到指定状态
