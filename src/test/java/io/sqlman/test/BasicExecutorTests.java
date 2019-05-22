@@ -3,7 +3,6 @@ package io.sqlman.test;
 import com.alibaba.druid.pool.DruidDataSource;
 import io.sqlman.executor.BasicExecutor;
 import net.sf.jsqlparser.parser.CCJSqlParser;
-import net.sf.jsqlparser.parser.StreamProvider;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -17,7 +16,7 @@ public class BasicExecutorTests {
     @Test
     public void test() throws Exception {
         InputStream in = this.getClass().getResourceAsStream("/sqlman/v5.2.0-仓库平均成本价.sql");
-        CCJSqlParser parser = new CCJSqlParser(new StreamProvider(in));
+        CCJSqlParser parser = new CCJSqlParser(in);
         parser.Statements();
 
         DruidDataSource dataSource = new DruidDataSource();

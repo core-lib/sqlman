@@ -8,8 +8,6 @@ import io.sqlman.utils.Nullable;
 import io.sqlman.utils.Sqls;
 import io.sqlman.utils.Supplier;
 import net.sf.jsqlparser.parser.CCJSqlParser;
-import net.sf.jsqlparser.parser.Provider;
-import net.sf.jsqlparser.parser.StreamProvider;
 import net.sf.jsqlparser.statement.Statement;
 
 import java.io.InputStream;
@@ -51,8 +49,7 @@ public class URLResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
         String version = Sqls.getVersion(path);
         String description = Sqls.getDescription(path);
         try (InputStream in = source.openStream()) {
-            Provider provider = new StreamProvider(in);
-            CCJSqlParser parser = new CCJSqlParser(provider);
+            CCJSqlParser parser = new CCJSqlParser(in);
             List<Statement> sqls = parser.Statements().getStatements();
             List<SqlStatement> statements = new ArrayList<>(sqls.size());
             for (int ordinal = 0; ordinal < sqls.size(); ordinal++) {
