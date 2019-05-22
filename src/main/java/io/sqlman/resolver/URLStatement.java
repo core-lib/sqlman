@@ -12,12 +12,12 @@ import io.sqlman.statement.ExecutableStatement;
  */
 public class URLStatement extends ExecutableStatement implements SqlStatement {
     private final SqlType type;
-    private final int index;
+    private final int ordinal;
     private final String statement;
 
-    public URLStatement(SqlType type, int index, String statement) {
+    public URLStatement(SqlType type, int ordinal, String statement) {
         this.type = type;
-        this.index = index;
+        this.ordinal = ordinal;
         this.statement = statement;
     }
 
@@ -27,8 +27,8 @@ public class URLStatement extends ExecutableStatement implements SqlStatement {
     }
 
     @Override
-    public int index() {
-        return index;
+    public int ordinal() {
+        return ordinal;
     }
 
     @Override

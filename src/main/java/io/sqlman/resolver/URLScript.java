@@ -26,6 +26,11 @@ public class URLScript extends ExecutableScript implements SqlScript {
     }
 
     @Override
+    protected SqlStatement statement(int ordinal) {
+        return statements.get(ordinal);
+    }
+
+    @Override
     public int sqls() {
         return statements.size();
     }

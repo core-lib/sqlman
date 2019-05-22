@@ -16,10 +16,10 @@ public interface SqlScript {
      * 执行脚本
      *
      * @param connection 数据库连接
-     * @param index      执行语句下标
+     * @param ordinal    执行语句序号
      * @throws SQLException SQL执行异常
      */
-    void execute(Connection connection, int index) throws SQLException;
+    void execute(Connection connection, int ordinal) throws SQLException;
 
     /**
      * SQL语句数量

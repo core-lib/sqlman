@@ -15,6 +15,7 @@ public abstract class ExecutableStatement implements SqlStatement {
 
     @Override
     public void execute(Connection connection) throws SQLException {
-
+        String sql = statement();
+        connection.prepareStatement(sql).execute();
     }
 }

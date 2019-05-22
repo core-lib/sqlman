@@ -27,11 +27,11 @@ public interface SqlStatement {
     SqlType type();
 
     /**
-     * 脚本下标
+     * 脚本序号
      *
-     * @return 脚本下标
+     * @return 脚本序号
      */
-    int index();
+    int ordinal();
 
     /**
      * 脚本语句
