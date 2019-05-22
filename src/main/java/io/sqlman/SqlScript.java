@@ -17,9 +17,10 @@ public interface SqlScript {
      *
      * @param connection 数据库连接
      * @param ordinal    执行语句序号
+     * @return 影响行数
      * @throws SQLException SQL执行异常
      */
-    void execute(Connection connection, int ordinal) throws SQLException;
+    int execute(Connection connection, int ordinal) throws SQLException;
 
     /**
      * SQL语句数量

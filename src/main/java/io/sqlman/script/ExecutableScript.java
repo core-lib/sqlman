@@ -15,9 +15,9 @@ import java.sql.SQLException;
 public abstract class ExecutableScript implements SqlScript {
 
     @Override
-    public void execute(Connection connection, int ordinal) throws SQLException {
+    public int execute(Connection connection, int ordinal) throws SQLException {
         SqlStatement statement = statement(ordinal);
-        statement.execute(connection);
+        return statement.execute(connection);
     }
 
     /**

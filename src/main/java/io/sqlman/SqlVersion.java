@@ -1,7 +1,7 @@
 package io.sqlman;
 
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * 数据库版本
@@ -19,7 +19,7 @@ public class SqlVersion {
     private Integer rowEffected;
     private Integer errorCode;
     private String errorState;
-    private Date dateExecuted;
+    private Timestamp timeExecuted;
 
     public Integer getId() {
         return id;
@@ -93,12 +93,12 @@ public class SqlVersion {
         this.errorState = errorState;
     }
 
-    public Date getDateExecuted() {
-        return dateExecuted;
+    public Timestamp getTimeExecuted() {
+        return timeExecuted;
     }
 
-    public void setDateExecuted(Date dateExecuted) {
-        this.dateExecuted = dateExecuted;
+    public void setTimeExecuted(Timestamp timeExecuted) {
+        this.timeExecuted = timeExecuted;
     }
 
     @Override

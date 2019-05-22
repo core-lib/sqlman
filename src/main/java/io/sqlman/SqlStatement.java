@@ -15,9 +15,10 @@ public interface SqlStatement {
      * 执行语句
      *
      * @param connection 数据库连接
+     * @return 影响行数
      * @throws SQLException SQL执行异常
      */
-    void execute(Connection connection) throws SQLException;
+    int execute(Connection connection) throws SQLException;
 
     /**
      * 脚本类型

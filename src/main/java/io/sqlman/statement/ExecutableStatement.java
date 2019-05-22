@@ -3,6 +3,7 @@ package io.sqlman.statement;
 import io.sqlman.SqlStatement;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
@@ -14,8 +15,10 @@ import java.sql.SQLException;
 public abstract class ExecutableStatement implements SqlStatement {
 
     @Override
-    public void execute(Connection connection) throws SQLException {
+    public int execute(Connection connection) throws SQLException {
         String sql = statement();
-        connection.prepareStatement(sql).execute();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.execute();
+        return statement.getUpdateCount();
     }
 }
