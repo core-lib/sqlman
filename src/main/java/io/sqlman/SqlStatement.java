@@ -20,13 +20,6 @@ public interface SqlStatement {
     void execute(Connection connection) throws SQLException;
 
     /**
-     * 所在脚本
-     *
-     * @return 所在脚本
-     */
-    SqlScript script();
-
-    /**
      * 脚本类型
      *
      * @return 脚本类型

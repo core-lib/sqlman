@@ -14,7 +14,6 @@ public class SqlVersion {
     private String version;
     private Integer ordinal;
     private String description;
-    private String author;
     private Integer sqlQuantity;
     private Boolean success;
     private Integer rowEffected;
@@ -52,14 +51,6 @@ public class SqlVersion {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public Integer getSqlQuantity() {

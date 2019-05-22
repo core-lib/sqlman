@@ -1,19 +1,18 @@
 package io.sqlman;
 
 /**
- * 框架配置
+ * 框架配置接口
  *
  * @author Payne 646742615@qq.com
- * 2019/5/18 13:25
+ * 2019/5/22 9:48
  */
-public class SqlConfig {
-    private String tableName = "sqlman";
+public interface SqlConfig {
 
-    public String getTableName() {
-        return tableName;
-    }
+    /**
+     * 升级记录表表名
+     *
+     * @return 升级记录表表名
+     */
+    String getTableName();
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
 }

@@ -49,11 +49,4 @@ public interface SqlScript {
      */
     String description();
 
-    /**
-     * 脚本作者
-     *
-     * @return 脚本作者
-     */
-    String author();
-
 }

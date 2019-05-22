@@ -15,8 +15,9 @@ public interface SqlProvider {
      * 实现类返回的结果必须遵循脚本版本的先后顺序。
      *
      * @return 所有SQL脚本
+     * @throws Exception 脚本获取错误
      */
-    Enumeration<SqlScript> acquire();
+    Enumeration<SqlScript> acquire() throws Exception;
 
     /**
      * 获取包括起始版本及更新版本的SQL脚本，当 version 为{@code null} 时及表示获取所有脚本。
@@ -24,7 +25,8 @@ public interface SqlProvider {
      *
      * @param version 起始版本
      * @return 包括起始版本及更新版本的SQL脚本
+     * @throws Exception 脚本获取错误
      */
-    Enumeration<SqlScript> acquire(String version);
+    Enumeration<SqlScript> acquire(String version) throws Exception;
 
 }

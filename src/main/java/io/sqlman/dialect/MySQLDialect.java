@@ -26,7 +26,6 @@ public class MySQLDialect implements SqlDialect {
         dql.append("     s.version AS version,");
         dql.append("     s.ordinal AS ordinal,");
         dql.append("     s.description AS description,");
-        dql.append("     s.author AS author,");
         dql.append("     s.sql_quantity AS sqlQuantity,");
         dql.append("     s.success AS success,");
         dql.append("     s.row_effected AS rowEffected,");
@@ -52,7 +51,6 @@ public class MySQLDialect implements SqlDialect {
         version.setVersion(result.getString("version"));
         version.setOrdinal(result.getInt("ordinal"));
         version.setDescription(result.getString("description"));
-        version.setAuthor(result.getString("author"));
         version.setSqlQuantity(result.getInt("sqlQuantity"));
         version.setSuccess(result.getBoolean("success"));
         version.setRowEffected(result.getInt("rowEffected"));
@@ -72,7 +70,6 @@ public class MySQLDialect implements SqlDialect {
         ddl.append("         `version` varchar(24) NOT NULL COMMENT '脚本版本号',");
         ddl.append("         `ordinal` int(11) NOT NULL COMMENT '脚本SQL下标',");
         ddl.append("         `description` varchar(128) NOT NULL COMMENT '脚本描述',");
-        ddl.append("         `author` varchar(24) NOT NULL COMMENT '脚本作者',");
         ddl.append("         `sql_quantity` int(11) NOT NULL COMMENT '脚本SQL数量',");
         ddl.append("         `success` bit(1) NOT NULL COMMENT '是否执行成功',");
         ddl.append("         `row_effected` int(11) NOT NULL COMMENT '影响行数',");
@@ -94,7 +91,6 @@ public class MySQLDialect implements SqlDialect {
         dml.append("     version,");
         dml.append("     ordinal,");
         dml.append("     description,");
-        dml.append("     author,");
         dml.append("     sql_quantity,");
         dml.append("     success,");
         dml.append("     row_effected,");
@@ -104,18 +100,32 @@ public class MySQLDialect implements SqlDialect {
         dml.append(" )");
         dml.append(" VALUES");
         dml.append("     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        dml.append(" ON DUPLICATE KEY UPDATE");
+        dml.append("     description = ?,");
+        dml.append("     sql_quantity = ?,");
+        dml.append("     success = ?,");
+        dml.append("     row_effected = ?,");
+        dml.append("     error_code = ?,");
+        dml.append("     error_state = ?,");
+        dml.append("     date_executed = ?");
 
         PreparedStatement statement = connection.prepareStatement(dml.toString());
         statement.setString(1, version.getVersion());
         statement.setInt(2, version.getOrdinal());
         statement.setString(3, version.getDescription());
-        statement.setString(4, version.getAuthor());
-        statement.setInt(5, version.getSqlQuantity());
-        statement.setBoolean(6, version.getSuccess());
-        statement.setInt(7, version.getRowEffected());
-        statement.setInt(8, version.getErrorCode());
-        statement.setString(9, version.getErrorState());
-        statement.setDate(10, version.getDateExecuted());
+        statement.setInt(4, version.getSqlQuantity());
+        statement.setBoolean(5, version.getSuccess());
+        statement.setInt(6, version.getRowEffected());
+        statement.setInt(7, version.getErrorCode());
+        statement.setString(8, version.getErrorState());
+        statement.setDate(9, version.getDateExecuted());
+        statement.setString(10, version.getDescription());
+        statement.setInt(11, version.getSqlQuantity());
+        statement.setBoolean(12, version.getSuccess());
+        statement.setInt(13, version.getRowEffected());
+        statement.setInt(14, version.getErrorCode());
+        statement.setString(15, version.getErrorState());
+        statement.setDate(16, version.getDateExecuted());
 
         return statement.executeUpdate();
     }
