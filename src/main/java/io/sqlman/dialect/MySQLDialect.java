@@ -32,6 +32,7 @@ public class MySQLDialect implements SqlDialect {
         ddl.append("         `row_effected` int(11) NOT NULL COMMENT '影响行数',");
         ddl.append("         `error_code` int(11) NOT NULL COMMENT '错误代码',");
         ddl.append("         `error_state` varchar(255) NOT NULL COMMENT '错误状态',");
+        ddl.append("         `error_message` varchar(255) NOT NULL COMMENT '错误信息',");
         ddl.append("         `time_executed` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '执行时间',");
         ddl.append("         PRIMARY KEY (`id`),");
         ddl.append("         UNIQUE KEY `UK_").append(name).append("_version_ordinal` (`version`,`ordinal`) USING BTREE");
@@ -54,6 +55,7 @@ public class MySQLDialect implements SqlDialect {
         dql.append("     s.row_effected AS rowEffected,");
         dql.append("     s.error_code AS errorCode,");
         dql.append("     s.error_state AS errorState,");
+        dql.append("     s.error_message AS errorMessage,");
         dql.append("     s.time_executed AS timeExecuted");
         dql.append(" FROM");
         dql.append("     ").append(name).append(" AS s");
@@ -79,6 +81,7 @@ public class MySQLDialect implements SqlDialect {
         version.setRowEffected(result.getInt("rowEffected"));
         version.setErrorCode(result.getInt("errorCode"));
         version.setErrorState(result.getString("errorState"));
+        version.setErrorMessage(result.getString("errorMessage"));
         version.setTimeExecuted(result.getTimestamp("timeExecuted"));
 
         return version;
@@ -97,10 +100,11 @@ public class MySQLDialect implements SqlDialect {
         dml.append("     row_effected,");
         dml.append("     error_code,");
         dml.append("     error_state,");
+        dml.append("     error_message,");
         dml.append("     time_executed");
         dml.append(" )");
         dml.append(" VALUES");
-        dml.append("     (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        dml.append("     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         dml.append(" ON DUPLICATE KEY UPDATE");
         dml.append("     description = ?,");
         dml.append("     sql_quantity = ?,");
@@ -108,6 +112,7 @@ public class MySQLDialect implements SqlDialect {
         dml.append("     row_effected = ?,");
         dml.append("     error_code = ?,");
         dml.append("     error_state = ?,");
+        dml.append("     error_message = ?,");
         dml.append("     time_executed = ?");
 
         PreparedStatement statement = connection.prepareStatement(dml.toString());
@@ -119,14 +124,16 @@ public class MySQLDialect implements SqlDialect {
         statement.setInt(6, version.getRowEffected());
         statement.setInt(7, version.getErrorCode());
         statement.setString(8, Sqls.truncate(version.getErrorState(), 255));
-        statement.setTimestamp(9, version.getTimeExecuted());
-        statement.setString(10, Sqls.truncate(version.getDescription(), 128));
-        statement.setInt(11, version.getSqlQuantity());
-        statement.setBoolean(12, version.getSuccess());
-        statement.setInt(13, version.getRowEffected());
-        statement.setInt(14, version.getErrorCode());
-        statement.setString(15, Sqls.truncate(version.getErrorState(), 255));
-        statement.setTimestamp(16, version.getTimeExecuted());
+        statement.setString(9, Sqls.truncate(version.getErrorMessage(), 255));
+        statement.setTimestamp(10, version.getTimeExecuted());
+        statement.setString(11, Sqls.truncate(version.getDescription(), 128));
+        statement.setInt(12, version.getSqlQuantity());
+        statement.setBoolean(13, version.getSuccess());
+        statement.setInt(14, version.getRowEffected());
+        statement.setInt(15, version.getErrorCode());
+        statement.setString(16, Sqls.truncate(version.getErrorState(), 255));
+        statement.setString(17, Sqls.truncate(version.getErrorMessage(), 255));
+        statement.setTimestamp(18, version.getTimeExecuted());
 
         return statement.executeUpdate();
     }

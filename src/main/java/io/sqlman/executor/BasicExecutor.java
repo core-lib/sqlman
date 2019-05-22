@@ -90,7 +90,8 @@ public class BasicExecutor implements SqlExecutor {
         boolean success = false;
         int rowEffected = 0;
         int errorCode = 0;
-        String errorState = "";
+        String errorState = null;
+        String errorMessage = null;
         Timestamp dateExecuted = new Timestamp(System.currentTimeMillis());
         Connection connection = null;
         try {
@@ -105,6 +106,7 @@ public class BasicExecutor implements SqlExecutor {
             }
             errorCode = e.getErrorCode();
             errorState = e.getSQLState();
+            errorMessage = e.getMessage();
             throw e;
         } catch (Exception e) {
             if (connection != null) {
@@ -112,6 +114,7 @@ public class BasicExecutor implements SqlExecutor {
             }
             errorCode = -1;
             errorState = e.getMessage();
+            errorMessage = e.getMessage();
         } finally {
             if (connection != null) {
                 connection.close();
@@ -125,6 +128,7 @@ public class BasicExecutor implements SqlExecutor {
             version.setRowEffected(rowEffected);
             version.setErrorCode(errorCode);
             version.setErrorState(errorState);
+            version.setErrorMessage(errorMessage);
             version.setTimeExecuted(dateExecuted);
             record(version);
         }

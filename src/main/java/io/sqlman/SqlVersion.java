@@ -19,6 +19,7 @@ public class SqlVersion {
     private Integer rowEffected;
     private Integer errorCode;
     private String errorState;
+    private String errorMessage;
     private Timestamp timeExecuted;
 
     public Integer getId() {
@@ -91,6 +92,14 @@ public class SqlVersion {
 
     public void setErrorState(String errorState) {
         this.errorState = errorState;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public Timestamp getTimeExecuted() {
