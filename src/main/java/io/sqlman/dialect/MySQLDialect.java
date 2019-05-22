@@ -3,6 +3,7 @@ package io.sqlman.dialect;
 import io.sqlman.SqlConfig;
 import io.sqlman.SqlDialect;
 import io.sqlman.SqlVersion;
+import io.sqlman.utils.Sqls;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -110,21 +111,21 @@ public class MySQLDialect implements SqlDialect {
         dml.append("     time_executed = ?");
 
         PreparedStatement statement = connection.prepareStatement(dml.toString());
-        statement.setString(1, version.getVersion());
+        statement.setString(1, Sqls.truncate(version.getVersion(), 24));
         statement.setInt(2, version.getOrdinal());
-        statement.setString(3, version.getDescription());
+        statement.setString(3, Sqls.truncate(version.getDescription(), 128));
         statement.setInt(4, version.getSqlQuantity());
         statement.setBoolean(5, version.getSuccess());
         statement.setInt(6, version.getRowEffected());
         statement.setInt(7, version.getErrorCode());
-        statement.setString(8, version.getErrorState());
+        statement.setString(8, Sqls.truncate(version.getErrorState(), 255));
         statement.setTimestamp(9, version.getTimeExecuted());
-        statement.setString(10, version.getDescription());
+        statement.setString(10, Sqls.truncate(version.getDescription(), 128));
         statement.setInt(11, version.getSqlQuantity());
         statement.setBoolean(12, version.getSuccess());
         statement.setInt(13, version.getRowEffected());
         statement.setInt(14, version.getErrorCode());
-        statement.setString(15, version.getErrorState());
+        statement.setString(15, Sqls.truncate(version.getErrorState(), 255));
         statement.setTimestamp(16, version.getTimeExecuted());
 
         return statement.executeUpdate();

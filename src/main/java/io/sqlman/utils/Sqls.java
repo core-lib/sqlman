@@ -70,6 +70,13 @@ public final class Sqls {
         return idx < 0 ? "" : name.substring(idx + 1);
     }
 
+    /**
+     * 版本号对比
+     *
+     * @param aVer 版本a
+     * @param bVer 版本b
+     * @return 如果{@code a == b} 则返回 {@code 0}，如果{@code a < b} 则返回 {@code -1} 否则返回 {@code 1}
+     */
     public static int compare(String aVer, String bVer) {
         if (aVer.startsWith("v") || aVer.startsWith("V")) {
             aVer = aVer.substring(1);
@@ -88,6 +95,23 @@ public final class Sqls {
             }
         }
         return Integer.compare(as.length, bs.length);
+    }
+
+    /**
+     * 字符串截断，如果字符串为{@code null} 则返回{@code ""}
+     *
+     * @param value  字符串
+     * @param length 截断长度
+     * @return 截断后的字符串
+     */
+    public static String truncate(String value, int length) {
+        if (value == null) {
+            return "";
+        }
+        if (value.length() < length) {
+            return value;
+        }
+        return value.substring(0, length);
     }
 
 }
