@@ -36,6 +36,12 @@ public class URLResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
     }
 
     @Override
+    public int contrast(URL source, String version) {
+        String ver = Sqls.getVersion(source.getPath());
+        return Sqls.compare(ver, version);
+    }
+
+    @Override
     public Enumeration<SqlScript> resolve(URL source) {
         return Laziness.forSingle(source, this);
     }
@@ -43,14 +49,8 @@ public class URLResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
     @Override
     public Nullable<SqlScript> supply(URL source) throws Exception {
         String path = source.toURI().getPath();
-        int index = path.lastIndexOf('/');
-        String filename = index < 0 ? path : path.substring(index + 1);
-        String name = Sqls.getName(filename);
-
-        int idx = name.indexOf('-');
-
-        String version = idx < 0 ? name : name.substring(0, idx);
-        String description = idx < 0 ? "" : name.substring(idx + 1);
+        String version = Sqls.getVersion(path);
+        String description = Sqls.getDescription(path);
         try (InputStream in = source.openStream()) {
             Provider provider = new StreamProvider(in);
             CCJSqlParser parser = new CCJSqlParser(provider);
@@ -68,24 +68,9 @@ public class URLResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
 
     @Override
     public int compare(URL self, URL that) {
-        try {
-            String a = Sqls.getVersion(self.toURI().getPath());
-            String b = Sqls.getVersion(that.toURI().getPath());
-            String[] as = a.split("\\.");
-            String[] bs = b.split("\\.");
-            for (int i = 0; i < as.length && i < bs.length; i++) {
-                int l = Integer.valueOf(as[i]);
-                int r = Integer.valueOf(bs[i]);
-                int comparision = Integer.compare(l, r);
-                if (comparision != 0) {
-                    return comparision;
-                }
-            }
-            return Integer.compare(as.length, bs.length);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        String a = Sqls.getVersion(self.getPath());
+        String b = Sqls.getVersion(that.getPath());
+        return Sqls.compare(a, b);
     }
-
 
 }

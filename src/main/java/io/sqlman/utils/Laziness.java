@@ -105,7 +105,9 @@ public final class Laziness {
         @Override
         public R nextElement() {
             if (hasMoreElements()) {
-                return next.value().nextElement();
+                R element = next.value().nextElement();
+                next = null;
+                return element;
             } else {
                 throw new NoSuchElementException();
             }

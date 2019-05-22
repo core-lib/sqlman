@@ -20,6 +20,15 @@ public interface SqlResolver<T> extends Comparator<T> {
     boolean validate(T source);
 
     /**
+     * 对比源对象版本与指定版本的新旧
+     *
+     * @param source  源对象
+     * @param version 指定版本
+     * @return 如果是源对象版本在指定版本之后则返回{@code 1}, 如果在指定版本之前则返回{@code -1}, 如果版本一致则返回@{code 0}
+     */
+    int contrast(T source, String version);
+
+    /**
      * 解析SQL脚本
      *
      * @param source 脚本来源

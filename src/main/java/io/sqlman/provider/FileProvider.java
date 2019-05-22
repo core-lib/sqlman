@@ -25,15 +25,15 @@ import java.util.TreeSet;
 public class FileProvider implements SqlProvider, Supplier<Enumeration<SqlScript>, URL> {
     private ClassLoader classLoader = this.getClass().getClassLoader();
     private String location = "sqlman";
-    private boolean recursively = true;
+    private boolean recursively = false;
     private SqlResolver<URL> resolver = new URLResolver();
 
     public static void main(String... args) throws Exception {
         SqlProvider provider = new FileProvider();
-        Enumeration<SqlScript> scripts = provider.acquire();
+        Enumeration<SqlScript> scripts = provider.acquire("v1.2.2");
         while (scripts.hasMoreElements()) {
             SqlScript script = scripts.nextElement();
-            System.out.println(script);
+            System.out.println(script.version());
         }
     }
 
@@ -53,15 +53,12 @@ public class FileProvider implements SqlProvider, Supplier<Enumeration<SqlScript
 
     @Override
     public Enumeration<SqlScript> acquire(String version) throws Exception {
-        // 参照物
-        URL reference = new URL("file:/" + version);
-
         Set<URL> resources = new TreeSet<>(resolver);
         Enumeration<Resource> enumeration = Loaders.std(classLoader).load(location, recursively);
         while (enumeration.hasMoreElements()) {
             Resource resource = enumeration.nextElement();
             URL url = resource.getUrl();
-            if (resolver.validate(url) && resolver.compare(reference, url) >= 0 && !resources.add(url)) {
+            if (resolver.validate(url) && resolver.contrast(url, version) >= 0 && !resources.add(url)) {
                 throw new IllegalStateException("duplicate sql script version of " + resource.getName());
             }
         }

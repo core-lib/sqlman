@@ -48,12 +48,46 @@ public final class Sqls {
         }
         int index = path.lastIndexOf('/');
         String filename = index < 0 ? path : path.substring(index + 1);
-        if (filename.startsWith("v") || filename.startsWith("V")) {
-            filename = filename.substring(1);
-        }
         String name = Sqls.getName(filename);
         int idx = name.indexOf('-');
         return idx < 0 ? name : name.substring(0, idx);
+    }
+
+    /**
+     * 获取脚本文件描述
+     *
+     * @param path 脚本文件路径
+     * @return 脚本文件描述
+     */
+    public static String getDescription(String path) {
+        if (path == null) {
+            throw new NullPointerException("path must not be null");
+        }
+        int index = path.lastIndexOf('/');
+        String filename = index < 0 ? path : path.substring(index + 1);
+        String name = Sqls.getName(filename);
+        int idx = name.indexOf('-');
+        return idx < 0 ? "" : name.substring(idx + 1);
+    }
+
+    public static int compare(String aVer, String bVer) {
+        if (aVer.startsWith("v") || aVer.startsWith("V")) {
+            aVer = aVer.substring(1);
+        }
+        if (bVer.startsWith("v") || bVer.startsWith("V")) {
+            bVer = bVer.substring(1);
+        }
+        String[] as = aVer.split("\\.");
+        String[] bs = bVer.split("\\.");
+        for (int i = 0; i < as.length && i < bs.length; i++) {
+            int l = Integer.valueOf(as[i]);
+            int r = Integer.valueOf(bs[i]);
+            int comparision = Integer.compare(l, r);
+            if (comparision != 0) {
+                return comparision;
+            }
+        }
+        return Integer.compare(as.length, bs.length);
     }
 
 }
