@@ -21,13 +21,6 @@ public interface SqlStatement {
     int execute(Connection connection) throws SQLException;
 
     /**
-     * 脚本类型
-     *
-     * @return 脚本类型
-     */
-    SqlType type();
-
-    /**
      * 脚本序号
      *
      * @return 脚本序号

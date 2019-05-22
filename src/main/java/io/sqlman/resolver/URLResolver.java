@@ -3,7 +3,6 @@ package io.sqlman.resolver;
 import io.sqlman.SqlResolver;
 import io.sqlman.SqlScript;
 import io.sqlman.SqlStatement;
-import io.sqlman.SqlType;
 import io.sqlman.utils.Laziness;
 import io.sqlman.utils.Nullable;
 import io.sqlman.utils.Sqls;
@@ -56,9 +55,9 @@ public class URLResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
             CCJSqlParser parser = new CCJSqlParser(provider);
             List<Statement> sqls = parser.Statements().getStatements();
             List<SqlStatement> statements = new ArrayList<>(sqls.size());
-            for (int i = 0; i < sqls.size(); i++) {
-                Statement sql = sqls.get(i);
-                SqlStatement statement = new URLStatement(SqlType.DDL, i, sql.toString());
+            for (int ordinal = 0; ordinal < sqls.size(); ordinal++) {
+                Statement sql = sqls.get(ordinal);
+                SqlStatement statement = new URLStatement(ordinal, sql.toString());
                 statements.add(statement);
             }
             SqlScript script = new URLScript(version, description, statements);
