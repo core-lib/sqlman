@@ -28,15 +28,6 @@ public class FileProvider implements SqlProvider, Supplier<Enumeration<SqlScript
     private boolean recursively = false;
     private SqlResolver<URL> resolver = new URLResolver();
 
-    public static void main(String... args) throws Exception {
-        SqlProvider provider = new FileProvider();
-        Enumeration<SqlScript> scripts = provider.acquire("v1.2.2");
-        while (scripts.hasMoreElements()) {
-            SqlScript script = scripts.nextElement();
-            System.out.println(script.version());
-        }
-    }
-
     @Override
     public Enumeration<SqlScript> acquire() throws Exception {
         Set<URL> resources = new TreeSet<>(resolver);

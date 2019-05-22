@@ -18,6 +18,28 @@ import java.sql.SQLException;
 public class MySQLDialect implements SqlDialect {
 
     @Override
+    public void install(Connection connection, SqlConfig config) throws SQLException {
+        String name = config.getTableName();
+        StringBuilder ddl = new StringBuilder();
+        ddl.append(" CREATE TABLE IF NOT EXISTS `").append(name).append("` (");
+        ddl.append("         `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '脚本执行记录ID',");
+        ddl.append("         `version` varchar(24) NOT NULL COMMENT '脚本版本号',");
+        ddl.append("         `ordinal` int(11) NOT NULL COMMENT '脚本SQL序号',");
+        ddl.append("         `description` varchar(128) NOT NULL COMMENT '脚本描述',");
+        ddl.append("         `sql_quantity` int(11) NOT NULL COMMENT '脚本SQL数量',");
+        ddl.append("         `success` bit(1) NOT NULL COMMENT '是否执行成功',");
+        ddl.append("         `row_effected` int(11) NOT NULL COMMENT '影响行数',");
+        ddl.append("         `error_code` int(11) NOT NULL COMMENT '错误代码',");
+        ddl.append("         `error_state` varchar(255) NOT NULL COMMENT '错误状态',");
+        ddl.append("         `date_executed` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '执行时间',");
+        ddl.append("         PRIMARY KEY (`id`),");
+        ddl.append("         UNIQUE KEY `UK_").append(name).append("_version_ordinal` (`version`,`ordinal`) USING BTREE");
+        ddl.append(" )");
+        PreparedStatement statement = connection.prepareStatement(ddl.toString());
+        statement.execute();
+    }
+
+    @Override
     public SqlVersion status(Connection connection, SqlConfig config) throws SQLException {
         String name = config.getTableName();
         StringBuilder dql = new StringBuilder();
@@ -59,28 +81,6 @@ public class MySQLDialect implements SqlDialect {
         version.setDateExecuted(result.getDate("dateExecuted"));
 
         return version;
-    }
-
-    @Override
-    public void install(Connection connection, SqlConfig config) throws SQLException {
-        String name = config.getTableName();
-        StringBuilder ddl = new StringBuilder();
-        ddl.append(" CREATE TABLE IF NOT EXISTS `").append(name).append("` (");
-        ddl.append("         `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '脚本执行记录ID',");
-        ddl.append("         `version` varchar(24) NOT NULL COMMENT '脚本版本号',");
-        ddl.append("         `ordinal` int(11) NOT NULL COMMENT '脚本SQL序号',");
-        ddl.append("         `description` varchar(128) NOT NULL COMMENT '脚本描述',");
-        ddl.append("         `sql_quantity` int(11) NOT NULL COMMENT '脚本SQL数量',");
-        ddl.append("         `success` bit(1) NOT NULL COMMENT '是否执行成功',");
-        ddl.append("         `row_effected` int(11) NOT NULL COMMENT '影响行数',");
-        ddl.append("         `error_code` int(11) NOT NULL COMMENT '错误代码',");
-        ddl.append("         `error_state` varchar(255) NOT NULL COMMENT '错误状态',");
-        ddl.append("         `date_executed` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '执行时间',");
-        ddl.append("         PRIMARY KEY (`id`),");
-        ddl.append("         UNIQUE KEY `UK_").append(name).append("_version_ordinal` (`version`,`ordinal`) USING BTREE");
-        ddl.append(" )");
-        PreparedStatement statement = connection.prepareStatement(ddl.toString());
-        statement.execute();
     }
 
     @Override

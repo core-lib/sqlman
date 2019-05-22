@@ -13,6 +13,15 @@ import java.sql.SQLException;
 public interface SqlDialect {
 
     /**
+     * 安装版本升级记录表，如果表已经安装则不做任何变化。
+     *
+     * @param connection 连接
+     * @param config     系统配置
+     * @throws SQLException SQL异常
+     */
+    void install(Connection connection, SqlConfig config) throws SQLException;
+
+    /**
      * 查询数据库的最新版本升级记录，当返回为{@code null}时表示版本升级记录表没有任何记录。
      *
      * @param connection 连接
@@ -21,15 +30,6 @@ public interface SqlDialect {
      * @throws SQLException SQL异常
      */
     SqlVersion status(Connection connection, SqlConfig config) throws SQLException;
-
-    /**
-     * 安装版本升级记录表
-     *
-     * @param connection 连接
-     * @param config     系统配置
-     * @throws SQLException SQL异常
-     */
-    void install(Connection connection, SqlConfig config) throws SQLException;
 
     /**
      * 升级到指定状态
