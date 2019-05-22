@@ -46,6 +46,7 @@ public class BasicExecutor implements SqlExecutor {
             for (int index = ordinal; index < sqls; index++) {
                 upgrade(script, index);
             }
+            ordinal = 0;
         }
     }
 
