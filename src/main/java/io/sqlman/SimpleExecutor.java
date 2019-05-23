@@ -26,6 +26,9 @@ public class SimpleExecutor implements SqlExecutor {
 
     @Override
     public void execute() throws Exception {
+        if (dataSource == null) {
+            throw new IllegalStateException("dataSource is null");
+        }
         // 初始化
         initialize();
         // 查询状态
