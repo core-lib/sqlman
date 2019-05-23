@@ -1,6 +1,8 @@
 package io.sqlman;
 
 import io.sqlman.dialect.MySQLDialect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -15,6 +17,8 @@ import java.util.Enumeration;
  * 2019/5/22 16:15
  */
 public class SimpleExecutor implements SqlExecutor {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private DataSource dataSource;
     private SqlProvider provider = new SimpleProvider();
     private SqlDialect dialect = new MySQLDialect();
@@ -22,10 +26,10 @@ public class SimpleExecutor implements SqlExecutor {
 
     @Override
     public void execute() throws Exception {
-        // 安装
-        install();
+        // 初始化
+        initialize();
         // 查询状态
-        SqlVersion current = status();
+        SqlVersion current = retrieve();
         // 获取当前版本之后的所有升级脚本
         String version = current != null ? current.getVersion() : null;
         // 获取脚本下一个执行的SQL语句序好
@@ -41,23 +45,26 @@ public class SimpleExecutor implements SqlExecutor {
             SqlScript script = scripts.nextElement();
             int sqls = script.sqls();
             for (int index = ordinal; index < sqls; index++) {
-                upgrade(script, index);
+                execute(script, index);
             }
             ordinal = 0;
         }
     }
 
-    private void install() throws Exception {
+    private void initialize() throws Exception {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
+            logger.info("Initializing sqlman");
             dialect.install(connection, config);
+            logger.info("Sqlman initialize completed");
             connection.commit();
         } catch (Exception e) {
             if (connection != null) {
                 connection.rollback();
             }
+            logger.error("Sqlman initialize failed", e);
             throw e;
         } finally {
             if (connection != null) {
@@ -66,16 +73,20 @@ public class SimpleExecutor implements SqlExecutor {
         }
     }
 
-    private SqlVersion status() throws Exception {
+    private SqlVersion retrieve() throws Exception {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
-            return dialect.status(connection, config);
+            logger.info("Retrieving sqlman version");
+            SqlVersion status = dialect.status(connection, config);
+            logger.info("Sqlman version is {}", status);
+            return status;
         } catch (Exception e) {
             if (connection != null) {
                 connection.rollback();
             }
+            logger.error("Sqlman version retrieve failed", e);
             throw e;
         } finally {
             if (connection != null) {
@@ -84,7 +95,7 @@ public class SimpleExecutor implements SqlExecutor {
         }
     }
 
-    private void upgrade(SqlScript script, int ordinal) throws Exception {
+    private void execute(SqlScript script, int ordinal) throws Exception {
         boolean success = false;
         int rowEffected = 0;
         int errorCode = 0;
@@ -95,13 +106,17 @@ public class SimpleExecutor implements SqlExecutor {
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
+            String version = script.version() + "/" + ordinal;
+            logger.info("Executing SQL script {}", version);
             rowEffected = script.execute(connection, ordinal);
+            logger.info("SQL script execute completed");
             success = true;
             connection.commit();
         } catch (SQLException e) {
             if (connection != null) {
                 connection.rollback();
             }
+            logger.error("SQL script execute failed", e);
             errorCode = e.getErrorCode();
             errorState = e.getSQLState();
             errorMessage = e.getMessage();
@@ -128,21 +143,24 @@ public class SimpleExecutor implements SqlExecutor {
             version.setErrorState(errorState);
             version.setErrorMessage(errorMessage);
             version.setTimeExecuted(dateExecuted);
-            record(version);
+            update(version);
         }
     }
 
-    private void record(SqlVersion version) throws Exception {
+    private void update(SqlVersion version) throws Exception {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
+            logger.info("Updating sqlman to version {}", version);
             dialect.upgrade(connection, config, version);
+            logger.info("Sqlman version update completed");
             connection.commit();
         } catch (Exception e) {
             if (connection != null) {
                 connection.rollback();
             }
+            logger.error("Sqlman version update failed", e);
             throw e;
         } finally {
             if (connection != null) {
