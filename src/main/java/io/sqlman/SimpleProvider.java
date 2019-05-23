@@ -40,7 +40,7 @@ public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScri
     @Override
     public Enumeration<SqlScript> acquire(String version) throws Exception {
         Set<URL> resources = new TreeSet<>(resolver);
-        Enumeration<Resource> enumeration = Loaders.std(classLoader).load(location);
+        Enumeration<Resource> enumeration = Loaders.ant(classLoader).load(location);
         while (enumeration.hasMoreElements()) {
             Resource resource = enumeration.nextElement();
             URL url = resource.getUrl();
