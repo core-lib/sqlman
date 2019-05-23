@@ -2,10 +2,7 @@ package io.sqlman.test;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import io.sqlman.executor.BasicExecutor;
-import net.sf.jsqlparser.parser.CCJSqlParser;
 import org.junit.Test;
-
-import java.io.InputStream;
 
 /**
  * @author Payne 646742615@qq.com
@@ -15,10 +12,6 @@ public class BasicExecutorTests {
 
     @Test
     public void test() throws Exception {
-        InputStream in = this.getClass().getResourceAsStream("/sqlman/v5.2.0-仓库平均成本价.sql");
-        CCJSqlParser parser = new CCJSqlParser(in);
-        parser.Statements();
-
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setUrl("jdbc:mysql://new-alpha.juniusoft.com:23306/new_mf_pro_bak_0408?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8");
         dataSource.setUsername("new_mf");
