@@ -20,18 +20,17 @@ import java.util.TreeSet;
  */
 public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScript>, URL> {
     private ClassLoader classLoader = this.getClass().getClassLoader();
-    private String location = "sqlman";
-    private boolean recursively = false;
     private SqlResolver<URL> resolver = new SimpleResolver();
+    private String location = "sqlman/**/*.sql";
 
     @Override
     public Enumeration<SqlScript> acquire() throws Exception {
         Set<URL> resources = new TreeSet<>(resolver);
-        Enumeration<Resource> enumeration = Loaders.std(classLoader).load(location, recursively);
+        Enumeration<Resource> enumeration = Loaders.ant(classLoader).load(location);
         while (enumeration.hasMoreElements()) {
             Resource resource = enumeration.nextElement();
             URL url = resource.getUrl();
-            if (resolver.validate(url) && !resources.add(url)) {
+            if (!resources.add(url)) {
                 throw new IllegalStateException("duplicate sql script version of " + resource.getName());
             }
         }
@@ -41,11 +40,11 @@ public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScri
     @Override
     public Enumeration<SqlScript> acquire(String version) throws Exception {
         Set<URL> resources = new TreeSet<>(resolver);
-        Enumeration<Resource> enumeration = Loaders.std(classLoader).load(location, recursively);
+        Enumeration<Resource> enumeration = Loaders.std(classLoader).load(location);
         while (enumeration.hasMoreElements()) {
             Resource resource = enumeration.nextElement();
             URL url = resource.getUrl();
-            if (resolver.validate(url) && resolver.contrast(url, version) >= 0 && !resources.add(url)) {
+            if (resolver.contrast(url, version) >= 0 && !resources.add(url)) {
                 throw new IllegalStateException("duplicate sql script version of " + resource.getName());
             }
         }
@@ -65,22 +64,6 @@ public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScri
         this.classLoader = classLoader;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public boolean isRecursively() {
-        return recursively;
-    }
-
-    public void setRecursively(boolean recursively) {
-        this.recursively = recursively;
-    }
-
     public SqlResolver<URL> getResolver() {
         return resolver;
     }
@@ -89,4 +72,11 @@ public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScri
         this.resolver = resolver;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

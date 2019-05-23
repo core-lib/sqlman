@@ -12,14 +12,6 @@ import java.util.Enumeration;
 public interface SqlResolver<T> extends Comparator<T> {
 
     /**
-     * 验证
-     *
-     * @param source 源对象
-     * @return 如果是合法的SQL脚本则返回{@code true} 否则返回{@code false}
-     */
-    boolean validate(T source);
-
-    /**
      * 对比源对象版本与指定版本的新旧
      *
      * @param source  源对象

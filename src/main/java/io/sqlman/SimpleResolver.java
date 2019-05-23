@@ -20,14 +20,6 @@ import java.util.List;
  * 2019/5/22 10:42
  */
 public class SimpleResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
-    private static final String SQL = ".sql";
-
-    @Override
-    public boolean validate(URL source) {
-        String path = source.getPath();
-        String extension = Sqls.getExtension(path);
-        return SQL.equalsIgnoreCase(extension);
-    }
 
     @Override
     public int contrast(URL source, String version) {
