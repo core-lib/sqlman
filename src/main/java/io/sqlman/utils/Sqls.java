@@ -114,5 +114,14 @@ public final class Sqls {
         return value.substring(0, length);
     }
 
+    /**
+     * 判断字符串为{@code null}或空字符串
+     *
+     * @param value 字符串
+     * @return 如果字符串为{@code null}或空字符串则返回{@code true} 否则返回{@code false}
+     */
+    public static boolean isEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
 
 }

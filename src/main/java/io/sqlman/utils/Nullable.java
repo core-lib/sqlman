@@ -9,7 +9,7 @@ package io.sqlman.utils;
 public class Nullable<T> {
     private final T value;
 
-    Nullable(T value) {
+    private Nullable(T value) {
         this.value = value;
     }
 

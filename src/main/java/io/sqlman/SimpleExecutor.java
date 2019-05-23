@@ -1,9 +1,6 @@
-package io.sqlman.executor;
+package io.sqlman;
 
-import io.sqlman.*;
-import io.sqlman.config.SimpleConfig;
 import io.sqlman.dialect.MySQLDialect;
-import io.sqlman.provider.FileProvider;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -17,9 +14,9 @@ import java.util.Enumeration;
  * @author Payne 646742615@qq.com
  * 2019/5/22 16:15
  */
-public class BasicExecutor implements SqlExecutor {
+public class SimpleExecutor implements SqlExecutor {
     private DataSource dataSource;
-    private SqlProvider provider = new FileProvider();
+    private SqlProvider provider = new SimpleProvider();
     private SqlDialect dialect = new MySQLDialect();
     private SqlConfig config = new SimpleConfig();
 

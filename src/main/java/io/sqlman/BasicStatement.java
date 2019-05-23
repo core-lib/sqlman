@@ -1,19 +1,16 @@
-package io.sqlman.resolver;
-
-import io.sqlman.SqlStatement;
-import io.sqlman.statement.ExecutableStatement;
+package io.sqlman;
 
 /**
- * 基于URL的SQL脚本语句
+ * 基本SQL脚本语句
  *
  * @author Payne 646742615@qq.com
  * 2019/5/22 11:15
  */
-public class URLStatement extends ExecutableStatement implements SqlStatement {
+public class BasicStatement extends AbstractStatement implements SqlStatement {
     private final int ordinal;
     private final String statement;
 
-    public URLStatement(int ordinal, String statement) {
+    public BasicStatement(int ordinal, String statement) {
         this.ordinal = ordinal;
         this.statement = statement;
     }
@@ -25,6 +22,11 @@ public class URLStatement extends ExecutableStatement implements SqlStatement {
 
     @Override
     public String statement() {
+        return statement;
+    }
+
+    @Override
+    public String toString() {
         return statement;
     }
 }

@@ -1,7 +1,4 @@
-package io.sqlman.script;
-
-import io.sqlman.SqlScript;
-import io.sqlman.SqlStatement;
+package io.sqlman;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,7 +9,7 @@ import java.sql.SQLException;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:24
  */
-public abstract class ExecutableScript implements SqlScript {
+public abstract class AbstractScript implements SqlScript {
 
     @Override
     public int execute(Connection connection, int ordinal) throws SQLException {

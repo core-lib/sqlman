@@ -9,13 +9,13 @@ import java.util.NoSuchElementException;
  * @author Payne 646742615@qq.com
  * 2019/5/22 13:20
  */
-public final class Laziness {
+public final class Enumerations {
 
-    public static <R, P> Enumeration<R> forSingle(P param, Supplier<R, P> supplier) {
+    public static <R, P> Enumeration<R> create(P param, Supplier<R, P> supplier) {
         return new Single<>(param, supplier);
     }
 
-    public static <R, P> Enumeration<R> forMultiple(Enumeration<P> param, Supplier<Enumeration<R>, P> supplier) {
+    public static <R, P> Enumeration<R> create(Enumeration<P> param, Supplier<Enumeration<R>, P> supplier) {
         return new Multiple<>(param, supplier);
     }
 

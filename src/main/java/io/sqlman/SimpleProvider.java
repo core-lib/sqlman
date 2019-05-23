@@ -1,12 +1,8 @@
-package io.sqlman.provider;
+package io.sqlman;
 
 import io.loadkit.Loaders;
 import io.loadkit.Resource;
-import io.sqlman.SqlProvider;
-import io.sqlman.SqlResolver;
-import io.sqlman.SqlScript;
-import io.sqlman.resolver.URLResolver;
-import io.sqlman.utils.Laziness;
+import io.sqlman.utils.Enumerations;
 import io.sqlman.utils.Nullable;
 import io.sqlman.utils.Supplier;
 
@@ -22,11 +18,11 @@ import java.util.TreeSet;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:02
  */
-public class FileProvider implements SqlProvider, Supplier<Enumeration<SqlScript>, URL> {
+public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScript>, URL> {
     private ClassLoader classLoader = this.getClass().getClassLoader();
     private String location = "sqlman";
     private boolean recursively = false;
-    private SqlResolver<URL> resolver = new URLResolver();
+    private SqlResolver<URL> resolver = new SimpleResolver();
 
     @Override
     public Enumeration<SqlScript> acquire() throws Exception {
@@ -39,7 +35,7 @@ public class FileProvider implements SqlProvider, Supplier<Enumeration<SqlScript
                 throw new IllegalStateException("duplicate sql script version of " + resource.getName());
             }
         }
-        return Laziness.forMultiple(Collections.enumeration(resources), this);
+        return Enumerations.create(Collections.enumeration(resources), this);
     }
 
     @Override
@@ -53,7 +49,7 @@ public class FileProvider implements SqlProvider, Supplier<Enumeration<SqlScript
                 throw new IllegalStateException("duplicate sql script version of " + resource.getName());
             }
         }
-        return Laziness.forMultiple(Collections.enumeration(resources), this);
+        return Enumerations.create(Collections.enumeration(resources), this);
     }
 
     @Override

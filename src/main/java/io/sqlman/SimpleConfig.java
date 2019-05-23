@@ -1,6 +1,4 @@
-package io.sqlman.config;
-
-import io.sqlman.SqlConfig;
+package io.sqlman;
 
 /**
  * 框架配置

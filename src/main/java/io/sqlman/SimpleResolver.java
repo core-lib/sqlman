@@ -1,9 +1,6 @@
-package io.sqlman.resolver;
+package io.sqlman;
 
-import io.sqlman.SqlResolver;
-import io.sqlman.SqlScript;
-import io.sqlman.SqlStatement;
-import io.sqlman.utils.Laziness;
+import io.sqlman.utils.Enumerations;
 import io.sqlman.utils.Nullable;
 import io.sqlman.utils.Sqls;
 import io.sqlman.utils.Supplier;
@@ -22,7 +19,7 @@ import java.util.List;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:42
  */
-public class URLResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
+public class SimpleResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
     private static final String SQL = ".sql";
 
     @Override
@@ -40,7 +37,7 @@ public class URLResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
 
     @Override
     public Enumeration<SqlScript> resolve(URL source) {
-        return Laziness.forSingle(source, this);
+        return Enumerations.create(source, this);
     }
 
     @Override
@@ -54,10 +51,10 @@ public class URLResolver implements SqlResolver<URL>, Supplier<SqlScript, URL> {
             List<SqlStatement> statements = new ArrayList<>(sqls.size());
             for (int ordinal = 0; ordinal < sqls.size(); ordinal++) {
                 Statement sql = sqls.get(ordinal);
-                SqlStatement statement = new URLStatement(ordinal, sql.toString());
+                SqlStatement statement = new BasicStatement(ordinal, sql.toString());
                 statements.add(statement);
             }
-            SqlScript script = new URLScript(version, description, statements);
+            SqlScript script = new BasicScript(version, description, statements);
             return Nullable.of(script);
         }
     }
