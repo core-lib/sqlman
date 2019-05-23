@@ -1,5 +1,6 @@
 package io.sqlman.dialect;
 
+import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.SqlConfig;
 import io.sqlman.SqlDialect;
 import io.sqlman.SqlVersion;
@@ -11,9 +12,14 @@ import java.sql.SQLException;
  * SQLite方言
  *
  * @author Payne 646742615@qq.com
- * 2019/5/23 11:12
+ * 2019/5/23 15:52
  */
 public class SQLiteDialect implements SqlDialect {
+    @Override
+    public String type() {
+        return JdbcUtils.SQLITE;
+    }
+
     @Override
     public void install(Connection connection, SqlConfig config) throws SQLException {
 

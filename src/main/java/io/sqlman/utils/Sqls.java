@@ -1,5 +1,10 @@
 package io.sqlman.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+
 /**
  * SQL脚本工具类
  *
@@ -122,6 +127,20 @@ public final class Sqls {
      */
     public static boolean isEmpty(String value) {
         return value == null || value.isEmpty();
+    }
+
+    public static String stringify(InputStream in) throws IOException {
+        return stringify(in, Charset.defaultCharset().name());
+    }
+
+    public static String stringify(InputStream in, String charset) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) != -1) {
+            out.write(buf, 0, len);
+        }
+        return out.toString(charset);
     }
 
 }

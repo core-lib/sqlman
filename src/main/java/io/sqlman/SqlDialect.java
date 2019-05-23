@@ -13,6 +13,13 @@ import java.sql.SQLException;
 public interface SqlDialect {
 
     /**
+     * 方言类型
+     *
+     * @return 方言类型
+     */
+    String type();
+
+    /**
      * 安装版本升级记录表，如果表已经安装则不做任何变化。
      *
      * @param connection 连接

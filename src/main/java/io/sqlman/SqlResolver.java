@@ -24,9 +24,10 @@ public interface SqlResolver<T> extends Comparator<T> {
      * 解析SQL脚本
      *
      * @param source 脚本来源
+     * @param dbType 数据库类型
      * @return SQL脚本
      * @throws Exception 解析异常
      */
-    Enumeration<SqlScript> resolve(T source) throws Exception;
+    Enumeration<SqlScript> resolve(T source, String dbType) throws Exception;
 
 }

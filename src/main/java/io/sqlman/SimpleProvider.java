@@ -18,13 +18,13 @@ import java.util.TreeSet;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:02
  */
-public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScript>, URL> {
+public class SimpleProvider implements SqlProvider {
     private ClassLoader classLoader = this.getClass().getClassLoader();
     private SqlResolver<URL> resolver = new SimpleResolver();
     private String location = "sqlman/**/*.sql";
 
     @Override
-    public Enumeration<SqlScript> acquire() throws Exception {
+    public Enumeration<SqlScript> acquire(String dbType) throws Exception {
         Set<URL> resources = new TreeSet<>(resolver);
         Enumeration<Resource> enumeration = Loaders.ant(classLoader).load(location);
         while (enumeration.hasMoreElements()) {
@@ -34,11 +34,11 @@ public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScri
                 throw new IllegalStateException("duplicate sql script version of " + resource.getName());
             }
         }
-        return Enumerations.create(Collections.enumeration(resources), this);
+        return Enumerations.create(Collections.enumeration(resources), new SimpleSupplier(resolver, dbType));
     }
 
     @Override
-    public Enumeration<SqlScript> acquire(String version) throws Exception {
+    public Enumeration<SqlScript> acquire(String dbType, String version) throws Exception {
         Set<URL> resources = new TreeSet<>(resolver);
         Enumeration<Resource> enumeration = Loaders.ant(classLoader).load(location);
         while (enumeration.hasMoreElements()) {
@@ -48,13 +48,24 @@ public class SimpleProvider implements SqlProvider, Supplier<Enumeration<SqlScri
                 throw new IllegalStateException("duplicate sql script version of " + resource.getName());
             }
         }
-        return Enumerations.create(Collections.enumeration(resources), this);
+        return Enumerations.create(Collections.enumeration(resources), new SimpleSupplier(resolver, dbType));
     }
 
-    @Override
-    public Nullable<Enumeration<SqlScript>> supply(URL param) throws Exception {
-        return Nullable.ofNullable(resolver.resolve(param));
+    private static class SimpleSupplier implements Supplier<Enumeration<SqlScript>, URL> {
+        private final SqlResolver<URL> resolver;
+        private final String dbType;
+
+        SimpleSupplier(SqlResolver<URL> resolver, String dbType) {
+            this.resolver = resolver;
+            this.dbType = dbType;
+        }
+
+        @Override
+        public Nullable<Enumeration<SqlScript>> supply(URL param) throws Exception {
+            return Nullable.ofNullable(resolver.resolve(param, dbType));
+        }
     }
+
 
     public ClassLoader getClassLoader() {
         return classLoader;

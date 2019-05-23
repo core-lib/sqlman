@@ -39,7 +39,8 @@ public class SimpleExecutor implements SqlExecutor {
                 ? current.getOrdinal() + 1
                 : current.getOrdinal();
 
-        Enumeration<SqlScript> scripts = version == null ? provider.acquire() : provider.acquire(version);
+        String dbType = dialect.type();
+        Enumeration<SqlScript> scripts = version == null ? provider.acquire(dbType) : provider.acquire(dbType, version);
         // 按顺序执行脚本
         while (scripts.hasMoreElements()) {
             SqlScript script = scripts.nextElement();

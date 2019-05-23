@@ -1,5 +1,6 @@
 package io.sqlman.dialect;
 
+import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.SqlConfig;
 import io.sqlman.SqlDialect;
 import io.sqlman.SqlVersion;
@@ -17,6 +18,11 @@ import java.sql.SQLException;
  * 2019/5/21 17:19
  */
 public class MySQLDialect implements SqlDialect {
+
+    @Override
+    public String type() {
+        return JdbcUtils.MYSQL;
+    }
 
     @Override
     public void install(Connection connection, SqlConfig config) throws SQLException {
