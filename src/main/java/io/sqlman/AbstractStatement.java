@@ -19,7 +19,7 @@ public abstract class AbstractStatement implements SqlStatement {
     @Override
     public int execute(Connection connection) throws SQLException {
         String sql = statement();
-        logger.debug(sql);
+        logger.info(sql);
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.execute();
         return statement.getUpdateCount();
