@@ -49,6 +49,7 @@ public class SimpleExecutor implements SqlExecutor {
             }
             ordinal = 0;
         }
+        logger.info("Sqlman upgrade completed");
     }
 
     private void initialize() throws Exception {
