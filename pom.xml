@@ -6,7 +6,7 @@
 
     <groupId>io.sqlman</groupId>
     <artifactId>sqlman</artifactId>
-    <version>v0.0.4-alpha</version>
+    <version>v0.0.5-alpha</version>
 
     <name>sqlman</name>
 
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.github.core-lib</groupId>
             <artifactId>loadkit</artifactId>
-            <version>v1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.jsqlparser</groupId>

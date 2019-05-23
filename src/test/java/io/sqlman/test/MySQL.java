@@ -8,7 +8,7 @@ import org.junit.Test;
  * @author Payne 646742615@qq.com
  * 2019/5/22 16:27
  */
-public class SimpleExecutorTests {
+public class MySQL {
 
     @Test
     public void test() throws Exception {
