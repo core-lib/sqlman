@@ -15,11 +15,21 @@ public class SimpleProvider implements SqlProvider {
 
     @Override
     public Enumeration<SqlResource> acquire(SqlConfig config) throws Exception {
-        String location = config.getLocation();
-        Enumeration<Resource> enumeration = Loaders.ant().load(location);
+        final String location = config.getLocation();
+        final Enumeration<Resource> enumeration = Loaders.ant().load(location);
+        return new Enumeration<SqlResource>() {
+            @Override
+            public boolean hasMoreElements() {
+                return enumeration.hasMoreElements();
+            }
 
+            @Override
+            public SqlResource nextElement() {
+                Resource resource = enumeration.nextElement();
+                return new BasicResource(resource.getUrl());
+            }
+        };
     }
-
 
 
 }

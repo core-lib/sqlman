@@ -29,4 +29,11 @@ public interface SqlConfig {
      */
     String getLocation();
 
+    /**
+     * 脚本字符集
+     *
+     * @return 脚本字符集
+     */
+    String getCharset();
+
 }

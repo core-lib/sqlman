@@ -9,6 +9,8 @@ package io.sqlman;
 public class SimpleConfig implements SqlConfig {
     private String name = "sqlman";
     private SqlIsolation isolation = SqlIsolation.DEFAULT;
+    private String location = "sqlman/**/*.sql";
+    private String charset = "UTF-8";
 
     @Override
     public String getName() {
@@ -26,5 +28,23 @@ public class SimpleConfig implements SqlConfig {
 
     public void setIsolation(SqlIsolation isolation) {
         this.isolation = isolation;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    @Override
+    public String getCharset() {
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
     }
 }

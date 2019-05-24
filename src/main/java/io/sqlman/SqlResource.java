@@ -1,5 +1,6 @@
 package io.sqlman;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -21,7 +22,8 @@ public interface SqlResource {
      * 资源输入流
      *
      * @return 资源输入流
+     * @throws IOException I/O异常
      */
-    InputStream stream();
+    InputStream stream() throws IOException;
 
 }
