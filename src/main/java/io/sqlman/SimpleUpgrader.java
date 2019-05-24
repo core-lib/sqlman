@@ -31,25 +31,22 @@ public class SimpleUpgrader implements SqlUpgrader {
             // 建立连接
             setup();
 
-            // 安装
-            perform(new InstallTransaction());
-
-            // 获取表锁
+            // 获取升级锁
             perform(new LockTransaction());
+            try {
+                // 安装
+                perform(new InstallTransaction());
 
-            // 查询当前状态
-            SqlVersion current = perform(new ExamineTransaction());
+                // 查询当前状态
+                SqlVersion current = perform(new ExamineTransaction());
 
-            // 执行升级脚本
-            perform(new UpgradeTransaction(current));
+                // 执行升级脚本
+                perform(new UpgradeTransaction(current));
+            } finally {
+                // 释放升级锁
+                perform(new UnlockTransaction());
+            }
 
-            // 释放表锁
-            perform(new UnlockTransaction());
-        } catch (Exception e) {
-            // 释放表锁
-            perform(new UnlockTransaction());
-            // 抛出异常阻止应用继续启动
-            throw e;
         } finally {
             // 关闭连接
             close();
@@ -110,7 +107,7 @@ public class SimpleUpgrader implements SqlUpgrader {
                 logger.info("Sqlman locked");
                 return null;
             } catch (SQLException e) {
-                logger.error("Fail to acquire sqlman upgrade lock", e);
+                logger.error("Fail to acquire sqlman upgrade lock for " + e.getMessage(), e);
                 throw e;
             }
         }
