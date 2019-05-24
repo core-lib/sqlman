@@ -9,6 +9,13 @@ package io.sqlman;
 public class SqlConfig {
     private String name = "sqlman";
 
+    public SqlConfig() {
+    }
+
+    public SqlConfig(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
