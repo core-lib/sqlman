@@ -28,7 +28,7 @@ public class StandardVersionManager implements SqlVersionManager {
 
     private DataSource dataSource;
     private Connection jdbcConnection;
-    private SqlIsolation transactionIsolation = SqlIsolation.DEFAULT;
+    private SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
     private SqlScriptProvider scriptProvider = new ClasspathScriptProvider();
     private SqlScriptResolver scriptResolver = new DruidScriptResolver();
     private SqlDialectSupporter dialectSupporter = new MySQLDialectSupporter();
@@ -71,8 +71,8 @@ public class StandardVersionManager implements SqlVersionManager {
         if (jdbcConnection == null) {
             jdbcConnection = dataSource.getConnection();
             jdbcConnection.setAutoCommit(false);
-            if (transactionIsolation != SqlIsolation.DEFAULT) {
-                jdbcConnection.setTransactionIsolation(transactionIsolation.value);
+            if (trxIsolation != SqlIsolation.DEFAULT) {
+                jdbcConnection.setTransactionIsolation(trxIsolation.value);
             }
         }
     }
@@ -99,6 +99,25 @@ public class StandardVersionManager implements SqlVersionManager {
         if (jdbcConnection != null) {
             jdbcConnection.close();
         }
+    }
+
+    /**
+     * 事务操作
+     *
+     * @author Payne 646742615@qq.com
+     * 2019/5/24 10:57
+     */
+    private interface SqlTransaction<T> {
+
+        /**
+         * 执行事务
+         *
+         * @param connection 连接
+         * @return 事务执行结果
+         * @throws Exception 事务执行异常
+         */
+        T execute(Connection connection) throws Exception;
+
     }
 
     private class InstallTransaction implements SqlTransaction<Void> {
@@ -263,12 +282,12 @@ public class StandardVersionManager implements SqlVersionManager {
         this.dataSource = dataSource;
     }
 
-    public SqlIsolation getTransactionIsolation() {
-        return transactionIsolation;
+    public SqlIsolation getTrxIsolation() {
+        return trxIsolation;
     }
 
-    public void setTransactionIsolation(SqlIsolation transactionIsolation) {
-        this.transactionIsolation = transactionIsolation;
+    public void setTrxIsolation(SqlIsolation trxIsolation) {
+        this.trxIsolation = trxIsolation;
     }
 
     public SqlScriptProvider getScriptProvider() {
