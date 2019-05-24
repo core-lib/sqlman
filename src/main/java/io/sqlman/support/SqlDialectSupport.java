@@ -1,4 +1,4 @@
-package io.sqlman.supporter;
+package io.sqlman.support;
 
 import io.sqlman.SqlConfig;
 import io.sqlman.SqlVersion;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * @author Payne 646742615@qq.com
  * 2019/5/18 13:13
  */
-public interface SqlDialectSupporter {
+public interface SqlDialectSupport {
 
     /**
      * 安装版本升级记录表，如果表已经安装则不做任何变化。

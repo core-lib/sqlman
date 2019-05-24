@@ -5,8 +5,8 @@ import io.sqlman.provider.ClasspathScriptProvider;
 import io.sqlman.provider.SqlScriptProvider;
 import io.sqlman.resolver.DruidScriptResolver;
 import io.sqlman.resolver.SqlScriptResolver;
-import io.sqlman.supporter.MySQLDialectSupporter;
-import io.sqlman.supporter.SqlDialectSupporter;
+import io.sqlman.support.MySQLDialectSupport;
+import io.sqlman.support.SqlDialectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class StandardVersionManager implements SqlVersionManager {
     private SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
     private SqlScriptProvider scriptProvider = new ClasspathScriptProvider();
     private SqlScriptResolver scriptResolver = new DruidScriptResolver();
-    private SqlDialectSupporter dialectSupporter = new MySQLDialectSupporter();
+    private SqlDialectSupport dialectSupport = new MySQLDialectSupport();
     private SqlConfig tableConfig = new SqlConfig();
 
     public StandardVersionManager() {
@@ -131,7 +131,7 @@ public class StandardVersionManager implements SqlVersionManager {
         @Override
         public Void execute(Connection connection) throws SQLException {
             logger.info("Initializing sqlman");
-            dialectSupporter.install(connection, tableConfig);
+            dialectSupport.install(connection, tableConfig);
             logger.info("Sqlman initialize completed");
             return null;
         }
@@ -142,7 +142,7 @@ public class StandardVersionManager implements SqlVersionManager {
         public Void execute(Connection connection) throws SQLException {
             try {
                 logger.info("Locking sqlman");
-                dialectSupporter.lock(connection, tableConfig);
+                dialectSupport.lock(connection, tableConfig);
                 logger.info("Sqlman locked");
                 return null;
             } catch (SQLException e) {
@@ -156,7 +156,7 @@ public class StandardVersionManager implements SqlVersionManager {
         @Override
         public SqlVersion execute(Connection connection) throws SQLException {
             logger.info("Examining sqlman current version");
-            SqlVersion current = dialectSupporter.examine(connection, tableConfig);
+            SqlVersion current = dialectSupport.examine(connection, tableConfig);
             logger.info("Sqlman current version is {}", current);
             return current;
         }
@@ -251,7 +251,7 @@ public class StandardVersionManager implements SqlVersionManager {
                 version.setErrorState("");
                 version.setErrorMessage("");
                 version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialectSupporter.record(connection, tableConfig, version);
+                dialectSupport.record(connection, tableConfig, version);
             } else {
                 SqlVersion version = new SqlVersion();
                 version.setVersion(script.version());
@@ -264,7 +264,7 @@ public class StandardVersionManager implements SqlVersionManager {
                 version.setErrorState(sqlException.getSQLState());
                 version.setErrorMessage(sqlException.getMessage());
                 version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialectSupporter.record(connection, tableConfig, version);
+                dialectSupport.record(connection, tableConfig, version);
             }
             return null;
         }
@@ -275,7 +275,7 @@ public class StandardVersionManager implements SqlVersionManager {
         @Override
         public Void execute(Connection connection) throws SQLException {
             logger.info("Unlocking sqlman");
-            dialectSupporter.unlock(connection, tableConfig);
+            dialectSupport.unlock(connection, tableConfig);
             logger.info("Sqlman unlocked");
             return null;
         }
@@ -313,12 +313,12 @@ public class StandardVersionManager implements SqlVersionManager {
         this.scriptResolver = scriptResolver;
     }
 
-    public SqlDialectSupporter getDialectSupporter() {
-        return dialectSupporter;
+    public SqlDialectSupport getDialectSupport() {
+        return dialectSupport;
     }
 
-    public void setDialectSupporter(SqlDialectSupporter dialectSupporter) {
-        this.dialectSupporter = dialectSupporter;
+    public void setDialectSupport(SqlDialectSupport dialectSupport) {
+        this.dialectSupport = dialectSupport;
     }
 
     public SqlConfig getTableConfig() {

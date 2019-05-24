@@ -1,4 +1,4 @@
-package io.sqlman.supporter;
+package io.sqlman.support;
 
 import io.sqlman.SqlConfig;
 import io.sqlman.SqlVersion;
@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * @author Payne 646742615@qq.com
  * 2019/5/24 9:52
  */
-public abstract class AbstractDialectSupporter implements SqlDialectSupporter {
+public abstract class AbstractDialectSupport implements SqlDialectSupport {
 
     @Override
     public SqlVersion examine(Connection connection, SqlConfig config) throws SQLException {
