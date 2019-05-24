@@ -23,6 +23,13 @@ public class SimpleProvider implements SqlProvider {
     private SqlResolver<URL> resolver = new SimpleResolver();
     private String location = "sqlman/**/*.sql";
 
+    public SimpleProvider() {
+    }
+
+    public SimpleProvider(String location) {
+        this.location = location;
+    }
+
     @Override
     public Enumeration<SqlScript> acquire(String dbType) throws Exception {
         Set<URL> resources = new TreeSet<>(resolver);

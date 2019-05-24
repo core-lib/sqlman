@@ -17,7 +17,7 @@ public interface SqlDialect {
      *
      * @return 方言类型
      */
-    String type();
+    SqlType type();
 
     /**
      * 安装版本升级记录表，如果表已经安装则不做任何变化。
@@ -29,24 +29,41 @@ public interface SqlDialect {
     void install(Connection connection, SqlConfig config) throws SQLException;
 
     /**
-     * 查询数据库的最新版本升级记录，当返回为{@code null}时表示版本升级记录表没有任何记录。
+     * 检查数据库的最新版本升级记录，当返回为{@code null}时表示版本升级记录表没有任何记录。
      *
      * @param connection 连接
      * @param config     系统配置
      * @return 数据库状态
      * @throws SQLException SQL异常
      */
-    SqlVersion status(Connection connection, SqlConfig config) throws SQLException;
+    SqlVersion examine(Connection connection, SqlConfig config) throws SQLException;
 
     /**
-     * 升级到指定状态
+     * 记录当前版本状态
      *
      * @param connection 连接
      * @param config     系统配置
      * @param version    版本
-     * @return 影响行数
      * @throws SQLException SQL异常
      */
-    int upgrade(Connection connection, SqlConfig config, SqlVersion version) throws SQLException;
+    void record(Connection connection, SqlConfig config, SqlVersion version) throws SQLException;
+
+    /**
+     * 获取版本升级的排他锁
+     *
+     * @param connection 连接
+     * @param config     系统配置
+     * @throws SQLException SQL异常
+     */
+    void lock(Connection connection, SqlConfig config) throws SQLException;
+
+    /**
+     * 释放版本升级的排他锁
+     *
+     * @param connection 连接
+     * @param config     系统配置
+     * @throws SQLException SQL异常
+     */
+    void unlock(Connection connection, SqlConfig config) throws SQLException;
 
 }

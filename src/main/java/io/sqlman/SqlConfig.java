@@ -13,6 +13,13 @@ public interface SqlConfig {
      *
      * @return 升级记录表表名
      */
-    String getTableName();
+    String getName();
+
+    /**
+     * 连接的事务隔离界别，为{@code null}时采用连接的默认隔离级别
+     *
+     * @return 连接的事务隔离界别
+     */
+    SqlIsolation getIsolation();
 
 }

@@ -1,9 +1,10 @@
 package io.sqlman.dialect;
 
-import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.SqlConfig;
 import io.sqlman.SqlDialect;
+import io.sqlman.SqlType;
 import io.sqlman.SqlVersion;
+import io.sqlman.utils.Sqls;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,15 +16,15 @@ import java.sql.SQLException;
  * @author Payne 646742615@qq.com
  * 2019/5/23 15:52
  */
-public class SQLiteDialect implements SqlDialect {
+public class SQLiteDialect extends AbstractDialect implements SqlDialect {
     @Override
-    public String type() {
-        return JdbcUtils.SQLITE;
+    public SqlType type() {
+        return SqlType.SQLite;
     }
 
     @Override
     public void install(Connection connection, SqlConfig config) throws SQLException {
-        String name = config.getTableName();
+        String name = config.getName();
         {
             StringBuilder ddl = new StringBuilder();
             ddl.append(" CREATE TABLE IF NOT EXISTS ").append(name).append(" (");
@@ -52,12 +53,50 @@ public class SQLiteDialect implements SqlDialect {
     }
 
     @Override
-    public SqlVersion status(Connection connection, SqlConfig config) throws SQLException {
-        return null;
+    public void record(Connection connection, SqlConfig config, SqlVersion version) throws SQLException {
+        String name = config.getName();
+        StringBuilder dml = new StringBuilder();
+        dml.append(" REPLACE INTO ").append(name).append(" (");
+        dml.append("     version,");
+        dml.append("     ordinal,");
+        dml.append("     description,");
+        dml.append("     sql_quantity,");
+        dml.append("     success,");
+        dml.append("     row_effected,");
+        dml.append("     error_code,");
+        dml.append("     error_state,");
+        dml.append("     error_message,");
+        dml.append("     time_executed");
+        dml.append(" )");
+        dml.append(" VALUES");
+        dml.append("     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+        PreparedStatement statement = connection.prepareStatement(dml.toString());
+        statement.setString(1, Sqls.truncate(version.getVersion(), 24));
+        statement.setInt(2, version.getOrdinal());
+        statement.setString(3, Sqls.truncate(version.getDescription(), 128));
+        statement.setInt(4, version.getSqlQuantity());
+        statement.setBoolean(5, version.getSuccess());
+        statement.setInt(6, version.getRowEffected());
+        statement.setInt(7, version.getErrorCode());
+        statement.setString(8, Sqls.truncate(version.getErrorState(), 255));
+        statement.setString(9, Sqls.truncate(version.getErrorMessage(), 255));
+        statement.setTimestamp(10, version.getTimeExecuted());
+
+        statement.executeUpdate();
     }
 
     @Override
-    public int upgrade(Connection connection, SqlConfig config, SqlVersion version) throws SQLException {
-        return 0;
+    public void lock(Connection connection, SqlConfig config) throws SQLException {
+        String name = config.getName();
+        PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + name + "_lock (nil INTEGER PRIMARY KEY)");
+        statement.execute();
+    }
+
+    @Override
+    public void unlock(Connection connection, SqlConfig config) throws SQLException {
+        String name = config.getName();
+        PreparedStatement statement = connection.prepareStatement("DROP TABLE " + name + "_lock");
+        statement.execute();
     }
 }

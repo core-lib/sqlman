@@ -1,14 +1,13 @@
 package io.sqlman.dialect;
 
-import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.SqlConfig;
 import io.sqlman.SqlDialect;
+import io.sqlman.SqlType;
 import io.sqlman.SqlVersion;
 import io.sqlman.utils.Sqls;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -17,16 +16,16 @@ import java.sql.SQLException;
  * @author Payne 646742615@qq.com
  * 2019/5/21 17:19
  */
-public class MySQLDialect implements SqlDialect {
+public class MySQLDialect extends AbstractDialect implements SqlDialect {
 
     @Override
-    public String type() {
-        return JdbcUtils.MYSQL;
+    public SqlType type() {
+        return SqlType.MySQL;
     }
 
     @Override
     public void install(Connection connection, SqlConfig config) throws SQLException {
-        String name = config.getTableName();
+        String name = config.getName();
         StringBuilder ddl = new StringBuilder();
         ddl.append(" CREATE TABLE IF NOT EXISTS `").append(name).append("` (");
         ddl.append("         `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '脚本执行记录ID',");
@@ -48,56 +47,10 @@ public class MySQLDialect implements SqlDialect {
     }
 
     @Override
-    public SqlVersion status(Connection connection, SqlConfig config) throws SQLException {
-        String name = config.getTableName();
-        StringBuilder dql = new StringBuilder();
-        dql.append(" SELECT");
-        dql.append("     s.id AS id,");
-        dql.append("     s.version AS version,");
-        dql.append("     s.ordinal AS ordinal,");
-        dql.append("     s.description AS description,");
-        dql.append("     s.sql_quantity AS sqlQuantity,");
-        dql.append("     s.success AS success,");
-        dql.append("     s.row_effected AS rowEffected,");
-        dql.append("     s.error_code AS errorCode,");
-        dql.append("     s.error_state AS errorState,");
-        dql.append("     s.error_message AS errorMessage,");
-        dql.append("     s.time_executed AS timeExecuted");
-        dql.append(" FROM");
-        dql.append("     ").append(name).append(" AS s");
-        dql.append(" ORDER BY");
-        dql.append("     s.id DESC");
-        dql.append(" LIMIT 0, 1");
-
-        PreparedStatement statement = connection.prepareStatement(dql.toString());
-        ResultSet result = statement.executeQuery();
-        // 一条数据也没有
-        if (!result.next()) {
-            return null;
-        }
-
-        SqlVersion version = new SqlVersion();
-
-        version.setId(result.getInt("id"));
-        version.setVersion(result.getString("version"));
-        version.setOrdinal(result.getInt("ordinal"));
-        version.setDescription(result.getString("description"));
-        version.setSqlQuantity(result.getInt("sqlQuantity"));
-        version.setSuccess(result.getBoolean("success"));
-        version.setRowEffected(result.getInt("rowEffected"));
-        version.setErrorCode(result.getInt("errorCode"));
-        version.setErrorState(result.getString("errorState"));
-        version.setErrorMessage(result.getString("errorMessage"));
-        version.setTimeExecuted(result.getTimestamp("timeExecuted"));
-
-        return version;
-    }
-
-    @Override
-    public int upgrade(Connection connection, SqlConfig config, SqlVersion version) throws SQLException {
-        String name = config.getTableName();
+    public void record(Connection connection, SqlConfig config, SqlVersion version) throws SQLException {
+        String name = config.getName();
         StringBuilder dml = new StringBuilder();
-        dml.append(" INSERT INTO ").append(name).append(" (");
+        dml.append(" INSERT INTO `").append(name).append("` (");
         dml.append("     version,");
         dml.append("     ordinal,");
         dml.append("     description,");
@@ -141,6 +94,20 @@ public class MySQLDialect implements SqlDialect {
         statement.setString(17, Sqls.truncate(version.getErrorMessage(), 255));
         statement.setTimestamp(18, version.getTimeExecuted());
 
-        return statement.executeUpdate();
+        statement.executeUpdate();
+    }
+
+    @Override
+    public void lock(Connection connection, SqlConfig config) throws SQLException {
+        String name = config.getName();
+        PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + name + "_lock (nil INT(1) PRIMARY KEY)");
+        statement.execute();
+    }
+
+    @Override
+    public void unlock(Connection connection, SqlConfig config) throws SQLException {
+        String name = config.getName();
+        PreparedStatement statement = connection.prepareStatement("DROP TABLE " + name + "_lock");
+        statement.execute();
     }
 }
