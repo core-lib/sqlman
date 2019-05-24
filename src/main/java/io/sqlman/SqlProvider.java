@@ -11,24 +11,13 @@ import java.util.Enumeration;
 public interface SqlProvider {
 
     /**
-     * 获取所有SQL脚本，相当于调用{@link SqlProvider#acquire(String)}以{@code null}作为参数。
+     * 获取所有SQL脚本，相当于调用{@link this.acquire(String)}以{@code null}作为参数。
      * 实现类返回的结果必须遵循脚本版本的先后顺序。
      *
-     * @param dbType 数据库类型
+     * @param config 系统配置
      * @return 所有SQL脚本
      * @throws Exception 脚本获取错误
      */
-    Enumeration<SqlScript> acquire(String dbType) throws Exception;
-
-    /**
-     * 获取包括起始版本及更新版本的SQL脚本，当 version 为{@code null} 时及表示获取所有脚本。
-     * 实现类返回的结果必须遵循脚本版本的先后顺序。
-     *
-     * @param dbType 数据库类型
-     * @param version 起始版本
-     * @return 包括起始版本及更新版本的SQL脚本
-     * @throws Exception 脚本获取错误
-     */
-    Enumeration<SqlScript> acquire(String dbType, String version) throws Exception;
+    Enumeration<SqlResource> acquire(SqlConfig config) throws Exception;
 
 }

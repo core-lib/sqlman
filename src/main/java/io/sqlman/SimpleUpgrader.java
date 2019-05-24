@@ -141,8 +141,7 @@ public class SimpleUpgrader implements SqlUpgrader {
             String version = current != null ? current.getVersion() : null;
             int ordinal = current == null ? 0 : current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal();
 
-            String dbType = dialect.type().value;
-            Enumeration<SqlScript> scripts = version == null ? provider.acquire(dbType) : provider.acquire(dbType, version);
+            Enumeration<SqlScript> scripts = version == null ? provider.acquire(config) : provider.acquire(dbType, version);
             while (scripts.hasMoreElements()) {
                 SqlScript script = scripts.nextElement();
                 int count = script.sqls();

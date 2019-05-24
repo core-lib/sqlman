@@ -22,4 +22,11 @@ public interface SqlConfig {
      */
     SqlIsolation getIsolation();
 
+    /**
+     * 脚本文件ANT路径表达式
+     *
+     * @return 脚本文件ANT路径表达式
+     */
+    String getLocation();
+
 }
