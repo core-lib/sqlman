@@ -11,7 +11,7 @@ import org.junit.Test;
  * @author Payne 646742615@qq.com
  * 2019/5/24 13:17
  */
-public class MySQLTest {
+public class MySQLSupportTest {
 
     @Test
     public void test() throws Exception {
