@@ -28,6 +28,9 @@ public class SimpleUpgrader implements SqlUpgrader {
     @Override
     public void upgrade() throws Exception {
         try {
+            // 开始升级
+            logger.info("Upgrading database");
+
             // 建立连接
             setup();
 
@@ -47,6 +50,8 @@ public class SimpleUpgrader implements SqlUpgrader {
                 perform(new UnlockTransaction());
             }
 
+            // 已经升级到最新
+            logger.info("Database is up to date");
         } finally {
             // 关闭连接
             close();
