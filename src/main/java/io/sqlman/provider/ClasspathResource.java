@@ -9,7 +9,7 @@ import java.util.Objects;
 
 
 /**
- * 基础资源
+ * classpath内脚本资源
  *
  * @author Payne 646742615@qq.com
  * 2019/5/24 17:57

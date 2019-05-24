@@ -34,6 +34,13 @@ public class StandardVersionManager implements SqlVersionManager {
     private SqlDialectSupporter dialectSupporter = new MySQLDialectSupporter();
     private SqlConfig tableConfig = new SqlConfig();
 
+    public StandardVersionManager() {
+    }
+
+    public StandardVersionManager(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     @Override
     public void upgrade() throws Exception {
         try {

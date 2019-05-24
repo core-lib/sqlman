@@ -10,12 +10,13 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * 缺省的SQL脚本提供器
+ * classpath内脚本资源提供器
  *
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:02
  */
 public class ClasspathScriptProvider implements SqlScriptProvider {
+    private ClassLoader classLoader;
     private String scriptLocation = "sqlman/**/*.sql";
     private SqlNamingStrategy namingStrategy = new CommonNamingStrategy();
 
@@ -33,13 +34,20 @@ public class ClasspathScriptProvider implements SqlScriptProvider {
 
     @Override
     public Enumeration<SqlResource> acquire() throws Exception {
-        Enumeration<Resource> enumeration = Loaders.ant().load(scriptLocation);
+        ClassLoader resourceLoader = classLoader;
+        if (resourceLoader == null) {
+            resourceLoader = Thread.currentThread().getContextClassLoader();
+        }
+        if (resourceLoader == null) {
+            resourceLoader = this.getClass().getClassLoader();
+        }
+        Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
         List<SqlResource> resources = new ArrayList<>();
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
-            SqlInfo identity = namingStrategy.parse(name);
-            SqlResource resource = new ClasspathResource(identity.getVersion(), identity.getDescription(), element.getUrl());
+            SqlInfo info = namingStrategy.parse(name);
+            SqlResource resource = new ClasspathResource(info.getVersion(), info.getDescription(), element.getUrl());
             resources.add(resource);
         }
         Collections.sort(resources, new SqlVersionComparator(namingStrategy));
@@ -48,20 +56,35 @@ public class ClasspathScriptProvider implements SqlScriptProvider {
 
     @Override
     public Enumeration<SqlResource> acquire(String version, boolean included) throws Exception {
-        Enumeration<Resource> enumeration = Loaders.ant().load(scriptLocation);
+        ClassLoader resourceLoader = classLoader;
+        if (resourceLoader == null) {
+            resourceLoader = Thread.currentThread().getContextClassLoader();
+        }
+        if (resourceLoader == null) {
+            resourceLoader = this.getClass().getClassLoader();
+        }
+        Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
         List<SqlResource> resources = new ArrayList<>();
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
-            SqlInfo identity = namingStrategy.parse(name);
-            int comparision = namingStrategy.compare(identity.getVersion(), version);
+            SqlInfo info = namingStrategy.parse(name);
+            int comparision = namingStrategy.compare(info.getVersion(), version);
             if (comparision > 0 || (comparision == 0 && included)) {
-                SqlResource resource = new ClasspathResource(identity.getVersion(), identity.getDescription(), element.getUrl());
+                SqlResource resource = new ClasspathResource(info.getVersion(), info.getDescription(), element.getUrl());
                 resources.add(resource);
             }
         }
         Collections.sort(resources, new SqlVersionComparator(namingStrategy));
         return Collections.enumeration(resources);
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
     public String getScriptLocation() {

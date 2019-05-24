@@ -1,5 +1,6 @@
 package io.sqlman.spring;
 
+import io.sqlman.manager.SqlVersionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,7 +19,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableConfigurationProperties(SqlmanConfigProperties.class)
-@ConditionalOnClass(SqlmanVersionManager.class)
+@ConditionalOnClass(SqlVersionManager.class)
 @ConditionalOnProperty(prefix = "sqlman", value = "enabled", matchIfMissing = true)
 public class SqlmanAutoConfiguration {
 
@@ -29,10 +30,11 @@ public class SqlmanAutoConfiguration {
     private DataSource dataSource;
 
     @Bean
-    @ConditionalOnMissingBean(SqlmanVersionManager.class)
-    public SqlmanVersionManager sqlmanSpringUpgrader() {
-        SqlmanVersionManager manager = new SqlmanVersionManager();
-        return manager;
+    @ConditionalOnMissingBean(SqlVersionManager.class)
+    public SqlVersionManager sqlVersionManager() {
+
+
+        return null;
     }
 
 }
