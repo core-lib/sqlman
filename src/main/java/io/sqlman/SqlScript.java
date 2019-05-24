@@ -1,7 +1,5 @@
 package io.sqlman;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Enumeration;
 
 /**
@@ -13,21 +11,20 @@ import java.util.Enumeration;
 public interface SqlScript {
 
     /**
-     * 执行脚本
-     *
-     * @param connection 数据库连接
-     * @param ordinal    执行语句序号
-     * @return 影响行数
-     * @throws SQLException SQL执行异常
-     */
-    int execute(Connection connection, int ordinal) throws SQLException;
-
-    /**
      * SQL语句数量
      *
      * @return 语句数量
      */
     int sqls();
+
+    /**
+     * 获取该脚本指定序号的SQL语句
+     *
+     * @param ordinal SQL语句序号
+     * @return 指定序号的SQL语句
+     * @throws IndexOutOfBoundsException 序号超出边界时抛出
+     */
+    SqlStatement statement(int ordinal) throws IndexOutOfBoundsException;
 
     /**
      * SQL语句列表

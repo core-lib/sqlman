@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:44
  */
-public class BasicScript extends AbstractScript implements SqlScript {
+public class BasicScript implements SqlScript {
     private final String version;
     private final String description;
     private final List<SqlStatement> statements;
@@ -29,13 +29,13 @@ public class BasicScript extends AbstractScript implements SqlScript {
     }
 
     @Override
-    protected SqlStatement statement(int ordinal) {
-        return statements.get(ordinal);
+    public int sqls() {
+        return statements.size();
     }
 
     @Override
-    public int sqls() {
-        return statements.size();
+    public SqlStatement statement(int ordinal) {
+        return statements.get(ordinal);
     }
 
     @Override

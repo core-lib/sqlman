@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Enumeration;
@@ -177,8 +178,12 @@ public class SimpleUpgrader implements SqlUpgrader {
         public Integer execute(Connection connection) throws SQLException {
             String version = script.version() + "/" + ordinal;
             logger.info("Executing SQL script {}", version);
-            int rowEffected = script.execute(connection, ordinal);
-            logger.info("SQL script record completed");
+            SqlStatement statement = script.statement(ordinal);
+            String sql = statement.statement();
+            logger.info("{}", sql);
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            int rowEffected = stmt.executeUpdate();
+            logger.info("SQL script execute completed with {} rows effected", rowEffected);
             return rowEffected;
         }
     }

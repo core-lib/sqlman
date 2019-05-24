@@ -1,8 +1,5 @@
 package io.sqlman;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 /**
  * SQL语句
  *
@@ -10,15 +7,6 @@ import java.sql.SQLException;
  * 2019/5/17 11:19
  */
 public interface SqlStatement {
-
-    /**
-     * 执行语句
-     *
-     * @param connection 数据库连接
-     * @return 影响行数
-     * @throws SQLException SQL执行异常
-     */
-    int execute(Connection connection) throws SQLException;
 
     /**
      * 脚本序号

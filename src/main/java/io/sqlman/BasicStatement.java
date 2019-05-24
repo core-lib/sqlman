@@ -6,7 +6,7 @@ package io.sqlman;
  * @author Payne 646742615@qq.com
  * 2019/5/22 11:15
  */
-public class BasicStatement extends AbstractStatement implements SqlStatement {
+public class BasicStatement implements SqlStatement {
     private final int ordinal;
     private final String statement;
 
