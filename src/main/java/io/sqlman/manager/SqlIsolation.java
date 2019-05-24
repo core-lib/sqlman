@@ -1,4 +1,4 @@
-package io.sqlman;
+package io.sqlman.manager;
 
 import java.sql.Connection;
 

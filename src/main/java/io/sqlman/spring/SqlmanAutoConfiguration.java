@@ -18,7 +18,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableConfigurationProperties(SqlmanConfigProperties.class)
-@ConditionalOnClass(SqlmanSpringUpgrader.class)
+@ConditionalOnClass(SqlmanVersionManager.class)
 @ConditionalOnProperty(prefix = "sqlman", value = "enabled", matchIfMissing = true)
 public class SqlmanAutoConfiguration {
 
@@ -29,12 +29,10 @@ public class SqlmanAutoConfiguration {
     private DataSource dataSource;
 
     @Bean
-    @ConditionalOnMissingBean(SqlmanSpringUpgrader.class)
-    public SqlmanSpringUpgrader sqlmanSpringUpgrader() {
-        SqlmanSpringUpgrader upgrader = new SqlmanSpringUpgrader();
-        upgrader.setConfig(sqlmanConfigProperties);
-        upgrader.setDataSource(dataSource);
-        return upgrader;
+    @ConditionalOnMissingBean(SqlmanVersionManager.class)
+    public SqlmanVersionManager sqlmanSpringUpgrader() {
+        SqlmanVersionManager manager = new SqlmanVersionManager();
+        return manager;
     }
 
 }

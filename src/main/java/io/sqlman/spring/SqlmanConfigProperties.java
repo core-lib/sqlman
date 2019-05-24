@@ -1,7 +1,5 @@
 package io.sqlman.spring;
 
-import io.sqlman.SimpleConfig;
-import io.sqlman.SqlConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -11,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 2019/5/24 16:34
  */
 @ConfigurationProperties(prefix = "sqlman")
-public class SqlmanConfigProperties extends SimpleConfig implements SqlConfig {
+public class SqlmanConfigProperties {
     private boolean enabled = true;
     private ScriptConfigProperties script = new ScriptConfigProperties();
 

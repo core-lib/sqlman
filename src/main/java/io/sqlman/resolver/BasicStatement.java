@@ -1,4 +1,6 @@
-package io.sqlman;
+package io.sqlman.resolver;
+
+import io.sqlman.SqlStatement;
 
 /**
  * 基本SQL脚本语句

@@ -1,6 +1,12 @@
-package io.sqlman;
+package io.sqlman.manager;
 
-import io.sqlman.dialect.MySQLDialect;
+import io.sqlman.*;
+import io.sqlman.provider.ClasspathScriptProvider;
+import io.sqlman.provider.SqlScriptProvider;
+import io.sqlman.resolver.DruidScriptResolver;
+import io.sqlman.resolver.SqlScriptResolver;
+import io.sqlman.supporter.MySQLDialectSupporter;
+import io.sqlman.supporter.SqlDialectSupporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,14 +23,16 @@ import java.util.Enumeration;
  * @author Payne 646742615@qq.com
  * 2019/5/22 16:15
  */
-public class SimpleUpgrader implements SqlUpgrader {
+public class StandardVersionManager implements SqlVersionManager {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private DataSource dataSource;
-    private Connection connection;
-    private SqlProvider provider = new SimpleProvider();
-    private SqlDialect dialect = new MySQLDialect();
-    private SqlConfig config = new SimpleConfig();
+    private Connection jdbcConnection;
+    private SqlIsolation transactionIsolation = SqlIsolation.DEFAULT;
+    private SqlScriptProvider scriptProvider = new ClasspathScriptProvider();
+    private SqlScriptResolver scriptResolver = new DruidScriptResolver();
+    private SqlDialectSupporter dialectSupporter = new MySQLDialectSupporter();
+    private SqlConfig tableConfig = new SqlConfig();
 
     @Override
     public void upgrade() throws Exception {
@@ -60,37 +68,36 @@ public class SimpleUpgrader implements SqlUpgrader {
     }
 
     private synchronized void setup() throws SQLException {
-        if (connection == null) {
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
-            SqlIsolation isolation = config.getIsolation();
-            if (isolation != SqlIsolation.DEFAULT) {
-                connection.setTransactionIsolation(isolation.value);
+        if (jdbcConnection == null) {
+            jdbcConnection = dataSource.getConnection();
+            jdbcConnection.setAutoCommit(false);
+            if (transactionIsolation != SqlIsolation.DEFAULT) {
+                jdbcConnection.setTransactionIsolation(transactionIsolation.value);
             }
         }
     }
 
     private synchronized <T> T perform(SqlTransaction<T> transaction) throws SQLException {
         try {
-            T result = transaction.execute(connection);
-            connection.commit();
+            T result = transaction.execute(jdbcConnection);
+            jdbcConnection.commit();
             return result;
         } catch (SQLException e) {
-            if (connection != null) {
-                connection.rollback();
+            if (jdbcConnection != null) {
+                jdbcConnection.rollback();
             }
             throw e;
         } catch (Exception e) {
-            if (connection != null) {
-                connection.rollback();
+            if (jdbcConnection != null) {
+                jdbcConnection.rollback();
             }
             throw new SQLException(e);
         }
     }
 
     private synchronized void close() throws SQLException {
-        if (connection != null) {
-            connection.close();
+        if (jdbcConnection != null) {
+            jdbcConnection.close();
         }
     }
 
@@ -98,7 +105,7 @@ public class SimpleUpgrader implements SqlUpgrader {
         @Override
         public Void execute(Connection connection) throws SQLException {
             logger.info("Initializing sqlman");
-            dialect.install(connection, config);
+            dialectSupporter.install(connection, tableConfig);
             logger.info("Sqlman initialize completed");
             return null;
         }
@@ -109,7 +116,7 @@ public class SimpleUpgrader implements SqlUpgrader {
         public Void execute(Connection connection) throws SQLException {
             try {
                 logger.info("Locking sqlman");
-                dialect.lock(connection, config);
+                dialectSupporter.lock(connection, tableConfig);
                 logger.info("Sqlman locked");
                 return null;
             } catch (SQLException e) {
@@ -123,7 +130,7 @@ public class SimpleUpgrader implements SqlUpgrader {
         @Override
         public SqlVersion execute(Connection connection) throws SQLException {
             logger.info("Examining sqlman current version");
-            SqlVersion current = dialect.examine(connection, config);
+            SqlVersion current = dialectSupporter.examine(connection, tableConfig);
             logger.info("Sqlman current version is {}", current);
             return current;
         }
@@ -141,9 +148,13 @@ public class SimpleUpgrader implements SqlUpgrader {
             String version = current != null ? current.getVersion() : null;
             int ordinal = current == null ? 0 : current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal();
 
-            Enumeration<SqlScript> scripts = version == null ? provider.acquire(config) : provider.acquire(dbType, version);
-            while (scripts.hasMoreElements()) {
-                SqlScript script = scripts.nextElement();
+            Enumeration<SqlResource> resources = current == null
+                    ? scriptProvider.acquire()
+                    : scriptProvider.acquire(version, ordinal < current.getSqlQuantity() - 1);
+
+            while (resources.hasMoreElements()) {
+                SqlResource resource = resources.nextElement();
+                SqlScript script = scriptResolver.resolve(resource);
                 int count = script.sqls();
                 for (int index = ordinal; index < count; index++) {
                     int rowEffected = 0;
@@ -214,7 +225,7 @@ public class SimpleUpgrader implements SqlUpgrader {
                 version.setErrorState("");
                 version.setErrorMessage("");
                 version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialect.record(connection, config, version);
+                dialectSupporter.record(connection, tableConfig, version);
             } else {
                 SqlVersion version = new SqlVersion();
                 version.setVersion(script.version());
@@ -227,7 +238,7 @@ public class SimpleUpgrader implements SqlUpgrader {
                 version.setErrorState(sqlException.getSQLState());
                 version.setErrorMessage(sqlException.getMessage());
                 version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialect.record(connection, config, version);
+                dialectSupporter.record(connection, tableConfig, version);
             }
             return null;
         }
@@ -238,7 +249,7 @@ public class SimpleUpgrader implements SqlUpgrader {
         @Override
         public Void execute(Connection connection) throws SQLException {
             logger.info("Unlocking sqlman");
-            dialect.unlock(connection, config);
+            dialectSupporter.unlock(connection, tableConfig);
             logger.info("Sqlman unlocked");
             return null;
         }
@@ -252,27 +263,43 @@ public class SimpleUpgrader implements SqlUpgrader {
         this.dataSource = dataSource;
     }
 
-    public SqlProvider getProvider() {
-        return provider;
+    public SqlIsolation getTransactionIsolation() {
+        return transactionIsolation;
     }
 
-    public void setProvider(SqlProvider provider) {
-        this.provider = provider;
+    public void setTransactionIsolation(SqlIsolation transactionIsolation) {
+        this.transactionIsolation = transactionIsolation;
     }
 
-    public SqlDialect getDialect() {
-        return dialect;
+    public SqlScriptProvider getScriptProvider() {
+        return scriptProvider;
     }
 
-    public void setDialect(SqlDialect dialect) {
-        this.dialect = dialect;
+    public void setScriptProvider(SqlScriptProvider scriptProvider) {
+        this.scriptProvider = scriptProvider;
     }
 
-    public SqlConfig getConfig() {
-        return config;
+    public SqlScriptResolver getScriptResolver() {
+        return scriptResolver;
     }
 
-    public void setConfig(SqlConfig config) {
-        this.config = config;
+    public void setScriptResolver(SqlScriptResolver scriptResolver) {
+        this.scriptResolver = scriptResolver;
+    }
+
+    public SqlDialectSupporter getDialectSupporter() {
+        return dialectSupporter;
+    }
+
+    public void setDialectSupporter(SqlDialectSupporter dialectSupporter) {
+        this.dialectSupporter = dialectSupporter;
+    }
+
+    public SqlConfig getTableConfig() {
+        return tableConfig;
+    }
+
+    public void setTableConfig(SqlConfig tableConfig) {
+        this.tableConfig = tableConfig;
     }
 }

@@ -12,18 +12,25 @@ import java.io.InputStream;
 public interface SqlResource {
 
     /**
-     * 资源名称
+     * 脚本版本号
      *
-     * @return 资源名称
+     * @return 脚本版本号
      */
-    String name();
+    String version();
 
     /**
-     * 资源输入流
+     * 脚本描述
      *
-     * @return 资源输入流
+     * @return 脚本描述
+     */
+    String description();
+
+    /**
+     * 脚本输入流
+     *
+     * @return 脚本输入流
      * @throws IOException I/O异常
      */
-    InputStream stream() throws IOException;
+    InputStream open() throws IOException;
 
 }

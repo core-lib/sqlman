@@ -1,39 +1,20 @@
 package io.sqlman;
 
 /**
- * 框架配置接口
+ * 框架配置
  *
  * @author Payne 646742615@qq.com
- * 2019/5/22 9:48
+ * 2019/5/18 13:25
  */
-public interface SqlConfig {
+public class SqlConfig {
+    private String name = "sqlman";
 
-    /**
-     * 升级记录表表名
-     *
-     * @return 升级记录表表名
-     */
-    String getName();
+    public String getName() {
+        return name;
+    }
 
-    /**
-     * 连接的事务隔离界别，为{@code null}时采用连接的默认隔离级别
-     *
-     * @return 连接的事务隔离界别
-     */
-    SqlIsolation getIsolation();
-
-    /**
-     * 脚本文件ANT路径表达式
-     *
-     * @return 脚本文件ANT路径表达式
-     */
-    String getLocation();
-
-    /**
-     * 脚本字符集
-     *
-     * @return 脚本字符集
-     */
-    String getCharset();
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

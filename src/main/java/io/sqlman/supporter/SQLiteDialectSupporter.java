@@ -1,10 +1,8 @@
-package io.sqlman.dialect;
+package io.sqlman.supporter;
 
 import io.sqlman.SqlConfig;
-import io.sqlman.SqlDialect;
-import io.sqlman.SqlType;
+import io.sqlman.SqlUtils;
 import io.sqlman.SqlVersion;
-import io.sqlman.utils.Sqls;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,11 +14,7 @@ import java.sql.SQLException;
  * @author Payne 646742615@qq.com
  * 2019/5/23 15:52
  */
-public class SQLiteDialect extends AbstractDialect implements SqlDialect {
-    @Override
-    public SqlType type() {
-        return SqlType.SQLite;
-    }
+public class SQLiteDialectSupporter extends AbstractDialectSupporter implements SqlDialectSupporter {
 
     @Override
     public void install(Connection connection, SqlConfig config) throws SQLException {
@@ -65,15 +59,15 @@ public class SQLiteDialect extends AbstractDialect implements SqlDialect {
         dml.append("     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         PreparedStatement statement = connection.prepareStatement(dml.toString());
-        statement.setString(1, Sqls.truncate(version.getVersion(), 24));
+        statement.setString(1, SqlUtils.truncate(version.getVersion(), 24));
         statement.setInt(2, version.getOrdinal());
-        statement.setString(3, Sqls.truncate(version.getDescription(), 128));
+        statement.setString(3, SqlUtils.truncate(version.getDescription(), 128));
         statement.setInt(4, version.getSqlQuantity());
         statement.setBoolean(5, version.getSuccess());
         statement.setInt(6, version.getRowEffected());
         statement.setInt(7, version.getErrorCode());
-        statement.setString(8, Sqls.truncate(version.getErrorState(), 255));
-        statement.setString(9, Sqls.truncate(version.getErrorMessage(), 255));
+        statement.setString(8, SqlUtils.truncate(version.getErrorState(), 255));
+        statement.setString(9, SqlUtils.truncate(version.getErrorMessage(), 255));
         statement.setTimestamp(10, version.getTimeExecuted());
 
         statement.executeUpdate();

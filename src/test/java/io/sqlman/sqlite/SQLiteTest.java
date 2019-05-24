@@ -1,9 +1,9 @@
 package io.sqlman.sqlite;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import io.sqlman.SimpleProvider;
-import io.sqlman.SimpleUpgrader;
-import io.sqlman.dialect.SQLiteDialect;
+import io.sqlman.manager.StandardVersionManager;
+import io.sqlman.provider.ClasspathScriptProvider;
+import io.sqlman.supporter.SQLiteDialectSupporter;
 import org.junit.Test;
 
 /**
@@ -20,10 +20,10 @@ public class SQLiteTest {
         dataSource.setUrl("jdbc:sqlite:target/SQLite.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
-        SimpleUpgrader upgrader = new SimpleUpgrader();
+        StandardVersionManager upgrader = new StandardVersionManager();
         upgrader.setDataSource(dataSource);
-        upgrader.setDialect(new SQLiteDialect());
-        upgrader.setProvider(new SimpleProvider("sqlman/SQLite/**/*.sql"));
+        upgrader.setDialectSupporter(new SQLiteDialectSupporter());
+        upgrader.setScriptProvider(new ClasspathScriptProvider("sqlman/SQLite/**/*.sql"));
         upgrader.upgrade();
     }
 

@@ -1,4 +1,7 @@
-package io.sqlman;
+package io.sqlman.resolver;
+
+import io.sqlman.SqlScript;
+import io.sqlman.SqlStatement;
 
 import java.util.Collections;
 import java.util.Enumeration;
