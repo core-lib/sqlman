@@ -9,17 +9,17 @@ import java.util.Objects;
 
 
 /**
- * classpath内脚本资源
+ * 标准脚本资源
  *
  * @author Payne 646742615@qq.com
  * 2019/5/24 17:57
  */
-public class ClasspathResource implements SqlResource {
+public class StandardResource implements SqlResource {
     private final String version;
     private final String description;
     private final URL url;
 
-    public ClasspathResource(String version, String description, URL url) {
+    public StandardResource(String version, String description, URL url) {
         this.version = version;
         this.description = description;
         this.url = url;
@@ -44,7 +44,7 @@ public class ClasspathResource implements SqlResource {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ClasspathResource that = (ClasspathResource) o;
+        StandardResource that = (StandardResource) o;
         return Objects.equals(version, that.version);
     }
 

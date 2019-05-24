@@ -1,8 +1,8 @@
 package io.sqlman.manager;
 
 import io.sqlman.*;
-import io.sqlman.provider.ClasspathScriptProvider;
 import io.sqlman.provider.SqlScriptProvider;
+import io.sqlman.provider.StandardScriptProvider;
 import io.sqlman.resolver.DruidScriptResolver;
 import io.sqlman.resolver.SqlScriptResolver;
 import io.sqlman.support.MySQLDialectSupport;
@@ -29,7 +29,7 @@ public class StandardVersionManager implements SqlVersionManager {
     private DataSource dataSource;
     private Connection jdbcConnection;
     private SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
-    private SqlScriptProvider scriptProvider = new ClasspathScriptProvider();
+    private SqlScriptProvider scriptProvider = new StandardScriptProvider();
     private SqlScriptResolver scriptResolver = new DruidScriptResolver();
     private SqlDialectSupport dialectSupport = new MySQLDialectSupport();
     private SqlConfig tableConfig = new SqlConfig();

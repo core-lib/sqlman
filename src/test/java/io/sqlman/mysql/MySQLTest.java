@@ -2,7 +2,7 @@ package io.sqlman.mysql;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import io.sqlman.manager.StandardVersionManager;
-import io.sqlman.provider.ClasspathScriptProvider;
+import io.sqlman.provider.StandardScriptProvider;
 import org.junit.Test;
 
 /**
@@ -21,7 +21,7 @@ public class MySQLTest {
         dataSource.setPassword("root");
         StandardVersionManager upgrader = new StandardVersionManager();
         upgrader.setDataSource(dataSource);
-        upgrader.setScriptProvider(new ClasspathScriptProvider("sqlman/MySQL/**/*.sql"));
+        upgrader.setScriptProvider(new StandardScriptProvider("sqlman/MySQL/**/*.sql"));
         upgrader.upgrade();
         Thread.sleep(1000);
     }

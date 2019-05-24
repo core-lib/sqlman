@@ -1,20 +1,20 @@
 package io.sqlman.provider;
 
 /**
- * 通用命名策略
+ * 标准命名策略
  *
  * @author Payne 646742615@qq.com
  * 2019/5/24 22:16
  */
-public class CommonNamingStrategy implements SqlNamingStrategy {
+public class StandardNamingStrategy implements SqlNamingStrategy {
     private char separator = '/';
     private String delimiter = "-";
     private String extension = ".sql";
 
-    public CommonNamingStrategy() {
+    public StandardNamingStrategy() {
     }
 
-    public CommonNamingStrategy(char separator, String delimiter, String extension) {
+    public StandardNamingStrategy(char separator, String delimiter, String extension) {
         this.separator = separator;
         this.delimiter = delimiter;
         this.extension = extension;
