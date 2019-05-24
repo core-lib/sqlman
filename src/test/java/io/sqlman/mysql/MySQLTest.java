@@ -23,6 +23,7 @@ public class MySQLTest {
         upgrader.setDataSource(dataSource);
         upgrader.setProvider(new SimpleProvider("sqlman/MySQL/**/*.sql"));
         upgrader.upgrade();
+        Thread.sleep(1000);
     }
 
 }

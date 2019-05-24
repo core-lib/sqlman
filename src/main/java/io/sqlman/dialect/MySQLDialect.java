@@ -39,8 +39,7 @@ public class MySQLDialect extends AbstractDialect implements SqlDialect {
         ddl.append("         `error_state` varchar(255) NOT NULL COMMENT '错误状态',");
         ddl.append("         `error_message` varchar(255) NOT NULL COMMENT '错误信息',");
         ddl.append("         `time_executed` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '执行时间',");
-        ddl.append("         PRIMARY KEY (`id`),");
-        ddl.append("         UNIQUE KEY `UK_").append(name).append("_version_ordinal` (`version`,`ordinal`) USING BTREE");
+        ddl.append("         PRIMARY KEY (`id`)");
         ddl.append(" )");
         PreparedStatement statement = connection.prepareStatement(ddl.toString());
         statement.execute();
