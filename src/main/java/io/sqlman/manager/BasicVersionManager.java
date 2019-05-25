@@ -4,16 +4,9 @@ import io.sqlman.SqlScript;
 import io.sqlman.SqlSource;
 import io.sqlman.SqlStatement;
 import io.sqlman.SqlVersion;
-import io.sqlman.provider.BasicSourceProvider;
-import io.sqlman.provider.SqlSourceProvider;
-import io.sqlman.resolver.BasicScriptResolver;
-import io.sqlman.resolver.SqlScriptResolver;
-import io.sqlman.support.MySQLDialectSupport;
-import io.sqlman.support.SqlDialectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -26,118 +19,42 @@ import java.util.Enumeration;
  * @author Payne 646742615@qq.com
  * 2019/5/22 16:15
  */
-public class BasicVersionManager implements SqlVersionManager {
+public class BasicVersionManager extends AbstractVersionManager implements SqlVersionManager {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private DataSource dataSource;
-    private Connection jdbcConnection;
-    private SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
-    private SqlSourceProvider scriptProvider = new BasicSourceProvider();
-    private SqlScriptResolver scriptResolver = new BasicScriptResolver();
-    private SqlDialectSupport dialectSupport = new MySQLDialectSupport();
-
-    public BasicVersionManager() {
-    }
-
-    public BasicVersionManager(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public BasicVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider scriptProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
-        this.dataSource = dataSource;
-        this.trxIsolation = trxIsolation;
-        this.scriptProvider = scriptProvider;
-        this.scriptResolver = scriptResolver;
-        this.dialectSupport = dialectSupport;
-    }
 
     @Override
     public void upgrade() throws SQLException {
-        try {
-            // 开始升级
-            logger.info("Upgrading database");
+        perform(new SqlTransaction<Void>() {
+            @Override
+            public Void execute(Connection connection) throws Exception {
+                // 开始升级
+                logger.info("Upgrading database");
 
-            // 建立连接
-            setup();
+                // 获取升级锁
+                new LockupTransaction().execute(connection);
+                try {
+                    // 创建版本记录表
+                    new CreateTransaction().execute(connection);
 
-            // 获取升级锁
-            perform(new LockTransaction());
-            try {
-                // 安装
-                perform(new InstallTransaction());
+                    // 查询当前状态
+                    SqlVersion current = new DetectTransaction().execute(connection);
 
-                // 查询当前状态
-                SqlVersion current = perform(new ExamineTransaction());
+                    // 执行升级脚本
+                    new UpgradeTransaction(current).execute(connection);
+                } finally {
+                    // 释放升级锁
+                    new UnlockTransaction().execute(connection);
+                }
 
-                // 执行升级脚本
-                perform(new UpgradeTransaction(current));
-            } finally {
-                // 释放升级锁
-                perform(new UnlockTransaction());
+                // 已经升级到最新
+                logger.info("Database is up to date");
+
+                return null;
             }
-
-            // 已经升级到最新
-            logger.info("Database is up to date");
-        } finally {
-            // 关闭连接
-            close();
-        }
+        });
     }
 
-    private synchronized void setup() throws SQLException {
-        if (jdbcConnection == null) {
-            jdbcConnection = dataSource.getConnection();
-            jdbcConnection.setAutoCommit(false);
-            if (trxIsolation != SqlIsolation.DEFAULT) {
-                jdbcConnection.setTransactionIsolation(trxIsolation.value);
-            }
-        }
-    }
-
-    private synchronized <T> T perform(SqlTransaction<T> transaction) throws SQLException {
-        try {
-            T result = transaction.execute(jdbcConnection);
-            jdbcConnection.commit();
-            return result;
-        } catch (SQLException e) {
-            if (jdbcConnection != null) {
-                jdbcConnection.rollback();
-            }
-            throw e;
-        } catch (Exception e) {
-            if (jdbcConnection != null) {
-                jdbcConnection.rollback();
-            }
-            throw new SQLException(e);
-        }
-    }
-
-    private synchronized void close() throws SQLException {
-        if (jdbcConnection != null) {
-            jdbcConnection.close();
-        }
-    }
-
-    /**
-     * 事务操作
-     *
-     * @author Payne 646742615@qq.com
-     * 2019/5/24 10:57
-     */
-    private interface SqlTransaction<T> {
-
-        /**
-         * 执行事务
-         *
-         * @param connection 连接
-         * @return 事务执行结果
-         * @throws Exception 事务执行异常
-         */
-        T execute(Connection connection) throws Exception;
-
-    }
-
-    private class InstallTransaction implements SqlTransaction<Void> {
+    private class CreateTransaction implements SqlTransaction<Void> {
         @Override
         public Void execute(Connection connection) throws SQLException {
             logger.info("Initializing sqlman");
@@ -147,7 +64,7 @@ public class BasicVersionManager implements SqlVersionManager {
         }
     }
 
-    private class LockTransaction implements SqlTransaction<Void> {
+    private class LockupTransaction implements SqlTransaction<Void> {
         @Override
         public Void execute(Connection connection) throws SQLException {
             try {
@@ -162,10 +79,10 @@ public class BasicVersionManager implements SqlVersionManager {
         }
     }
 
-    private class ExamineTransaction implements SqlTransaction<SqlVersion> {
+    private class DetectTransaction implements SqlTransaction<SqlVersion> {
         @Override
         public SqlVersion execute(Connection connection) throws SQLException {
-            logger.info("Examining sqlman current version");
+            logger.info("Detecting sqlman current version");
             SqlVersion current = dialectSupport.detect(connection);
             logger.info("Sqlman current version is {}", current);
             return current;
@@ -201,7 +118,7 @@ public class BasicVersionManager implements SqlVersionManager {
                         sqlException = e;
                         throw e;
                     } finally {
-                        perform(new RecordTransaction(script, index, rowEffected, sqlException));
+                        perform(new UpdateTransaction(script, index, rowEffected, sqlException));
                     }
                 }
                 ordinal = 0;
@@ -233,13 +150,13 @@ public class BasicVersionManager implements SqlVersionManager {
         }
     }
 
-    private class RecordTransaction implements SqlTransaction<Void> {
+    private class UpdateTransaction implements SqlTransaction<Void> {
         private final SqlScript script;
         private final int ordinal;
         private final int rowEffected;
         private final SQLException sqlException;
 
-        RecordTransaction(SqlScript script, int ordinal, int rowEffected, SQLException sqlException) {
+        UpdateTransaction(SqlScript script, int ordinal, int rowEffected, SQLException sqlException) {
             this.script = script;
             this.ordinal = ordinal;
             this.rowEffected = rowEffected;
@@ -290,46 +207,6 @@ public class BasicVersionManager implements SqlVersionManager {
             logger.info("Sqlman unlocked");
             return null;
         }
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public SqlIsolation getTrxIsolation() {
-        return trxIsolation;
-    }
-
-    public void setTrxIsolation(SqlIsolation trxIsolation) {
-        this.trxIsolation = trxIsolation;
-    }
-
-    public SqlSourceProvider getScriptProvider() {
-        return scriptProvider;
-    }
-
-    public void setScriptProvider(SqlSourceProvider scriptProvider) {
-        this.scriptProvider = scriptProvider;
-    }
-
-    public SqlScriptResolver getScriptResolver() {
-        return scriptResolver;
-    }
-
-    public void setScriptResolver(SqlScriptResolver scriptResolver) {
-        this.scriptResolver = scriptResolver;
-    }
-
-    public SqlDialectSupport getDialectSupport() {
-        return dialectSupport;
-    }
-
-    public void setDialectSupport(SqlDialectSupport dialectSupport) {
-        this.dialectSupport = dialectSupport;
     }
 
 }
