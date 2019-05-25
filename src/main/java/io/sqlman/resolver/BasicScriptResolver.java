@@ -2,12 +2,14 @@ package io.sqlman.resolver;
 
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.parser.ParserException;
 import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.SqlScript;
 import io.sqlman.SqlSource;
 import io.sqlman.SqlStatement;
 import io.sqlman.SqlUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,7 @@ public class BasicScriptResolver implements SqlScriptResolver {
     }
 
     @Override
-    public SqlScript resolve(SqlSource resource) throws Exception {
+    public SqlScript resolve(SqlSource resource) throws IncorrectSyntaxException, IOException {
         try (InputStream in = resource.open()) {
             String text = SqlUtils.stringify(in, charset);
             List<SQLStatement> sqls = SQLUtils.parseStatements(text, dialect.toLowerCase());
@@ -42,6 +44,8 @@ public class BasicScriptResolver implements SqlScriptResolver {
                 statements.add(statement);
             }
             return new BasicScript(resource.name(), resource.version(), resource.description(), statements);
+        } catch (ParserException e) {
+            throw new IncorrectSyntaxException(e);
         }
     }
 

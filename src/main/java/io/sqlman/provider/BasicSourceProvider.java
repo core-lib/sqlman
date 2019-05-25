@@ -4,6 +4,7 @@ import io.loadkit.Loaders;
 import io.loadkit.Resource;
 import io.sqlman.SqlSource;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Set;
@@ -32,7 +33,7 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
     }
 
     @Override
-    public Enumeration<SqlSource> acquire() throws Exception {
+    public Enumeration<SqlSource> acquire() throws IllegalNamingException, DuplicatedVersionException, IOException {
         ClassLoader resourceLoader = classLoader;
         if (resourceLoader == null) {
             resourceLoader = Thread.currentThread().getContextClassLoader();
@@ -48,14 +49,14 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
             SqlInfo info = namingStrategy.parse(name);
             SqlSource resource = new BasicSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             if (!resources.add(resource)) {
-                throw new IllegalStateException("duplicate SQL script version: " + resource.version());
+                throw new DuplicatedVersionException("duplicate SQL script version: " + resource.version(), resource.version());
             }
         }
         return Collections.enumeration(resources);
     }
 
     @Override
-    public Enumeration<SqlSource> acquire(String version, boolean included) throws Exception {
+    public Enumeration<SqlSource> acquire(String version, boolean included) throws IllegalNamingException, DuplicatedVersionException, IOException {
         ClassLoader resourceLoader = classLoader;
         if (resourceLoader == null) {
             resourceLoader = Thread.currentThread().getContextClassLoader();
@@ -73,7 +74,7 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
             SqlSource resource = new BasicSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             boolean newer = comparision > 0 || (comparision == 0 && included);
             if (newer && !resources.add(resource)) {
-                throw new IllegalStateException("duplicate SQL script version: " + resource.version());
+                throw new DuplicatedVersionException("duplicate SQL script version: " + resource.version(), resource.version());
             }
         }
         return Collections.enumeration(resources);
