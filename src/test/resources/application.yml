@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: sqlman
+  datasource:
+    driverClassName: org.sqlite.JDBC
+    url: jdbc:sqlite:${user.dir}/data/SQLite.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL
+    username: root
+    password: root
+    hikari:
+      transaction-isolation: TRANSACTION_SERIALIZABLE
+

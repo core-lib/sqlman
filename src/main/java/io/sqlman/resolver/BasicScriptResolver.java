@@ -19,14 +19,14 @@ import java.util.List;
  * 2019/5/22 10:42
  */
 public class BasicScriptResolver implements SqlScriptResolver {
-    private String sqlType = JdbcUtils.MYSQL;
+    private String dialect = JdbcUtils.MYSQL;
     private String charset = "UTF-8";
 
     public BasicScriptResolver() {
     }
 
-    public BasicScriptResolver(String sqlType, String charset) {
-        this.sqlType = sqlType;
+    public BasicScriptResolver(String dialect, String charset) {
+        this.dialect = dialect;
         this.charset = charset;
     }
 
@@ -34,7 +34,7 @@ public class BasicScriptResolver implements SqlScriptResolver {
     public SqlScript resolve(SqlResource resource) throws Exception {
         try (InputStream in = resource.open()) {
             String text = SqlUtils.stringify(in, charset);
-            List<SQLStatement> sqls = SQLUtils.parseStatements(text, sqlType);
+            List<SQLStatement> sqls = SQLUtils.parseStatements(text, dialect.toLowerCase());
             List<SqlStatement> statements = new ArrayList<>(sqls.size());
             for (int ordinal = 0; ordinal < sqls.size(); ordinal++) {
                 SQLStatement sql = sqls.get(ordinal);
@@ -45,12 +45,12 @@ public class BasicScriptResolver implements SqlScriptResolver {
         }
     }
 
-    public String getSqlType() {
-        return sqlType;
+    public String getDialect() {
+        return dialect;
     }
 
-    public void setSqlType(String sqlType) {
-        this.sqlType = sqlType;
+    public void setDialect(String dialect) {
+        this.dialect = dialect;
     }
 
     public String getCharset() {

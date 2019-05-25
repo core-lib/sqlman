@@ -15,6 +15,13 @@ import java.sql.SQLException;
  */
 public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlDialectSupport {
 
+    public SQLiteDialectSupport() {
+    }
+
+    public SQLiteDialectSupport(String table) {
+        super(table);
+    }
+
     @Override
     public void install(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();

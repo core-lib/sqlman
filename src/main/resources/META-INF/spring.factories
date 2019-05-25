@@ -1,1 +1,7 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.sqlman.spring.SqlmanAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.sqlman.spring.BasicManagerConfiguration,\
+  io.sqlman.spring.script.ClasspathProviderConfiguration,\
+  io.sqlman.spring.script.StandardNamingConfiguration,\
+  io.sqlman.spring.script.BasicResolverConfiguration,\
+  io.sqlman.spring.dialect.MySQLDialectConfiguration,\
+  io.sqlman.spring.dialect.SQLiteDialectConfiguration

@@ -43,6 +43,14 @@ public class BasicVersionManager implements SqlVersionManager {
         this.dataSource = dataSource;
     }
 
+    public BasicVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlScriptProvider scriptProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
+        this.dataSource = dataSource;
+        this.trxIsolation = trxIsolation;
+        this.scriptProvider = scriptProvider;
+        this.scriptResolver = scriptResolver;
+        this.dialectSupport = dialectSupport;
+    }
+
     @Override
     public void upgrade() throws Exception {
         try {
