@@ -23,8 +23,8 @@ interface SqlNamingAnalyzer extends Comparator<String> {
      *
      * @param name SQL脚本名称
      * @return SQL脚本信息
-     * @throws IllegalNamingException SQL脚本资源命名不合法，即{@link this#check(String)}返回{@code false}。
+     * @throws MalformedNameException SQL脚本资源命名不合法，即{@link this#check(String)}返回{@code false}。
      */
-    SqlInfo parse(String name) throws IllegalNamingException;
+    SqlInfo parse(String name) throws MalformedNameException;
 
 }

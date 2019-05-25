@@ -1,5 +1,7 @@
 package io.sqlman.manager;
 
+import java.sql.SQLException;
+
 /**
  * SQL版本管理器
  *
@@ -11,8 +13,8 @@ public interface SqlVersionManager {
     /**
      * 执行SQL脚本升级
      *
-     * @throws Exception 执行异常
+     * @throws SQLException SQL异常
      */
-    void upgrade() throws Exception;
+    void upgrade() throws SQLException;
 
 }

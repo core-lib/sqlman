@@ -22,7 +22,7 @@ public abstract class AbstractSourceProvider implements SqlSourceProvider {
     }
 
     @Override
-    public SqlInfo parse(String name) throws IllegalNamingException {
+    public SqlInfo parse(String name) throws MalformedNameException {
         return namingStrategy.parse(name);
     }
 

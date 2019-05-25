@@ -33,7 +33,7 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
     }
 
     @Override
-    public Enumeration<SqlSource> acquire() throws IllegalNamingException, DuplicatedVersionException, IOException {
+    public Enumeration<SqlSource> acquire() throws MalformedNameException, DuplicatedVersionException, IOException {
         ClassLoader resourceLoader = classLoader;
         if (resourceLoader == null) {
             resourceLoader = Thread.currentThread().getContextClassLoader();
@@ -56,7 +56,7 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
     }
 
     @Override
-    public Enumeration<SqlSource> acquire(String version, boolean included) throws IllegalNamingException, DuplicatedVersionException, IOException {
+    public Enumeration<SqlSource> acquire(String version, boolean included) throws MalformedNameException, DuplicatedVersionException, IOException {
         ClassLoader resourceLoader = classLoader;
         if (resourceLoader == null) {
             resourceLoader = Thread.currentThread().getContextClassLoader();

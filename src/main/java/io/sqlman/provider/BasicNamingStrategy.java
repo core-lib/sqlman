@@ -43,9 +43,9 @@ public class BasicNamingStrategy implements SqlNamingStrategy {
     }
 
     @Override
-    public SqlInfo parse(String name) throws IllegalNamingException {
+    public SqlInfo parse(String name) throws MalformedNameException {
         if (!check(name)) {
-            throw new IllegalNamingException("invalid name ： " + name, name);
+            throw new MalformedNameException("invalid name ： " + name, name);
         }
         // 去掉后缀
         String n = name.substring(0, name.length() - extension.length());

@@ -52,7 +52,7 @@ public class BasicVersionManager implements SqlVersionManager {
     }
 
     @Override
-    public void upgrade() throws Exception {
+    public void upgrade() throws SQLException {
         try {
             // 开始升级
             logger.info("Upgrading database");
