@@ -2,7 +2,7 @@ package io.sqlman.sqlite;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import io.sqlman.manager.BasicVersionManager;
-import io.sqlman.provider.BasicScriptProvider;
+import io.sqlman.provider.BasicSourceProvider;
 import io.sqlman.support.SQLiteDialectSupport;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class SQLiteSupportTest {
         BasicVersionManager upgrader = new BasicVersionManager();
         upgrader.setDataSource(dataSource);
         upgrader.setDialectSupport(new SQLiteDialectSupport());
-        upgrader.setScriptProvider(new BasicScriptProvider("sqlman/SQLite/**/*.sql"));
+        upgrader.setScriptProvider(new BasicSourceProvider("sqlman/SQLite/**/*.sql"));
         upgrader.upgrade();
         Thread.sleep(1000);
     }

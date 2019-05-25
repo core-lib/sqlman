@@ -1,11 +1,11 @@
 package io.sqlman.manager;
 
-import io.sqlman.SqlResource;
 import io.sqlman.SqlScript;
+import io.sqlman.SqlSource;
 import io.sqlman.SqlStatement;
 import io.sqlman.SqlVersion;
-import io.sqlman.provider.BasicScriptProvider;
-import io.sqlman.provider.SqlScriptProvider;
+import io.sqlman.provider.BasicSourceProvider;
+import io.sqlman.provider.SqlSourceProvider;
 import io.sqlman.resolver.BasicScriptResolver;
 import io.sqlman.resolver.SqlScriptResolver;
 import io.sqlman.support.MySQLDialectSupport;
@@ -32,7 +32,7 @@ public class BasicVersionManager implements SqlVersionManager {
     private DataSource dataSource;
     private Connection jdbcConnection;
     private SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
-    private SqlScriptProvider scriptProvider = new BasicScriptProvider();
+    private SqlSourceProvider scriptProvider = new BasicSourceProvider();
     private SqlScriptResolver scriptResolver = new BasicScriptResolver();
     private SqlDialectSupport dialectSupport = new MySQLDialectSupport();
 
@@ -43,7 +43,7 @@ public class BasicVersionManager implements SqlVersionManager {
         this.dataSource = dataSource;
     }
 
-    public BasicVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlScriptProvider scriptProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
+    public BasicVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider scriptProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
         this.dataSource = dataSource;
         this.trxIsolation = trxIsolation;
         this.scriptProvider = scriptProvider;
@@ -184,12 +184,12 @@ public class BasicVersionManager implements SqlVersionManager {
             String version = current != null ? current.getVersion() : null;
             int ordinal = current == null ? 0 : current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal();
 
-            Enumeration<SqlResource> resources = current == null
+            Enumeration<SqlSource> resources = current == null
                     ? scriptProvider.acquire()
                     : scriptProvider.acquire(version, ordinal < current.getSqlQuantity() - 1);
 
             while (resources.hasMoreElements()) {
-                SqlResource resource = resources.nextElement();
+                SqlSource resource = resources.nextElement();
                 SqlScript script = scriptResolver.resolve(resource);
                 int count = script.sqls();
                 for (int index = ordinal; index < count; index++) {
@@ -308,11 +308,11 @@ public class BasicVersionManager implements SqlVersionManager {
         this.trxIsolation = trxIsolation;
     }
 
-    public SqlScriptProvider getScriptProvider() {
+    public SqlSourceProvider getScriptProvider() {
         return scriptProvider;
     }
 
-    public void setScriptProvider(SqlScriptProvider scriptProvider) {
+    public void setScriptProvider(SqlSourceProvider scriptProvider) {
         this.scriptProvider = scriptProvider;
     }
 

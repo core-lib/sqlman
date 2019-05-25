@@ -21,7 +21,7 @@ public class BasicNamingStrategy implements SqlNamingStrategy {
     }
 
     @Override
-    public boolean validate(String name) {
+    public boolean check(String name) {
         if (name == null) {
             return false;
         }
@@ -44,7 +44,7 @@ public class BasicNamingStrategy implements SqlNamingStrategy {
 
     @Override
     public SqlInfo parse(String name) {
-        if (!validate(name)) {
+        if (!check(name)) {
             throw new IllegalArgumentException("invalid name ： " + name);
         }
         // 去掉后缀

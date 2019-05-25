@@ -3,8 +3,8 @@ package io.sqlman.resolver;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.util.JdbcUtils;
-import io.sqlman.SqlResource;
 import io.sqlman.SqlScript;
+import io.sqlman.SqlSource;
 import io.sqlman.SqlStatement;
 import io.sqlman.SqlUtils;
 
@@ -31,7 +31,7 @@ public class BasicScriptResolver implements SqlScriptResolver {
     }
 
     @Override
-    public SqlScript resolve(SqlResource resource) throws Exception {
+    public SqlScript resolve(SqlSource resource) throws Exception {
         try (InputStream in = resource.open()) {
             String text = SqlUtils.stringify(in, charset);
             List<SQLStatement> sqls = SQLUtils.parseStatements(text, dialect.toLowerCase());

@@ -2,7 +2,7 @@ package io.sqlman.provider;
 
 import io.loadkit.Loaders;
 import io.loadkit.Resource;
-import io.sqlman.SqlResource;
+import io.sqlman.SqlSource;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -15,25 +15,24 @@ import java.util.TreeSet;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:02
  */
-public class BasicScriptProvider implements SqlScriptProvider {
+public class BasicSourceProvider extends AbstractSourceProvider implements SqlSourceProvider {
     private ClassLoader classLoader;
     private String scriptLocation = "sqlman/**/*.sql";
-    private SqlNamingStrategy namingStrategy = new BasicNamingStrategy();
 
-    public BasicScriptProvider() {
+    public BasicSourceProvider() {
     }
 
-    public BasicScriptProvider(String scriptLocation) {
+    public BasicSourceProvider(String scriptLocation) {
         this.scriptLocation = scriptLocation;
     }
 
-    public BasicScriptProvider(String scriptLocation, SqlNamingStrategy namingStrategy) {
+    public BasicSourceProvider(String scriptLocation, SqlNamingStrategy namingStrategy) {
         this.scriptLocation = scriptLocation;
         this.namingStrategy = namingStrategy;
     }
 
     @Override
-    public Enumeration<SqlResource> acquire() throws Exception {
+    public Enumeration<SqlSource> acquire() throws Exception {
         ClassLoader resourceLoader = classLoader;
         if (resourceLoader == null) {
             resourceLoader = Thread.currentThread().getContextClassLoader();
@@ -42,12 +41,12 @@ public class BasicScriptProvider implements SqlScriptProvider {
             resourceLoader = this.getClass().getClassLoader();
         }
         Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
-        Set<SqlResource> resources = new TreeSet<>(new BasicVersionComparator(namingStrategy));
+        Set<SqlSource> resources = new TreeSet<>(new BasicVersionComparator(namingStrategy));
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
             SqlInfo info = namingStrategy.parse(name);
-            SqlResource resource = new BasicResource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
+            SqlSource resource = new BasicSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             if (!resources.add(resource)) {
                 throw new IllegalStateException("duplicate SQL script version: " + resource.version());
             }
@@ -56,7 +55,7 @@ public class BasicScriptProvider implements SqlScriptProvider {
     }
 
     @Override
-    public Enumeration<SqlResource> acquire(String version, boolean included) throws Exception {
+    public Enumeration<SqlSource> acquire(String version, boolean included) throws Exception {
         ClassLoader resourceLoader = classLoader;
         if (resourceLoader == null) {
             resourceLoader = Thread.currentThread().getContextClassLoader();
@@ -65,13 +64,13 @@ public class BasicScriptProvider implements SqlScriptProvider {
             resourceLoader = this.getClass().getClassLoader();
         }
         Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
-        Set<SqlResource> resources = new TreeSet<>(new BasicVersionComparator(namingStrategy));
+        Set<SqlSource> resources = new TreeSet<>(new BasicVersionComparator(namingStrategy));
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
             SqlInfo info = namingStrategy.parse(name);
             int comparision = namingStrategy.compare(info.getVersion(), version);
-            SqlResource resource = new BasicResource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
+            SqlSource resource = new BasicSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             boolean newer = comparision > 0 || (comparision == 0 && included);
             if (newer && !resources.add(resource)) {
                 throw new IllegalStateException("duplicate SQL script version: " + resource.version());
@@ -96,11 +95,4 @@ public class BasicScriptProvider implements SqlScriptProvider {
         this.scriptLocation = scriptLocation;
     }
 
-    public SqlNamingStrategy getNamingStrategy() {
-        return namingStrategy;
-    }
-
-    public void setNamingStrategy(SqlNamingStrategy namingStrategy) {
-        this.namingStrategy = namingStrategy;
-    }
 }

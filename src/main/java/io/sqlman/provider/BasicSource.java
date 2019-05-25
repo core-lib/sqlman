@@ -1,6 +1,6 @@
 package io.sqlman.provider;
 
-import io.sqlman.SqlResource;
+import io.sqlman.SqlSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,13 +14,13 @@ import java.util.Objects;
  * @author Payne 646742615@qq.com
  * 2019/5/24 17:57
  */
-public class BasicResource implements SqlResource {
+public class BasicSource implements SqlSource {
     private final String name;
     private final String version;
     private final String description;
     private final URL url;
 
-    public BasicResource(String name, String version, String description, URL url) {
+    public BasicSource(String name, String version, String description, URL url) {
         this.name = name;
         this.version = version;
         this.description = description;
@@ -51,7 +51,7 @@ public class BasicResource implements SqlResource {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BasicResource that = (BasicResource) o;
+        BasicSource that = (BasicSource) o;
         return Objects.equals(version, that.version);
     }
 

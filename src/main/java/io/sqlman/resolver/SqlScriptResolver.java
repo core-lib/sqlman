@@ -1,7 +1,7 @@
 package io.sqlman.resolver;
 
-import io.sqlman.SqlResource;
 import io.sqlman.SqlScript;
+import io.sqlman.SqlSource;
 
 /**
  * SQL脚本解析器
@@ -18,6 +18,6 @@ public interface SqlScriptResolver {
      * @return SQL脚本
      * @throws Exception 解析异常
      */
-    SqlScript resolve(SqlResource resource) throws Exception;
+    SqlScript resolve(SqlSource resource) throws Exception;
 
 }

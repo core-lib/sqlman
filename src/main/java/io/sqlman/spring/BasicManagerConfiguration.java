@@ -2,9 +2,10 @@ package io.sqlman.spring;
 
 import io.sqlman.manager.BasicVersionManager;
 import io.sqlman.manager.SqlIsolation;
-import io.sqlman.provider.SqlScriptProvider;
+import io.sqlman.provider.SqlSourceProvider;
 import io.sqlman.resolver.SqlScriptResolver;
 import io.sqlman.support.SqlDialectSupport;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,6 +25,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableConfigurationProperties(BasicManagerProperties.class)
 @ConditionalOnClass(BasicVersionManager.class)
+@ConditionalOnBean(DataSource.class)
 @ConditionalOnProperty(prefix = "sqlman", name = "manager", havingValue = "basic", matchIfMissing = true)
 public class BasicManagerConfiguration {
 
@@ -34,7 +36,7 @@ public class BasicManagerConfiguration {
     private BasicManagerProperties properties;
 
     @Resource
-    private SqlScriptProvider scriptProvider;
+    private SqlSourceProvider scriptProvider;
 
     @Resource
     private SqlScriptResolver scriptResolver;

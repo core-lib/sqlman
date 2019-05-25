@@ -1,6 +1,6 @@
 package io.sqlman.spring.script;
 
-import io.sqlman.provider.BasicScriptProvider;
+import io.sqlman.provider.BasicSourceProvider;
 import io.sqlman.resolver.BasicScriptResolver;
 import io.sqlman.resolver.SqlScriptResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  */
 @Configuration
 @EnableConfigurationProperties(BasicResolverProperties.class)
-@ConditionalOnClass(BasicScriptProvider.class)
+@ConditionalOnClass(BasicSourceProvider.class)
 @ConditionalOnProperty(prefix = "sqlman.script", name = "resolver", havingValue = "basic", matchIfMissing = true)
 public class BasicResolverConfiguration {
 

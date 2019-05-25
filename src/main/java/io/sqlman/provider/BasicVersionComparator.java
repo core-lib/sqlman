@@ -1,6 +1,6 @@
 package io.sqlman.provider;
 
-import io.sqlman.SqlResource;
+import io.sqlman.SqlSource;
 
 import java.util.Comparator;
 
@@ -10,15 +10,15 @@ import java.util.Comparator;
  * @author Payne 646742615@qq.com
  * 2019/5/24 22:02
  */
-public class BasicVersionComparator implements Comparator<SqlResource> {
-    private final SqlNamingStrategy namingStrategy;
+public class BasicVersionComparator implements Comparator<SqlSource> {
+    private final Comparator<String> delegate;
 
-    public BasicVersionComparator(SqlNamingStrategy namingStrategy) {
-        this.namingStrategy = namingStrategy;
+    public BasicVersionComparator(Comparator<String> delegate) {
+        this.delegate = delegate;
     }
 
     @Override
-    public int compare(SqlResource a, SqlResource b) {
-        return namingStrategy.compare(a.version(), b.version());
+    public int compare(SqlSource a, SqlSource b) {
+        return delegate.compare(a.version(), b.version());
     }
 }

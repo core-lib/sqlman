@@ -9,7 +9,7 @@ import java.io.InputStream;
  * @author Payne 646742615@qq.com
  * 2019/5/24 17:28
  */
-public interface SqlResource {
+public interface SqlSource {
 
     /**
      * 脚本名称
