@@ -27,6 +27,24 @@ public interface SqlVersionManager {
     void upgrade() throws SQLException;
 
     /**
+     * 执行事务
+     *
+     * @param transaction 事务
+     * @param <T>         事务执行结果类型
+     * @return 事务执行结果
+     * @throws SQLException SQL异常
+     */
+    <T> T execute(SqlTransaction<T> transaction) throws SQLException;
+
+    /**
+     * 执行操作
+     *
+     * @param action 操作
+     * @throws SQLException SQL异常
+     */
+    void perform(SqlAction action) throws SQLException;
+
+    /**
      * 获取所有SQL脚本
      * 实现类返回的结果必须遵循脚本版本的先后顺序。
      * 实现类当发现脚本资源中包含重复的SQL脚本版本时应当抛出

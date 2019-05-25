@@ -4,9 +4,13 @@ import io.sqlman.SqlScript;
 import io.sqlman.SqlSource;
 import io.sqlman.SqlStatement;
 import io.sqlman.SqlVersion;
+import io.sqlman.provider.SqlSourceProvider;
+import io.sqlman.resolver.SqlScriptResolver;
+import io.sqlman.support.SqlDialectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -22,11 +26,22 @@ import java.util.Enumeration;
 public class BasicVersionManager extends AbstractVersionManager implements SqlVersionManager {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public BasicVersionManager() {
+    }
+
+    public BasicVersionManager(DataSource dataSource) {
+        super(dataSource);
+    }
+
+    public BasicVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider scriptProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
+        super(dataSource, trxIsolation, scriptProvider, scriptResolver, dialectSupport);
+    }
+
     @Override
     public void upgrade() throws SQLException {
-        perform(new SqlTransaction<Void>() {
+        perform(new SqlAction() {
             @Override
-            public Void execute(Connection connection) throws Exception {
+            public void perform(Connection connection) throws Exception {
                 // 开始升级
                 logger.info("Upgrading database");
 
@@ -48,8 +63,6 @@ public class BasicVersionManager extends AbstractVersionManager implements SqlVe
 
                 // 已经升级到最新
                 logger.info("Database is up to date");
-
-                return null;
             }
         });
     }
@@ -113,12 +126,12 @@ public class BasicVersionManager extends AbstractVersionManager implements SqlVe
                     int rowEffected = 0;
                     SQLException sqlException = null;
                     try {
-                        rowEffected = perform(new ExecuteTransaction(script, index));
+                        rowEffected = BasicVersionManager.this.execute(new ExecuteTransaction(script, index));
                     } catch (SQLException e) {
                         sqlException = e;
                         throw e;
                     } finally {
-                        perform(new UpdateTransaction(script, index, rowEffected, sqlException));
+                        BasicVersionManager.this.execute(new UpdateTransaction(script, index, rowEffected, sqlException));
                     }
                 }
                 ordinal = 0;

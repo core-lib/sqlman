@@ -3,7 +3,7 @@ package io.sqlman.manager;
 import java.sql.Connection;
 
 /**
- * 事务操作
+ * 数据库事务
  *
  * @author Payne 646742615@qq.com
  * 2019/5/24 10:57

@@ -7,7 +7,7 @@ package io.sqlman.provider;
  * 2019/5/25 20:57
  */
 public abstract class AbstractSourceProvider implements SqlSourceProvider {
-    protected SqlNamingStrategy namingStrategy;
+    protected SqlNamingStrategy namingStrategy = new BasicNamingStrategy();
 
     protected AbstractSourceProvider() {
     }

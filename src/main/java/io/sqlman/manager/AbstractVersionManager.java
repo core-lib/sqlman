@@ -47,7 +47,8 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         this.dialectSupport = dialectSupport;
     }
 
-    protected <T> T perform(SqlTransaction<T> transaction) throws SQLException {
+    @Override
+    public <T> T execute(SqlTransaction<T> transaction) throws SQLException {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
@@ -75,6 +76,17 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     }
 
     @Override
+    public void perform(final SqlAction action) throws SQLException {
+        execute(new SqlTransaction<Void>() {
+            @Override
+            public Void execute(Connection connection) throws Exception {
+                action.perform(connection);
+                return null;
+            }
+        });
+    }
+
+    @Override
     public Enumeration<SqlSource> acquire() throws MalformedNameException, DuplicatedVersionException, IOException {
         return scriptProvider.acquire();
     }
@@ -91,18 +103,17 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public void create() throws SQLException {
-        perform(new SqlTransaction<Void>() {
+        perform(new SqlAction() {
             @Override
-            public Void execute(Connection connection) throws Exception {
+            public void perform(Connection connection) throws Exception {
                 dialectSupport.create(connection);
-                return null;
             }
         });
     }
 
     @Override
     public SqlVersion detect() throws SQLException {
-        return perform(new SqlTransaction<SqlVersion>() {
+        return execute(new SqlTransaction<SqlVersion>() {
             @Override
             public SqlVersion execute(Connection connection) throws Exception {
                 return dialectSupport.detect(connection);
@@ -112,44 +123,40 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public void update(final SqlVersion version) throws SQLException {
-        perform(new SqlTransaction<Void>() {
+        perform(new SqlAction() {
             @Override
-            public Void execute(Connection connection) throws Exception {
+            public void perform(Connection connection) throws Exception {
                 dialectSupport.update(connection, version);
-                return null;
             }
         });
     }
 
     @Override
     public void remove() throws SQLException {
-        perform(new SqlTransaction<Void>() {
+        perform(new SqlAction() {
             @Override
-            public Void execute(Connection connection) throws Exception {
+            public void perform(Connection connection) throws Exception {
                 dialectSupport.remove(connection);
-                return null;
             }
         });
     }
 
     @Override
     public void lockup() throws SQLException {
-        perform(new SqlTransaction<Void>() {
+        perform(new SqlAction() {
             @Override
-            public Void execute(Connection connection) throws Exception {
+            public void perform(Connection connection) throws Exception {
                 dialectSupport.lockup(connection);
-                return null;
             }
         });
     }
 
     @Override
     public void unlock() throws SQLException {
-        perform(new SqlTransaction<Void>() {
+        perform(new SqlAction() {
             @Override
-            public Void execute(Connection connection) throws Exception {
+            public void perform(Connection connection) throws Exception {
                 dialectSupport.unlock(connection);
-                return null;
             }
         });
     }
