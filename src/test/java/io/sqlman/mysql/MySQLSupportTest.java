@@ -21,7 +21,7 @@ public class MySQLSupportTest {
         dataSource.setPassword("root");
         BasicVersionManager upgrader = new BasicVersionManager();
         upgrader.setDataSource(dataSource);
-        upgrader.setScriptProvider(new BasicSourceProvider("sqlman/MySQL/**/*.sql"));
+        upgrader.setSourceProvider(new BasicSourceProvider("sqlman/MySQL/**/*.sql"));
         upgrader.upgrade();
     }
 

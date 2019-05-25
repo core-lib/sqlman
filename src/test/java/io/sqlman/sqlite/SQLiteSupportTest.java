@@ -23,7 +23,7 @@ public class SQLiteSupportTest {
         BasicVersionManager upgrader = new BasicVersionManager();
         upgrader.setDataSource(dataSource);
         upgrader.setDialectSupport(new SQLiteDialectSupport());
-        upgrader.setScriptProvider(new BasicSourceProvider("sqlman/SQLite/**/*.sql"));
+        upgrader.setSourceProvider(new BasicSourceProvider("sqlman/SQLite/**/*.sql"));
         upgrader.upgrade();
         Thread.sleep(1000);
     }

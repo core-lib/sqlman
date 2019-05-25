@@ -33,8 +33,8 @@ public class BasicVersionManager extends AbstractVersionManager implements SqlVe
         super(dataSource);
     }
 
-    public BasicVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider scriptProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
-        super(dataSource, trxIsolation, scriptProvider, scriptResolver, dialectSupport);
+    public BasicVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider sourceProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
+        super(dataSource, trxIsolation, sourceProvider, scriptResolver, dialectSupport);
     }
 
     @Override
@@ -46,19 +46,19 @@ public class BasicVersionManager extends AbstractVersionManager implements SqlVe
                 logger.info("Upgrading database");
 
                 // 获取升级锁
-                new LockupTransaction().execute(connection);
+                lockup(connection);
                 try {
                     // 创建版本记录表
-                    new CreateTransaction().execute(connection);
+                    create(connection);
 
                     // 查询当前状态
-                    SqlVersion current = new DetectTransaction().execute(connection);
+                    SqlVersion current = detect(connection);
 
                     // 执行升级脚本
-                    new UpgradeTransaction(current).execute(connection);
+                    upgrade(connection, current);
                 } finally {
                     // 释放升级锁
-                    new UnlockTransaction().execute(connection);
+                    unlock(connection);
                 }
 
                 // 已经升级到最新
@@ -67,159 +67,105 @@ public class BasicVersionManager extends AbstractVersionManager implements SqlVe
         });
     }
 
-    private class CreateTransaction implements SqlTransaction<Void> {
-        @Override
-        public Void execute(Connection connection) throws SQLException {
-            logger.info("Initializing sqlman");
-            dialectSupport.create(connection);
-            logger.info("Sqlman initialize completed");
-            return null;
+    private void create(Connection connection) throws SQLException {
+        logger.info("Initializing sqlman");
+        dialectSupport.create(connection);
+        logger.info("Sqlman initialize completed");
+    }
+
+    private void lockup(Connection connection) throws SQLException {
+        try {
+            logger.info("Locking sqlman");
+            dialectSupport.lockup(connection);
+            logger.info("Sqlman locked");
+        } catch (SQLException e) {
+            logger.error("Fail to acquire sqlman upgrade lockup for " + e.getMessage(), e);
+            throw e;
         }
     }
 
-    private class LockupTransaction implements SqlTransaction<Void> {
-        @Override
-        public Void execute(Connection connection) throws SQLException {
-            try {
-                logger.info("Locking sqlman");
-                dialectSupport.lockup(connection);
-                logger.info("Sqlman locked");
-                return null;
-            } catch (SQLException e) {
-                logger.error("Fail to acquire sqlman upgrade lockup for " + e.getMessage(), e);
-                throw e;
-            }
-        }
+    private SqlVersion detect(Connection connection) throws SQLException {
+        logger.info("Detecting sqlman current version");
+        SqlVersion current = dialectSupport.detect(connection);
+        logger.info("Sqlman current version is {}", current);
+        return current;
     }
 
-    private class DetectTransaction implements SqlTransaction<SqlVersion> {
-        @Override
-        public SqlVersion execute(Connection connection) throws SQLException {
-            logger.info("Detecting sqlman current version");
-            SqlVersion current = dialectSupport.detect(connection);
-            logger.info("Sqlman current version is {}", current);
-            return current;
-        }
-    }
+    private void upgrade(Connection connection, SqlVersion current) throws Exception {
+        String version = current != null ? current.getVersion() : null;
+        int ordinal = current == null ? 0 : current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal();
 
-    private class UpgradeTransaction implements SqlTransaction<Void> {
-        private final SqlVersion current;
+        Enumeration<SqlSource> resources = current == null
+                ? sourceProvider.acquire()
+                : sourceProvider.acquire(version, ordinal < current.getSqlQuantity() - 1);
 
-        UpgradeTransaction(SqlVersion current) {
-            this.current = current;
-        }
-
-        @Override
-        public Void execute(Connection connection) throws Exception {
-            String version = current != null ? current.getVersion() : null;
-            int ordinal = current == null ? 0 : current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal();
-
-            Enumeration<SqlSource> resources = current == null
-                    ? scriptProvider.acquire()
-                    : scriptProvider.acquire(version, ordinal < current.getSqlQuantity() - 1);
-
-            while (resources.hasMoreElements()) {
-                SqlSource resource = resources.nextElement();
-                SqlScript script = scriptResolver.resolve(resource);
-                int count = script.sqls();
-                for (int index = ordinal; index < count; index++) {
-                    int rowEffected = 0;
-                    SQLException sqlException = null;
-                    try {
-                        rowEffected = BasicVersionManager.this.execute(new ExecuteTransaction(script, index));
-                    } catch (SQLException e) {
-                        sqlException = e;
-                        throw e;
-                    } finally {
-                        BasicVersionManager.this.execute(new UpdateTransaction(script, index, rowEffected, sqlException));
-                    }
+        while (resources.hasMoreElements()) {
+            SqlSource resource = resources.nextElement();
+            SqlScript script = scriptResolver.resolve(resource);
+            int count = script.sqls();
+            for (int index = ordinal; index < count; index++) {
+                int rowEffected = 0;
+                SQLException sqlException = null;
+                try {
+                    rowEffected = execute(connection, script, index);
+                } catch (SQLException e) {
+                    sqlException = e;
+                    throw e;
+                } finally {
+                    update(connection, script, index, rowEffected, sqlException);
                 }
-                ordinal = 0;
             }
-
-            return null;
+            ordinal = 0;
         }
     }
 
-    private class ExecuteTransaction implements SqlTransaction<Integer> {
-        private final SqlScript script;
-        private final int ordinal;
+    private int execute(Connection connection, SqlScript script, int ordinal) throws SQLException {
+        logger.info("Executing SQL script: {}", script.name());
+        SqlStatement statement = script.statement(ordinal);
+        String sql = statement.statement();
+        logger.info("Executing SQL statement: {}#{}\n{}", script.version(), ordinal, sql);
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        int rowEffected = stmt.executeUpdate();
+        logger.info("SQL statement: {}#{} execute completed with {} rows effected", script.version(), ordinal, rowEffected);
+        return rowEffected;
+    }
 
-        ExecuteTransaction(SqlScript script, int ordinal) {
-            this.script = script;
-            this.ordinal = ordinal;
-        }
-
-        @Override
-        public Integer execute(Connection connection) throws SQLException {
-            logger.info("Executing SQL script: {}", script.name());
-            SqlStatement statement = script.statement(ordinal);
-            String sql = statement.statement();
-            logger.info("Executing SQL statement: {}#{}\n{}", script.version(), ordinal, sql);
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            int rowEffected = stmt.executeUpdate();
-            logger.info("SQL statement: {}#{} execute completed with {} rows effected", script.version(), ordinal, rowEffected);
-            return rowEffected;
+    private void update(Connection connection, SqlScript script, int ordinal, int rowEffected, SQLException sqlException) throws SQLException {
+        if (sqlException == null) {
+            SqlVersion version = new SqlVersion();
+            version.setName(script.name());
+            version.setVersion(script.version());
+            version.setOrdinal(ordinal);
+            version.setDescription(script.description());
+            version.setSqlQuantity(script.sqls());
+            version.setSuccess(true);
+            version.setRowEffected(rowEffected);
+            version.setErrorCode(0);
+            version.setErrorState("");
+            version.setErrorMessage("");
+            version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
+            dialectSupport.update(connection, version);
+        } else {
+            SqlVersion version = new SqlVersion();
+            version.setName(script.name());
+            version.setVersion(script.version());
+            version.setOrdinal(ordinal);
+            version.setDescription(script.description());
+            version.setSqlQuantity(script.sqls());
+            version.setSuccess(false);
+            version.setRowEffected(0);
+            version.setErrorCode(sqlException.getErrorCode());
+            version.setErrorState(sqlException.getSQLState());
+            version.setErrorMessage(sqlException.getMessage());
+            version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
+            dialectSupport.update(connection, version);
         }
     }
 
-    private class UpdateTransaction implements SqlTransaction<Void> {
-        private final SqlScript script;
-        private final int ordinal;
-        private final int rowEffected;
-        private final SQLException sqlException;
-
-        UpdateTransaction(SqlScript script, int ordinal, int rowEffected, SQLException sqlException) {
-            this.script = script;
-            this.ordinal = ordinal;
-            this.rowEffected = rowEffected;
-            this.sqlException = sqlException;
-        }
-
-        @Override
-        public Void execute(Connection connection) throws SQLException {
-            if (sqlException == null) {
-                SqlVersion version = new SqlVersion();
-                version.setName(script.name());
-                version.setVersion(script.version());
-                version.setOrdinal(ordinal);
-                version.setDescription(script.description());
-                version.setSqlQuantity(script.sqls());
-                version.setSuccess(true);
-                version.setRowEffected(rowEffected);
-                version.setErrorCode(0);
-                version.setErrorState("");
-                version.setErrorMessage("");
-                version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialectSupport.update(connection, version);
-            } else {
-                SqlVersion version = new SqlVersion();
-                version.setName(script.name());
-                version.setVersion(script.version());
-                version.setOrdinal(ordinal);
-                version.setDescription(script.description());
-                version.setSqlQuantity(script.sqls());
-                version.setSuccess(false);
-                version.setRowEffected(0);
-                version.setErrorCode(sqlException.getErrorCode());
-                version.setErrorState(sqlException.getSQLState());
-                version.setErrorMessage(sqlException.getMessage());
-                version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialectSupport.update(connection, version);
-            }
-            return null;
-        }
-    }
-
-    private class UnlockTransaction implements SqlTransaction<Void> {
-
-        @Override
-        public Void execute(Connection connection) throws SQLException {
-            logger.info("Unlocking sqlman");
-            dialectSupport.unlock(connection);
-            logger.info("Sqlman unlocked");
-            return null;
-        }
+    private void unlock(Connection connection) throws SQLException {
+        logger.info("Unlocking sqlman");
+        dialectSupport.unlock(connection);
+        logger.info("Sqlman unlocked");
     }
 
 }

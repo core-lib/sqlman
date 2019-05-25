@@ -28,7 +28,7 @@ import java.util.Enumeration;
 public abstract class AbstractVersionManager implements SqlVersionManager {
     protected DataSource dataSource;
     protected SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
-    protected SqlSourceProvider scriptProvider = new BasicSourceProvider();
+    protected SqlSourceProvider sourceProvider = new BasicSourceProvider();
     protected SqlScriptResolver scriptResolver = new BasicScriptResolver();
     protected SqlDialectSupport dialectSupport = new MySQLDialectSupport();
 
@@ -39,10 +39,10 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         this.dataSource = dataSource;
     }
 
-    protected AbstractVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider scriptProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
+    protected AbstractVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider sourceProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
         this.dataSource = dataSource;
         this.trxIsolation = trxIsolation;
-        this.scriptProvider = scriptProvider;
+        this.sourceProvider = sourceProvider;
         this.scriptResolver = scriptResolver;
         this.dialectSupport = dialectSupport;
     }
@@ -88,12 +88,12 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public Enumeration<SqlSource> acquire() throws MalformedNameException, DuplicatedVersionException, IOException {
-        return scriptProvider.acquire();
+        return sourceProvider.acquire();
     }
 
     @Override
     public Enumeration<SqlSource> acquire(String version, boolean included) throws MalformedNameException, DuplicatedVersionException, IOException {
-        return scriptProvider.acquire(version, included);
+        return sourceProvider.acquire(version, included);
     }
 
     @Override
@@ -177,12 +177,12 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         this.trxIsolation = trxIsolation;
     }
 
-    public SqlSourceProvider getScriptProvider() {
-        return scriptProvider;
+    public SqlSourceProvider getSourceProvider() {
+        return sourceProvider;
     }
 
-    public void setScriptProvider(SqlSourceProvider scriptProvider) {
-        this.scriptProvider = scriptProvider;
+    public void setSourceProvider(SqlSourceProvider sourceProvider) {
+        this.sourceProvider = sourceProvider;
     }
 
     public SqlScriptResolver getScriptResolver() {
