@@ -4,10 +4,10 @@ import io.loadkit.Loaders;
 import io.loadkit.Resource;
 import io.sqlman.SqlResource;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 标准脚本资源提供器
@@ -42,15 +42,16 @@ public class BasicScriptProvider implements SqlScriptProvider {
             resourceLoader = this.getClass().getClassLoader();
         }
         Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
-        List<SqlResource> resources = new ArrayList<>();
+        Set<SqlResource> resources = new TreeSet<>(new BasicVersionComparator(namingStrategy));
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
             SqlInfo info = namingStrategy.parse(name);
             SqlResource resource = new BasicResource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
-            resources.add(resource);
+            if (!resources.add(resource)) {
+                throw new IllegalStateException("duplicate SQL script version: " + resource.version());
+            }
         }
-        Collections.sort(resources, new BasicVersionComparator(namingStrategy));
         return Collections.enumeration(resources);
     }
 
@@ -64,18 +65,18 @@ public class BasicScriptProvider implements SqlScriptProvider {
             resourceLoader = this.getClass().getClassLoader();
         }
         Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
-        List<SqlResource> resources = new ArrayList<>();
+        Set<SqlResource> resources = new TreeSet<>(new BasicVersionComparator(namingStrategy));
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
             SqlInfo info = namingStrategy.parse(name);
             int comparision = namingStrategy.compare(info.getVersion(), version);
-            if (comparision > 0 || (comparision == 0 && included)) {
-                SqlResource resource = new BasicResource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
-                resources.add(resource);
+            SqlResource resource = new BasicResource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
+            boolean newer = comparision > 0 || (comparision == 0 && included);
+            if (newer && !resources.add(resource)) {
+                throw new IllegalStateException("duplicate SQL script version: " + resource.version());
             }
         }
-        Collections.sort(resources, new BasicVersionComparator(namingStrategy));
         return Collections.enumeration(resources);
     }
 

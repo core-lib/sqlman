@@ -11,3 +11,6 @@ spring:
     password: root
     hikari:
       transaction-isolation: TRANSACTION_SERIALIZABLE
+sqlman:
+  script:
+    location: sqlman/MySQL/**/*.sql

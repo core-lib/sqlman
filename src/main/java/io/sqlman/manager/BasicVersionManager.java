@@ -250,6 +250,7 @@ public class BasicVersionManager implements SqlVersionManager {
         public Void execute(Connection connection) throws SQLException {
             if (sqlException == null) {
                 SqlVersion version = new SqlVersion();
+                version.setName(script.name());
                 version.setVersion(script.version());
                 version.setOrdinal(ordinal);
                 version.setDescription(script.description());
@@ -263,6 +264,7 @@ public class BasicVersionManager implements SqlVersionManager {
                 dialectSupport.record(connection, version);
             } else {
                 SqlVersion version = new SqlVersion();
+                version.setName(script.name());
                 version.setVersion(script.version());
                 version.setOrdinal(ordinal);
                 version.setDescription(script.description());

@@ -11,6 +11,7 @@ import java.sql.Timestamp;
  */
 public class SqlVersion {
     private Integer id;
+    private String name;
     private String version;
     private Integer ordinal;
     private String description;
@@ -28,6 +29,14 @@ public class SqlVersion {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getVersion() {

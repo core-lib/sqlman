@@ -28,6 +28,7 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
         StringBuilder dql = new StringBuilder();
         dql.append(" SELECT");
         dql.append("     id AS id,");
+        dql.append("     name AS name,");
         dql.append("     version AS version,");
         dql.append("     ordinal AS ordinal,");
         dql.append("     description AS description,");
@@ -54,6 +55,7 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
         SqlVersion version = new SqlVersion();
 
         version.setId(result.getInt("id"));
+        version.setName(result.getString("name"));
         version.setVersion(result.getString("version"));
         version.setOrdinal(result.getInt("ordinal"));
         version.setDescription(result.getString("description"));
