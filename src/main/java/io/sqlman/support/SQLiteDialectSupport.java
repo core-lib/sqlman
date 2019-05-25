@@ -23,7 +23,7 @@ public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlD
     }
 
     @Override
-    public void install(Connection connection) throws SQLException {
+    public void create(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();
         ddl.append(" CREATE TABLE IF NOT EXISTS ").append(table).append(" (");
         ddl.append("     id integer NOT NULL PRIMARY KEY AUTOINCREMENT,");
@@ -46,7 +46,7 @@ public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlD
     }
 
     @Override
-    public void record(Connection connection, SqlVersion version) throws SQLException {
+    public void update(Connection connection, SqlVersion version) throws SQLException {
         StringBuilder dml = new StringBuilder();
         dml.append(" REPLACE INTO ").append(table).append(" (");
         dml.append("     name,");
@@ -81,7 +81,7 @@ public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlD
     }
 
     @Override
-    public void lock(Connection connection) throws SQLException {
+    public void lockup(Connection connection) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + table + "_lock (nil INTEGER PRIMARY KEY)");
         statement.execute();
     }

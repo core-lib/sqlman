@@ -15,38 +15,46 @@ import java.sql.SQLException;
 public interface SqlDialectSupport {
 
     /**
-     * 安装版本升级记录表，如果表已经安装则不做任何变化。
+     * 创建版本升级记录表，如果已经创建则不做任何变化。
      *
      * @param connection 连接
      * @throws SQLException SQL异常
      */
-    void install(Connection connection) throws SQLException;
+    void create(Connection connection) throws SQLException;
 
     /**
-     * 检查数据库的最新版本升级记录，当返回为{@code null}时表示版本升级记录表没有任何记录。
+     * 检测当前版本，如果没有任何升级记录则返回{@code null}
      *
      * @param connection 连接
-     * @return 数据库状态
+     * @return 当前版本
      * @throws SQLException SQL异常
      */
-    SqlVersion examine(Connection connection) throws SQLException;
+    SqlVersion detect(Connection connection) throws SQLException;
 
     /**
-     * 记录当前版本状态
+     * 更新当前版本
      *
      * @param connection 连接
-     * @param version    版本
+     * @param version    当前版本
      * @throws SQLException SQL异常
      */
-    void record(Connection connection, SqlVersion version) throws SQLException;
+    void update(Connection connection, SqlVersion version) throws SQLException;
 
     /**
-     * 获取版本升级的排他锁
+     * 删除版本升级记录表，如果已经删除则不做任何变化。
      *
      * @param connection 连接
      * @throws SQLException SQL异常
      */
-    void lock(Connection connection) throws SQLException;
+    void remove(Connection connection) throws SQLException;
+
+    /**
+     * 获取版本升级的排他锁，当获取失败时抛出{@link SQLException}
+     *
+     * @param connection 连接
+     * @throws SQLException SQL异常
+     */
+    void lockup(Connection connection) throws SQLException;
 
     /**
      * 释放版本升级的排他锁

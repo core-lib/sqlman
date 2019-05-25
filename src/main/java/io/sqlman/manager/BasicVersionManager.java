@@ -141,7 +141,7 @@ public class BasicVersionManager implements SqlVersionManager {
         @Override
         public Void execute(Connection connection) throws SQLException {
             logger.info("Initializing sqlman");
-            dialectSupport.install(connection);
+            dialectSupport.create(connection);
             logger.info("Sqlman initialize completed");
             return null;
         }
@@ -152,11 +152,11 @@ public class BasicVersionManager implements SqlVersionManager {
         public Void execute(Connection connection) throws SQLException {
             try {
                 logger.info("Locking sqlman");
-                dialectSupport.lock(connection);
+                dialectSupport.lockup(connection);
                 logger.info("Sqlman locked");
                 return null;
             } catch (SQLException e) {
-                logger.error("Fail to acquire sqlman upgrade lock for " + e.getMessage(), e);
+                logger.error("Fail to acquire sqlman upgrade lockup for " + e.getMessage(), e);
                 throw e;
             }
         }
@@ -166,7 +166,7 @@ public class BasicVersionManager implements SqlVersionManager {
         @Override
         public SqlVersion execute(Connection connection) throws SQLException {
             logger.info("Examining sqlman current version");
-            SqlVersion current = dialectSupport.examine(connection);
+            SqlVersion current = dialectSupport.detect(connection);
             logger.info("Sqlman current version is {}", current);
             return current;
         }
@@ -261,7 +261,7 @@ public class BasicVersionManager implements SqlVersionManager {
                 version.setErrorState("");
                 version.setErrorMessage("");
                 version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialectSupport.record(connection, version);
+                dialectSupport.update(connection, version);
             } else {
                 SqlVersion version = new SqlVersion();
                 version.setName(script.name());
@@ -275,7 +275,7 @@ public class BasicVersionManager implements SqlVersionManager {
                 version.setErrorState(sqlException.getSQLState());
                 version.setErrorMessage(sqlException.getMessage());
                 version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialectSupport.record(connection, version);
+                dialectSupport.update(connection, version);
             }
             return null;
         }

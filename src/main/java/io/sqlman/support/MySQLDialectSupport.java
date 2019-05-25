@@ -23,7 +23,7 @@ public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDi
     }
 
     @Override
-    public void install(Connection connection) throws SQLException {
+    public void create(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();
         ddl.append(" CREATE TABLE IF NOT EXISTS `").append(table).append("` (");
         ddl.append("         `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '脚本执行记录ID',");
@@ -45,7 +45,7 @@ public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDi
     }
 
     @Override
-    public void record(Connection connection, SqlVersion version) throws SQLException {
+    public void update(Connection connection, SqlVersion version) throws SQLException {
         StringBuilder dml = new StringBuilder();
         dml.append(" INSERT INTO `").append(table).append("` (");
         dml.append("     name,");
@@ -99,7 +99,7 @@ public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDi
     }
 
     @Override
-    public void lock(Connection connection) throws SQLException {
+    public void lockup(Connection connection) throws SQLException {
         PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + table + "_lock (nil INT(1) PRIMARY KEY)");
         statement.execute();
     }

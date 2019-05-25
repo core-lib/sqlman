@@ -24,7 +24,7 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
     }
 
     @Override
-    public SqlVersion examine(Connection connection) throws SQLException {
+    public SqlVersion detect(Connection connection) throws SQLException {
         StringBuilder dql = new StringBuilder();
         dql.append(" SELECT");
         dql.append("     id AS id,");
@@ -68,6 +68,12 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
         version.setTimeExecuted(result.getTimestamp("timeExecuted"));
 
         return version;
+    }
+
+    @Override
+    public void remove(Connection connection) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("DELETE TABLE `" + table + "`");
+        statement.execute();
     }
 
     public String getTable() {
