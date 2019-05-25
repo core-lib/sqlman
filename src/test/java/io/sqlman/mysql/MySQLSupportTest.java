@@ -1,8 +1,8 @@
 package io.sqlman.mysql;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import io.sqlman.manager.StandardVersionManager;
-import io.sqlman.provider.StandardScriptProvider;
+import io.sqlman.manager.BasicVersionManager;
+import io.sqlman.provider.BasicScriptProvider;
 import org.junit.Test;
 
 /**
@@ -19,11 +19,10 @@ public class MySQLSupportTest {
         dataSource.setUrl("jdbc:mysql://localhost:3306/sqlman?serverTimezone=GMT%2B8&useSSL=false");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
-        StandardVersionManager upgrader = new StandardVersionManager();
+        BasicVersionManager upgrader = new BasicVersionManager();
         upgrader.setDataSource(dataSource);
-        upgrader.setScriptProvider(new StandardScriptProvider("sqlman/MySQL/**/*.sql"));
+        upgrader.setScriptProvider(new BasicScriptProvider("sqlman/MySQL/**/*.sql"));
         upgrader.upgrade();
-        Thread.sleep(1000);
     }
 
 }

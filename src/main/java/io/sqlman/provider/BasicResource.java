@@ -14,12 +14,12 @@ import java.util.Objects;
  * @author Payne 646742615@qq.com
  * 2019/5/24 17:57
  */
-public class StandardResource implements SqlResource {
+public class BasicResource implements SqlResource {
     private final String version;
     private final String description;
     private final URL url;
 
-    public StandardResource(String version, String description, URL url) {
+    public BasicResource(String version, String description, URL url) {
         this.version = version;
         this.description = description;
         this.url = url;
@@ -44,7 +44,7 @@ public class StandardResource implements SqlResource {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        StandardResource that = (StandardResource) o;
+        BasicResource that = (BasicResource) o;
         return Objects.equals(version, that.version);
     }
 

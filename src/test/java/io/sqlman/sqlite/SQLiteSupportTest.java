@@ -1,8 +1,8 @@
 package io.sqlman.sqlite;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import io.sqlman.manager.StandardVersionManager;
-import io.sqlman.provider.StandardScriptProvider;
+import io.sqlman.manager.BasicVersionManager;
+import io.sqlman.provider.BasicScriptProvider;
 import io.sqlman.support.SQLiteDialectSupport;
 import org.junit.Test;
 
@@ -20,11 +20,12 @@ public class SQLiteSupportTest {
         dataSource.setUrl("jdbc:sqlite:target/SQLite.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
-        StandardVersionManager upgrader = new StandardVersionManager();
+        BasicVersionManager upgrader = new BasicVersionManager();
         upgrader.setDataSource(dataSource);
         upgrader.setDialectSupport(new SQLiteDialectSupport());
-        upgrader.setScriptProvider(new StandardScriptProvider("sqlman/SQLite/**/*.sql"));
+        upgrader.setScriptProvider(new BasicScriptProvider("sqlman/SQLite/**/*.sql"));
         upgrader.upgrade();
+        Thread.sleep(1000);
     }
 
 }

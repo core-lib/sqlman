@@ -1,9 +1,9 @@
 package io.sqlman.manager;
 
 import io.sqlman.*;
+import io.sqlman.provider.BasicScriptProvider;
 import io.sqlman.provider.SqlScriptProvider;
-import io.sqlman.provider.StandardScriptProvider;
-import io.sqlman.resolver.DruidScriptResolver;
+import io.sqlman.resolver.BasicScriptResolver;
 import io.sqlman.resolver.SqlScriptResolver;
 import io.sqlman.support.MySQLDialectSupport;
 import io.sqlman.support.SqlDialectSupport;
@@ -18,26 +18,26 @@ import java.sql.Timestamp;
 import java.util.Enumeration;
 
 /**
- * 基础执行器
+ * 基础SQL版本管理器
  *
  * @author Payne 646742615@qq.com
  * 2019/5/22 16:15
  */
-public class StandardVersionManager implements SqlVersionManager {
+public class BasicVersionManager implements SqlVersionManager {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private DataSource dataSource;
     private Connection jdbcConnection;
     private SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
-    private SqlScriptProvider scriptProvider = new StandardScriptProvider();
-    private SqlScriptResolver scriptResolver = new DruidScriptResolver();
+    private SqlScriptProvider scriptProvider = new BasicScriptProvider();
+    private SqlScriptResolver scriptResolver = new BasicScriptResolver();
     private SqlDialectSupport dialectSupport = new MySQLDialectSupport();
     private SqlConfig tableConfig = new SqlConfig();
 
-    public StandardVersionManager() {
+    public BasicVersionManager() {
     }
 
-    public StandardVersionManager(DataSource dataSource) {
+    public BasicVersionManager(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

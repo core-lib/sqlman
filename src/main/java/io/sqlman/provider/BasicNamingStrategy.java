@@ -6,15 +6,15 @@ package io.sqlman.provider;
  * @author Payne 646742615@qq.com
  * 2019/5/24 22:16
  */
-public class StandardNamingStrategy implements SqlNamingStrategy {
+public class BasicNamingStrategy implements SqlNamingStrategy {
     private char separator = '/';
     private String delimiter = "-";
     private String extension = ".sql";
 
-    public StandardNamingStrategy() {
+    public BasicNamingStrategy() {
     }
 
-    public StandardNamingStrategy(char separator, String delimiter, String extension) {
+    public BasicNamingStrategy(char separator, String delimiter, String extension) {
         this.separator = separator;
         this.delimiter = delimiter;
         this.extension = extension;

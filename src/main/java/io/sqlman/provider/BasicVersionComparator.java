@@ -10,10 +10,10 @@ import java.util.Comparator;
  * @author Payne 646742615@qq.com
  * 2019/5/24 22:02
  */
-public class SqlVersionComparator implements Comparator<SqlResource> {
+public class BasicVersionComparator implements Comparator<SqlResource> {
     private final SqlNamingStrategy namingStrategy;
 
-    public SqlVersionComparator(SqlNamingStrategy namingStrategy) {
+    public BasicVersionComparator(SqlNamingStrategy namingStrategy) {
         this.namingStrategy = namingStrategy;
     }
 

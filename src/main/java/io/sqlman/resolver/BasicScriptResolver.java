@@ -18,14 +18,14 @@ import java.util.List;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:42
  */
-public class DruidScriptResolver implements SqlScriptResolver {
+public class BasicScriptResolver implements SqlScriptResolver {
     private String sqlType = JdbcUtils.MYSQL;
     private String charset = "UTF-8";
 
-    public DruidScriptResolver() {
+    public BasicScriptResolver() {
     }
 
-    public DruidScriptResolver(String sqlType, String charset) {
+    public BasicScriptResolver(String sqlType, String charset) {
         this.sqlType = sqlType;
         this.charset = charset;
     }

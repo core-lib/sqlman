@@ -15,19 +15,19 @@ import java.util.List;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:02
  */
-public class StandardScriptProvider implements SqlScriptProvider {
+public class BasicScriptProvider implements SqlScriptProvider {
     private ClassLoader classLoader;
     private String scriptLocation = "sqlman/**/*.sql";
-    private SqlNamingStrategy namingStrategy = new StandardNamingStrategy();
+    private SqlNamingStrategy namingStrategy = new BasicNamingStrategy();
 
-    public StandardScriptProvider() {
+    public BasicScriptProvider() {
     }
 
-    public StandardScriptProvider(String scriptLocation) {
+    public BasicScriptProvider(String scriptLocation) {
         this.scriptLocation = scriptLocation;
     }
 
-    public StandardScriptProvider(String scriptLocation, SqlNamingStrategy namingStrategy) {
+    public BasicScriptProvider(String scriptLocation, SqlNamingStrategy namingStrategy) {
         this.scriptLocation = scriptLocation;
         this.namingStrategy = namingStrategy;
     }
@@ -47,10 +47,10 @@ public class StandardScriptProvider implements SqlScriptProvider {
             Resource element = enumeration.nextElement();
             String name = element.getName();
             SqlInfo info = namingStrategy.parse(name);
-            SqlResource resource = new StandardResource(info.getVersion(), info.getDescription(), element.getUrl());
+            SqlResource resource = new BasicResource(info.getVersion(), info.getDescription(), element.getUrl());
             resources.add(resource);
         }
-        Collections.sort(resources, new SqlVersionComparator(namingStrategy));
+        Collections.sort(resources, new BasicVersionComparator(namingStrategy));
         return Collections.enumeration(resources);
     }
 
@@ -71,11 +71,11 @@ public class StandardScriptProvider implements SqlScriptProvider {
             SqlInfo info = namingStrategy.parse(name);
             int comparision = namingStrategy.compare(info.getVersion(), version);
             if (comparision > 0 || (comparision == 0 && included)) {
-                SqlResource resource = new StandardResource(info.getVersion(), info.getDescription(), element.getUrl());
+                SqlResource resource = new BasicResource(info.getVersion(), info.getDescription(), element.getUrl());
                 resources.add(resource);
             }
         }
-        Collections.sort(resources, new SqlVersionComparator(namingStrategy));
+        Collections.sort(resources, new BasicVersionComparator(namingStrategy));
         return Collections.enumeration(resources);
     }
 
