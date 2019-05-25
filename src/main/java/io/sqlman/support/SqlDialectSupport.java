@@ -1,6 +1,5 @@
 package io.sqlman.support;
 
-import io.sqlman.SqlConfig;
 import io.sqlman.SqlVersion;
 
 import java.sql.Connection;
@@ -19,47 +18,42 @@ public interface SqlDialectSupport {
      * 安装版本升级记录表，如果表已经安装则不做任何变化。
      *
      * @param connection 连接
-     * @param config     系统配置
      * @throws SQLException SQL异常
      */
-    void install(Connection connection, SqlConfig config) throws SQLException;
+    void install(Connection connection) throws SQLException;
 
     /**
      * 检查数据库的最新版本升级记录，当返回为{@code null}时表示版本升级记录表没有任何记录。
      *
      * @param connection 连接
-     * @param config     系统配置
      * @return 数据库状态
      * @throws SQLException SQL异常
      */
-    SqlVersion examine(Connection connection, SqlConfig config) throws SQLException;
+    SqlVersion examine(Connection connection) throws SQLException;
 
     /**
      * 记录当前版本状态
      *
      * @param connection 连接
-     * @param config     系统配置
      * @param version    版本
      * @throws SQLException SQL异常
      */
-    void record(Connection connection, SqlConfig config, SqlVersion version) throws SQLException;
+    void record(Connection connection, SqlVersion version) throws SQLException;
 
     /**
      * 获取版本升级的排他锁
      *
      * @param connection 连接
-     * @param config     系统配置
      * @throws SQLException SQL异常
      */
-    void lock(Connection connection, SqlConfig config) throws SQLException;
+    void lock(Connection connection) throws SQLException;
 
     /**
      * 释放版本升级的排他锁
      *
      * @param connection 连接
-     * @param config     系统配置
      * @throws SQLException SQL异常
      */
-    void unlock(Connection connection, SqlConfig config) throws SQLException;
+    void unlock(Connection connection) throws SQLException;
 
 }

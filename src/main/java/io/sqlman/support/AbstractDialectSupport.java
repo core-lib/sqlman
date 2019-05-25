@@ -1,6 +1,5 @@
 package io.sqlman.support;
 
-import io.sqlman.SqlConfig;
 import io.sqlman.SqlVersion;
 
 import java.sql.Connection;
@@ -15,10 +14,17 @@ import java.sql.SQLException;
  * 2019/5/24 9:52
  */
 public abstract class AbstractDialectSupport implements SqlDialectSupport {
+    protected String table = "sqlman";
+
+    protected AbstractDialectSupport() {
+    }
+
+    protected AbstractDialectSupport(String table) {
+        this.table = table;
+    }
 
     @Override
-    public SqlVersion examine(Connection connection, SqlConfig config) throws SQLException {
-        String name = config.getName();
+    public SqlVersion examine(Connection connection) throws SQLException {
         StringBuilder dql = new StringBuilder();
         dql.append(" SELECT");
         dql.append("     id AS id,");
@@ -33,7 +39,7 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
         dql.append("     error_message AS errorMessage,");
         dql.append("     time_executed AS timeExecuted");
         dql.append(" FROM");
-        dql.append("     `").append(name).append("`");
+        dql.append("     `").append(table).append("`");
         dql.append(" ORDER BY");
         dql.append("     id DESC");
         dql.append(" LIMIT 0, 1");
@@ -62,4 +68,11 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
         return version;
     }
 
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
 }

@@ -1,6 +1,9 @@
 package io.sqlman.manager;
 
-import io.sqlman.*;
+import io.sqlman.SqlResource;
+import io.sqlman.SqlScript;
+import io.sqlman.SqlStatement;
+import io.sqlman.SqlVersion;
 import io.sqlman.provider.BasicScriptProvider;
 import io.sqlman.provider.SqlScriptProvider;
 import io.sqlman.resolver.BasicScriptResolver;
@@ -32,7 +35,6 @@ public class BasicVersionManager implements SqlVersionManager {
     private SqlScriptProvider scriptProvider = new BasicScriptProvider();
     private SqlScriptResolver scriptResolver = new BasicScriptResolver();
     private SqlDialectSupport dialectSupport = new MySQLDialectSupport();
-    private SqlConfig tableConfig = new SqlConfig();
 
     public BasicVersionManager() {
     }
@@ -131,7 +133,7 @@ public class BasicVersionManager implements SqlVersionManager {
         @Override
         public Void execute(Connection connection) throws SQLException {
             logger.info("Initializing sqlman");
-            dialectSupport.install(connection, tableConfig);
+            dialectSupport.install(connection);
             logger.info("Sqlman initialize completed");
             return null;
         }
@@ -142,7 +144,7 @@ public class BasicVersionManager implements SqlVersionManager {
         public Void execute(Connection connection) throws SQLException {
             try {
                 logger.info("Locking sqlman");
-                dialectSupport.lock(connection, tableConfig);
+                dialectSupport.lock(connection);
                 logger.info("Sqlman locked");
                 return null;
             } catch (SQLException e) {
@@ -156,7 +158,7 @@ public class BasicVersionManager implements SqlVersionManager {
         @Override
         public SqlVersion execute(Connection connection) throws SQLException {
             logger.info("Examining sqlman current version");
-            SqlVersion current = dialectSupport.examine(connection, tableConfig);
+            SqlVersion current = dialectSupport.examine(connection);
             logger.info("Sqlman current version is {}", current);
             return current;
         }
@@ -251,7 +253,7 @@ public class BasicVersionManager implements SqlVersionManager {
                 version.setErrorState("");
                 version.setErrorMessage("");
                 version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialectSupport.record(connection, tableConfig, version);
+                dialectSupport.record(connection, version);
             } else {
                 SqlVersion version = new SqlVersion();
                 version.setVersion(script.version());
@@ -264,7 +266,7 @@ public class BasicVersionManager implements SqlVersionManager {
                 version.setErrorState(sqlException.getSQLState());
                 version.setErrorMessage(sqlException.getMessage());
                 version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                dialectSupport.record(connection, tableConfig, version);
+                dialectSupport.record(connection, version);
             }
             return null;
         }
@@ -275,7 +277,7 @@ public class BasicVersionManager implements SqlVersionManager {
         @Override
         public Void execute(Connection connection) throws SQLException {
             logger.info("Unlocking sqlman");
-            dialectSupport.unlock(connection, tableConfig);
+            dialectSupport.unlock(connection);
             logger.info("Sqlman unlocked");
             return null;
         }
@@ -321,11 +323,4 @@ public class BasicVersionManager implements SqlVersionManager {
         this.dialectSupport = dialectSupport;
     }
 
-    public SqlConfig getTableConfig() {
-        return tableConfig;
-    }
-
-    public void setTableConfig(SqlConfig tableConfig) {
-        this.tableConfig = tableConfig;
-    }
 }

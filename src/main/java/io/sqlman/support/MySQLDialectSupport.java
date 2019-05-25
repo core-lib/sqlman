@@ -1,6 +1,5 @@
 package io.sqlman.support;
 
-import io.sqlman.SqlConfig;
 import io.sqlman.SqlUtils;
 import io.sqlman.SqlVersion;
 
@@ -17,10 +16,9 @@ import java.sql.SQLException;
 public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDialectSupport {
 
     @Override
-    public void install(Connection connection, SqlConfig config) throws SQLException {
-        String name = config.getName();
+    public void install(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();
-        ddl.append(" CREATE TABLE IF NOT EXISTS `").append(name).append("` (");
+        ddl.append(" CREATE TABLE IF NOT EXISTS `").append(table).append("` (");
         ddl.append("         `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '脚本执行记录ID',");
         ddl.append("         `version` varchar(24) NOT NULL COMMENT '脚本版本号',");
         ddl.append("         `ordinal` int(11) NOT NULL COMMENT '脚本SQL序号',");
@@ -39,10 +37,9 @@ public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDi
     }
 
     @Override
-    public void record(Connection connection, SqlConfig config, SqlVersion version) throws SQLException {
-        String name = config.getName();
+    public void record(Connection connection, SqlVersion version) throws SQLException {
         StringBuilder dml = new StringBuilder();
-        dml.append(" INSERT INTO `").append(name).append("` (");
+        dml.append(" INSERT INTO `").append(table).append("` (");
         dml.append("     version,");
         dml.append("     ordinal,");
         dml.append("     description,");
@@ -90,16 +87,14 @@ public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDi
     }
 
     @Override
-    public void lock(Connection connection, SqlConfig config) throws SQLException {
-        String name = config.getName();
-        PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + name + "_lock (nil INT(1) PRIMARY KEY)");
+    public void lock(Connection connection) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + table + "_lock (nil INT(1) PRIMARY KEY)");
         statement.execute();
     }
 
     @Override
-    public void unlock(Connection connection, SqlConfig config) throws SQLException {
-        String name = config.getName();
-        PreparedStatement statement = connection.prepareStatement("DROP TABLE " + name + "_lock");
+    public void unlock(Connection connection) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("DROP TABLE " + table + "_lock");
         statement.execute();
     }
 }
