@@ -15,14 +15,21 @@ import java.util.Objects;
  * 2019/5/24 17:57
  */
 public class BasicResource implements SqlResource {
+    private final String name;
     private final String version;
     private final String description;
     private final URL url;
 
-    public BasicResource(String version, String description, URL url) {
+    public BasicResource(String name, String version, String description, URL url) {
+        this.name = name;
         this.version = version;
         this.description = description;
         this.url = url;
+    }
+
+    @Override
+    public String name() {
+        return name;
     }
 
     @Override

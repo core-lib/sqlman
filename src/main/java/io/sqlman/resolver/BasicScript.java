@@ -15,17 +15,19 @@ import java.util.Objects;
  * 2019/5/22 10:44
  */
 public class BasicScript implements SqlScript {
+    private final String name;
     private final String version;
     private final String description;
     private final List<SqlStatement> statements;
 
-    public BasicScript(String version, String description, List<SqlStatement> statements) {
+    public BasicScript(String name, String version, String description, List<SqlStatement> statements) {
         if (version == null || version.isEmpty()) {
             throw new IllegalArgumentException("version must not be null or empty string");
         }
         if (statements == null || statements.isEmpty()) {
             throw new IllegalArgumentException("statements must not be null or empty list");
         }
+        this.name = name;
         this.version = version;
         this.description = description;
         this.statements = statements;
@@ -44,6 +46,11 @@ public class BasicScript implements SqlScript {
     @Override
     public Enumeration<SqlStatement> statements() {
         return Collections.enumeration(statements);
+    }
+
+    @Override
+    public String name() {
+        return name;
     }
 
     @Override

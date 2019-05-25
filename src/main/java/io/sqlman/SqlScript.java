@@ -34,6 +34,13 @@ public interface SqlScript {
     Enumeration<SqlStatement> statements();
 
     /**
+     * 脚本名称
+     *
+     * @return 脚本名称
+     */
+    String name();
+
+    /**
      * 脚本版本号
      *
      * @return 脚本版本号

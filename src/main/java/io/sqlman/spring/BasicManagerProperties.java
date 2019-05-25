@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "sqlman")
 public class BasicManagerProperties extends AbstractManagerProperties {
-    private SqlIsolation trxIsolation;
+    private SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
 
     public SqlIsolation getTrxIsolation() {
         return trxIsolation;

@@ -47,7 +47,7 @@ public class BasicScriptProvider implements SqlScriptProvider {
             Resource element = enumeration.nextElement();
             String name = element.getName();
             SqlInfo info = namingStrategy.parse(name);
-            SqlResource resource = new BasicResource(info.getVersion(), info.getDescription(), element.getUrl());
+            SqlResource resource = new BasicResource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             resources.add(resource);
         }
         Collections.sort(resources, new BasicVersionComparator(namingStrategy));
@@ -71,7 +71,7 @@ public class BasicScriptProvider implements SqlScriptProvider {
             SqlInfo info = namingStrategy.parse(name);
             int comparision = namingStrategy.compare(info.getVersion(), version);
             if (comparision > 0 || (comparision == 0 && included)) {
-                SqlResource resource = new BasicResource(info.getVersion(), info.getDescription(), element.getUrl());
+                SqlResource resource = new BasicResource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
                 resources.add(resource);
             }
         }

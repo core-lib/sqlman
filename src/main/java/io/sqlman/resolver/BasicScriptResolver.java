@@ -41,7 +41,7 @@ public class BasicScriptResolver implements SqlScriptResolver {
                 SqlStatement statement = new BasicStatement(ordinal, sql.toString());
                 statements.add(statement);
             }
-            return new BasicScript(resource.version(), resource.description(), statements);
+            return new BasicScript(resource.name(), resource.version(), resource.description(), statements);
         }
     }
 

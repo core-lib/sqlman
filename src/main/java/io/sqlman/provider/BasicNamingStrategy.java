@@ -48,15 +48,15 @@ public class BasicNamingStrategy implements SqlNamingStrategy {
             throw new IllegalArgumentException("invalid name ： " + name);
         }
         // 去掉后缀
-        name = name.substring(0, name.length() - extension.length());
+        String n = name.substring(0, name.length() - extension.length());
 
         // 取最后一截
-        name = name.substring(name.lastIndexOf(separator) + 1);
+        n = n.substring(n.lastIndexOf(separator) + 1);
 
         // 分隔符前面的是版本号后面是描述，描述可以没有
-        int index = name.indexOf(delimiter);
-        String version = index < 0 ? name : name.substring(0, index);
-        String description = index < 0 ? "" : name.substring(index + 1);
+        int index = n.indexOf(delimiter);
+        String version = index < 0 ? n : n.substring(0, index);
+        String description = index < 0 ? "" : n.substring(index + 1);
 
         return new SqlInfo(name, version, description);
     }

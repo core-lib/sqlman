@@ -222,14 +222,13 @@ public class BasicVersionManager implements SqlVersionManager {
 
         @Override
         public Integer execute(Connection connection) throws SQLException {
-            String version = script.version() + "/" + ordinal;
-            logger.info("Executing SQL script {}", version);
+            logger.info("Executing SQL script: {}", script.name());
             SqlStatement statement = script.statement(ordinal);
             String sql = statement.statement();
-            logger.info("{}", sql);
+            logger.info("Executing SQL statement: {}#{}\n{}", script.version(), ordinal, sql);
             PreparedStatement stmt = connection.prepareStatement(sql);
             int rowEffected = stmt.executeUpdate();
-            logger.info("SQL script execute completed with {} rows effected", rowEffected);
+            logger.info("SQL statement: {}#{} execute completed with {} rows effected", script.version(), ordinal, rowEffected);
             return rowEffected;
         }
     }
