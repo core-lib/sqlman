@@ -3,7 +3,7 @@ package io.sqlman;
 import java.util.Objects;
 
 /**
- * 脚本信息
+ * SQL脚本信息
  *
  * @author Payne 646742615@qq.com
  * 2019/5/24 20:48

@@ -50,6 +50,13 @@ public class SqlUtils {
         return out.toString(charset);
     }
 
+    /**
+     * 如果字符串是{@code null}或者是空字符串则返回缺省值，否则返回本身
+     *
+     * @param value        字符串本身
+     * @param defaultValue 缺省值
+     * @return 如果字符串是{@code null}或者是空字符串则返回缺省值，否则返回本身
+     */
     public static String ifEmpty(String value, String defaultValue) {
         return value == null || value.isEmpty() ? defaultValue : value;
     }

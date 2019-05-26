@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 
 /**
- * SQL版本管理器
+ * 数据库版本管理器
  *
  * @author Payne 646742615@qq.com
  * 2019/5/18 12:27

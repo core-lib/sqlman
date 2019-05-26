@@ -9,16 +9,16 @@ package io.sqlman;
 public interface SqlStatement {
 
     /**
-     * 脚本序号
+     * 语句序号
      *
-     * @return 脚本序号
+     * @return 语句序号
      */
     int ordinal();
 
     /**
-     * 脚本语句
+     * 语句内容
      *
-     * @return 脚本语句
+     * @return 语句内容
      */
     String statement();
 
