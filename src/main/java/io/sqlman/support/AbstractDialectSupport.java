@@ -27,6 +27,7 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
     @Override
     public SqlVersion detect(Connection connection) throws SQLException {
         StringBuilder dql = new StringBuilder();
+
         dql.append(" SELECT");
         dql.append("     ID AS id,");
         dql.append("     NAME AS name,");
@@ -73,6 +74,7 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
     @Override
     public void update(Connection connection, SqlVersion version) throws SQLException {
         StringBuilder dml = new StringBuilder();
+
         dml.append(" INSERT INTO ").append(table.toUpperCase()).append(" (");
         dml.append("     NAME,");
         dml.append("     VERSION,");
@@ -107,20 +109,17 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
 
     @Override
     public void remove(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DELETE TABLE " + table.toUpperCase() + "");
-        statement.execute();
+        connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "").execute();
     }
 
     @Override
     public void lockup(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + table.toUpperCase() + "_LOCK (NIL INTEGER)");
-        statement.execute();
+        connection.prepareStatement("CREATE TABLE " + table.toUpperCase() + "_LOCK (NIL INTEGER)").execute();
     }
 
     @Override
     public void unlock(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "_LOCK");
-        statement.execute();
+        connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "_LOCK").execute();
     }
 
     public String getTable() {

@@ -1,1 +1,0 @@
-drop table sqlman_test;

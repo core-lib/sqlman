@@ -1,7 +1,6 @@
 package io.sqlman.support;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
@@ -22,6 +21,7 @@ public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlD
     @Override
     public void create(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();
+
         ddl.append(" CREATE TABLE IF NOT EXISTS ").append(table.toUpperCase()).append(" (");
         ddl.append("     ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,");
         ddl.append("     NAME VARCHAR(225) NOT NULL,");
@@ -36,8 +36,8 @@ public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlD
         ddl.append("     ERROR_MESSAGE VARCHAR(255) NOT NULL,");
         ddl.append("     TIME_EXECUTED TIMESTAMP NOT NULL");
         ddl.append(" )");
-        PreparedStatement statement = connection.prepareStatement(ddl.toString());
-        statement.execute();
+
+        connection.prepareStatement(ddl.toString()).execute();
     }
 
 }

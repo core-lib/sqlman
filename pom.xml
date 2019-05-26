@@ -99,6 +99,13 @@
             <version>7.0.0.jre8</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0.4.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/test/lib/ojdbc6-11.2.0.4.0.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,1 +1,0 @@
-CREATE TABLE test (id int(11) PRIMARY KEY)

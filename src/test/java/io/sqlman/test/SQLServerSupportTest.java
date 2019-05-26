@@ -1,4 +1,4 @@
-package io.sqlman.sqlserver;
+package io.sqlman.test;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import io.sqlman.manager.BasicVersionManager;
@@ -23,8 +23,9 @@ public class SQLServerSupportTest {
         BasicVersionManager manager = new BasicVersionManager();
         manager.setDialectSupport(new SQLServerDialectSupport());
         manager.setDataSource(dataSource);
-        manager.setSourceProvider(new BasicSourceProvider("sqlman/SQLServer/**/*.sql"));
+        manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
         manager.upgrade();
+        manager.remove();
     }
 
 }

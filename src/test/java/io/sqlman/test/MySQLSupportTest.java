@@ -1,9 +1,9 @@
-package io.sqlman.sqlite;
+package io.sqlman.test;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import io.sqlman.manager.BasicVersionManager;
 import io.sqlman.provider.BasicSourceProvider;
-import io.sqlman.support.SQLiteDialectSupport;
+import io.sqlman.support.MySQLDialectSupport;
 import org.junit.Test;
 
 /**
@@ -12,19 +12,20 @@ import org.junit.Test;
  * @author Payne 646742615@qq.com
  * 2019/5/24 13:17
  */
-public class SQLiteSupportTest {
+public class MySQLSupportTest {
 
     @Test
     public void test() throws Exception {
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl("jdbc:sqlite:target/SQLite.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/sqlman?serverTimezone=GMT%2B8&useSSL=false");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
         BasicVersionManager manager = new BasicVersionManager();
+        manager.setDialectSupport(new MySQLDialectSupport());
         manager.setDataSource(dataSource);
-        manager.setDialectSupport(new SQLiteDialectSupport());
-        manager.setSourceProvider(new BasicSourceProvider("sqlman/SQLite/**/*.sql"));
+        manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
         manager.upgrade();
+        manager.remove();
     }
 
 }

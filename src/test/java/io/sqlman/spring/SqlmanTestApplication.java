@@ -1,4 +1,4 @@
-package io.sqlman;
+package io.sqlman.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

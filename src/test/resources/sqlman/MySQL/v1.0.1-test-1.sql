@@ -1,1 +1,0 @@
-UPDATE test set id = 1 WHERE id = 0;

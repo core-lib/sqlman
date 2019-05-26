@@ -1,7 +1,6 @@
 package io.sqlman.support;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
@@ -22,6 +21,7 @@ public class SQLServerDialectSupport extends AbstractDialectSupport implements S
     @Override
     public void create(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();
+
         ddl.append(" IF NOT EXISTS(");
         ddl.append("     SELECT *");
         ddl.append("     FROM SYSOBJECTS");
@@ -41,8 +41,8 @@ public class SQLServerDialectSupport extends AbstractDialectSupport implements S
         ddl.append("   ERROR_MESSAGE VARCHAR(255) NOT NULL,");
         ddl.append("   TIME_EXECUTED DATETIME     NOT NULL");
         ddl.append(" )");
-        PreparedStatement statement = connection.prepareStatement(ddl.toString());
-        statement.execute();
+
+        connection.prepareStatement(ddl.toString()).execute();
     }
 
 }
