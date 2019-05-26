@@ -7,7 +7,7 @@ package io.sqlman.spring;
  * 2019/5/25 9:39
  */
 public class AbstractManagerProperties {
-    private String manager = "basic";
+    private String manager = "jdbc";
 
     public String getManager() {
         return manager;

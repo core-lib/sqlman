@@ -11,6 +11,13 @@ import java.sql.SQLException;
  */
 public class OracleDialectSupport extends AbstractDialectSupport implements SqlDialectSupport {
 
+    public OracleDialectSupport() {
+    }
+
+    public OracleDialectSupport(String table) {
+        super(table);
+    }
+
     @Override
     public void create(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();

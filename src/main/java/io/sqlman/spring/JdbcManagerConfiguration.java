@@ -23,17 +23,17 @@ import javax.sql.DataSource;
  * 2019/5/25 9:43
  */
 @Configuration
-@EnableConfigurationProperties(BasicManagerProperties.class)
+@EnableConfigurationProperties(JdbcManagerProperties.class)
 @ConditionalOnClass(JdbcVersionManager.class)
 @ConditionalOnBean(DataSource.class)
-@ConditionalOnProperty(prefix = "sqlman", name = "manager", havingValue = "basic", matchIfMissing = true)
-public class BasicManagerConfiguration {
+@ConditionalOnProperty(prefix = "sqlman", name = "manager", havingValue = "jdbc", matchIfMissing = true)
+public class JdbcManagerConfiguration {
 
     @Resource
     private DataSource dataSource;
 
     @Resource
-    private BasicManagerProperties properties;
+    private JdbcManagerProperties properties;
 
     @Resource
     private SqlSourceProvider scriptProvider;
@@ -47,7 +47,7 @@ public class BasicManagerConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public JdbcVersionManager sqlmanBasicVersionManager() throws Exception {
-        JdbcIsolation trxIsolation = properties.getTrxIsolation();
+        JdbcIsolation trxIsolation = properties.getJdbcIsolation();
         JdbcVersionManager jdbcVersionManager = new JdbcVersionManager(dataSource, trxIsolation, scriptProvider, scriptResolver, dialectSupport);
         jdbcVersionManager.upgrade();
         return jdbcVersionManager;

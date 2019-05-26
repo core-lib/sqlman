@@ -33,12 +33,12 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     public JdbcVersionManager(
             DataSource dataSource,
-            JdbcIsolation trxIsolation,
+            JdbcIsolation jdbcIsolation,
             SqlSourceProvider sourceProvider,
             SqlScriptResolver scriptResolver,
             SqlDialectSupport dialectSupport
     ) {
-        super(dataSource, trxIsolation, sourceProvider, scriptResolver, dialectSupport);
+        super(dataSource, jdbcIsolation, sourceProvider, scriptResolver, dialectSupport);
     }
 
     @Override

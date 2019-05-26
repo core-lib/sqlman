@@ -8,15 +8,15 @@ import io.sqlman.provider.SqlInfo;
  * @author Payne 646742615@qq.com
  * 2019/5/24 22:16
  */
-public class DefaultNamingStrategy implements SqlNamingStrategy {
+public class StandardNamingStrategy implements SqlNamingStrategy {
     private char separator = '/';
     private String delimiter = "-";
     private String extension = ".sql";
 
-    public DefaultNamingStrategy() {
+    public StandardNamingStrategy() {
     }
 
-    public DefaultNamingStrategy(char separator, String delimiter, String extension) {
+    public StandardNamingStrategy(char separator, String delimiter, String extension) {
         if (delimiter == null || delimiter.trim().isEmpty()) {
             throw new IllegalArgumentException("delimiter must not be null or blank string");
         }

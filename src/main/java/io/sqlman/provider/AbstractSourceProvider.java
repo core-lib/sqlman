@@ -1,8 +1,8 @@
 package io.sqlman.provider;
 
-import io.sqlman.strategy.DefaultNamingStrategy;
 import io.sqlman.strategy.MalformedNameException;
 import io.sqlman.strategy.SqlNamingStrategy;
+import io.sqlman.strategy.StandardNamingStrategy;
 
 /**
  * 抽象的SQL脚本资源提供器
@@ -11,7 +11,7 @@ import io.sqlman.strategy.SqlNamingStrategy;
  * 2019/5/25 20:57
  */
 public abstract class AbstractSourceProvider implements SqlSourceProvider {
-    protected SqlNamingStrategy namingStrategy = new DefaultNamingStrategy();
+    protected SqlNamingStrategy namingStrategy = new StandardNamingStrategy();
 
     protected AbstractSourceProvider() {
     }

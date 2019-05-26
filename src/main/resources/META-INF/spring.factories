@@ -1,5 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.sqlman.spring.BasicManagerConfiguration,\
+  io.sqlman.spring.JdbcManagerConfiguration,\
   io.sqlman.spring.script.ClasspathProviderConfiguration,\
   io.sqlman.spring.script.StandardNamingConfiguration,\
   io.sqlman.spring.script.BasicResolverConfiguration,\

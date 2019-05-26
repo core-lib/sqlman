@@ -1,7 +1,7 @@
 package io.sqlman.spring.script;
 
-import io.sqlman.strategy.DefaultNamingStrategy;
 import io.sqlman.strategy.SqlNamingStrategy;
+import io.sqlman.strategy.StandardNamingStrategy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,8 +19,8 @@ import javax.annotation.Resource;
  */
 @Configuration
 @EnableConfigurationProperties(StandardNamingProperties.class)
-@ConditionalOnClass(DefaultNamingStrategy.class)
-@ConditionalOnProperty(prefix = "sqlman.script.naming", name = "strategy", havingValue = "basic", matchIfMissing = true)
+@ConditionalOnClass(StandardNamingStrategy.class)
+@ConditionalOnProperty(prefix = "sqlman.script.naming", name = "strategy", havingValue = "standard", matchIfMissing = true)
 public class StandardNamingConfiguration {
 
     @Resource
@@ -32,7 +32,7 @@ public class StandardNamingConfiguration {
         char separator = properties.getSeparator();
         String delimiter = properties.getDelimiter();
         String extension = properties.getExtension();
-        return new DefaultNamingStrategy(separator, delimiter, extension);
+        return new StandardNamingStrategy(separator, delimiter, extension);
     }
 
 }

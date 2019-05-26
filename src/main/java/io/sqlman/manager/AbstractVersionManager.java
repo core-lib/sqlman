@@ -27,7 +27,7 @@ import java.util.Enumeration;
  */
 public abstract class AbstractVersionManager implements SqlVersionManager {
     protected DataSource dataSource;
-    protected JdbcIsolation trxIsolation = JdbcIsolation.DEFAULT;
+    protected JdbcIsolation jdbcIsolation = JdbcIsolation.DEFAULT;
     protected SqlSourceProvider sourceProvider = new ClasspathSourceProvider();
     protected SqlScriptResolver scriptResolver = new BasicScriptResolver();
     protected SqlDialectSupport dialectSupport = new MySQLDialectSupport();
@@ -44,7 +44,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     protected AbstractVersionManager(
             DataSource dataSource,
-            JdbcIsolation trxIsolation,
+            JdbcIsolation jdbcIsolation,
             SqlSourceProvider sourceProvider,
             SqlScriptResolver scriptResolver,
             SqlDialectSupport dialectSupport
@@ -52,8 +52,8 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         if (dataSource == null) {
             throw new IllegalArgumentException("dataSource must not be null");
         }
-        if (trxIsolation == null) {
-            throw new IllegalArgumentException("trxIsolation must not be null");
+        if (jdbcIsolation == null) {
+            throw new IllegalArgumentException("jdbcIsolation must not be null");
         }
         if (sourceProvider == null) {
             throw new IllegalArgumentException("sourceProvider must not be null");
@@ -65,7 +65,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
             throw new IllegalArgumentException("dialectSupport must not be null");
         }
         this.dataSource = dataSource;
-        this.trxIsolation = trxIsolation;
+        this.jdbcIsolation = jdbcIsolation;
         this.sourceProvider = sourceProvider;
         this.scriptResolver = scriptResolver;
         this.dialectSupport = dialectSupport;
@@ -76,8 +76,8 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
-            if (trxIsolation != null && trxIsolation != JdbcIsolation.DEFAULT) {
-                connection.setTransactionIsolation(trxIsolation.value);
+            if (jdbcIsolation != null && jdbcIsolation != JdbcIsolation.DEFAULT) {
+                connection.setTransactionIsolation(jdbcIsolation.value);
             }
             T result = transaction.execute(connection);
             connection.commit();
@@ -192,12 +192,12 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         this.dataSource = dataSource;
     }
 
-    public JdbcIsolation getTrxIsolation() {
-        return trxIsolation;
+    public JdbcIsolation getJdbcIsolation() {
+        return jdbcIsolation;
     }
 
-    public void setTrxIsolation(JdbcIsolation trxIsolation) {
-        this.trxIsolation = trxIsolation;
+    public void setJdbcIsolation(JdbcIsolation jdbcIsolation) {
+        this.jdbcIsolation = jdbcIsolation;
     }
 
     public SqlSourceProvider getSourceProvider() {
