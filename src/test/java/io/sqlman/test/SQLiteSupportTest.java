@@ -16,16 +16,19 @@ public class SQLiteSupportTest {
 
     @Test
     public void test() throws Exception {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl("jdbc:sqlite:target/SQLite.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
         BasicVersionManager manager = new BasicVersionManager();
-        manager.setDataSource(dataSource);
-        manager.setDialectSupport(new SQLiteDialectSupport());
-        manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
-        manager.upgrade();
-        manager.remove();
+        try {
+            DruidDataSource dataSource = new DruidDataSource();
+            dataSource.setUrl("jdbc:sqlite:target/SQLite.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL");
+            dataSource.setUsername("root");
+            dataSource.setPassword("root");
+            manager.setDataSource(dataSource);
+            manager.setDialectSupport(new SQLiteDialectSupport());
+            manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
+            manager.upgrade();
+        } finally {
+            manager.remove();
+        }
     }
 
 }

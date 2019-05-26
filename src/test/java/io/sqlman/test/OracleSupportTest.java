@@ -16,16 +16,19 @@ public class OracleSupportTest {
 
     @Test
     public void test() throws Exception {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl("jdbc:oracle:thin:@//203.195.172.217:1521/regent");
-        dataSource.setUsername("regent");
-        dataSource.setPassword("regent2019");
         BasicVersionManager manager = new BasicVersionManager();
-        manager.setDialectSupport(new OracleDialectSupport());
-        manager.setDataSource(dataSource);
-        manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
-        manager.upgrade();
-        manager.remove();
+        try {
+            DruidDataSource dataSource = new DruidDataSource();
+            dataSource.setUrl("jdbc:oracle:thin:@//203.195.172.217:1521/regent");
+            dataSource.setUsername("regent");
+            dataSource.setPassword("regent2019");
+            manager.setDialectSupport(new OracleDialectSupport());
+            manager.setDataSource(dataSource);
+            manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
+            manager.upgrade();
+        } finally {
+            manager.remove();
+        }
     }
 
 }

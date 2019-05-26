@@ -16,16 +16,19 @@ public class MySQLSupportTest {
 
     @Test
     public void test() throws Exception {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl("jdbc:mysql://localhost:3306/sqlman?serverTimezone=GMT%2B8&useSSL=false");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
         BasicVersionManager manager = new BasicVersionManager();
-        manager.setDialectSupport(new MySQLDialectSupport());
-        manager.setDataSource(dataSource);
-        manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
-        manager.upgrade();
-        manager.remove();
+        try {
+            DruidDataSource dataSource = new DruidDataSource();
+            dataSource.setUrl("jdbc:mysql://localhost:3306/sqlman?serverTimezone=GMT%2B8&useSSL=false");
+            dataSource.setUsername("root");
+            dataSource.setPassword("root");
+            manager.setDialectSupport(new MySQLDialectSupport());
+            manager.setDataSource(dataSource);
+            manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
+            manager.upgrade();
+        } finally {
+            manager.remove();
+        }
     }
 
 }

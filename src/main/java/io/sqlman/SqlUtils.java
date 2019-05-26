@@ -50,4 +50,8 @@ public class SqlUtils {
         return out.toString(charset);
     }
 
+    public static String ifEmpty(String value, String defaultValue) {
+        return value == null || value.isEmpty() ? defaultValue : value;
+    }
+
 }

@@ -1,9 +1,6 @@
 package io.sqlman.manager;
 
-import io.sqlman.SqlScript;
-import io.sqlman.SqlSource;
-import io.sqlman.SqlStatement;
-import io.sqlman.SqlVersion;
+import io.sqlman.*;
 import io.sqlman.provider.SqlSourceProvider;
 import io.sqlman.resolver.SqlScriptResolver;
 import io.sqlman.support.SqlDialectSupport;
@@ -113,20 +110,20 @@ public class BasicVersionManager extends AbstractVersionManager implements SqlVe
                             } catch (Throwable ex) {
                                 connection.rollback();
                                 logger.error("Fail to execute SQL statement", ex);
-                                String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "unknown error" : ex.getMessage();
+                                String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "Unknown error" : ex.getMessage();
                                 throw new SQLException(state, state, -1, ex);
                             } finally {
                                 current = new SqlVersion();
-                                current.setName(script.name());
+                                current.setName(SqlUtils.ifEmpty(script.name(), "NO NAME"));
                                 current.setVersion(script.version());
                                 current.setOrdinal(ordinal);
-                                current.setDescription(script.description());
+                                current.setDescription(SqlUtils.ifEmpty(script.description(), "NO DESCRIPTION"));
                                 current.setSqlQuantity(script.sqls());
                                 current.setSuccess(sqlException == null);
                                 current.setRowEffected(rowEffected);
                                 current.setErrorCode(sqlException == null ? 0 : sqlException.getErrorCode());
-                                current.setErrorState(sqlException == null ? "" : sqlException.getSQLState());
-                                current.setErrorMessage(sqlException == null ? "" : sqlException.getMessage());
+                                current.setErrorState(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getSQLState(), "NO STATE"));
+                                current.setErrorMessage(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getMessage(), "NO MESSAGE"));
                                 current.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
                                 dialectSupport.update(connection, current);
                                 connection.commit();
