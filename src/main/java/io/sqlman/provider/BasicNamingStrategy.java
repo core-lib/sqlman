@@ -15,11 +15,11 @@ public class BasicNamingStrategy implements SqlNamingStrategy {
     }
 
     public BasicNamingStrategy(char separator, String delimiter, String extension) {
-        if (delimiter == null || delimiter.isEmpty()) {
-            throw new IllegalArgumentException("delimiter must not be null or empty string");
+        if (delimiter == null || delimiter.trim().isEmpty()) {
+            throw new IllegalArgumentException("delimiter must not be null or blank string");
         }
-        if (extension == null || extension.isEmpty()) {
-            throw new IllegalArgumentException("extension must not be null or empty string");
+        if (extension == null || extension.trim().isEmpty()) {
+            throw new IllegalArgumentException("extension must not be null or blank string");
         }
         this.separator = separator;
         this.delimiter = delimiter;
