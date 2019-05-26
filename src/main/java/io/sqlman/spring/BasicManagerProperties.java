@@ -1,6 +1,6 @@
 package io.sqlman.spring;
 
-import io.sqlman.manager.SqlIsolation;
+import io.sqlman.manager.JdbcIsolation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -11,13 +11,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "sqlman")
 public class BasicManagerProperties extends AbstractManagerProperties {
-    private SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
+    private JdbcIsolation trxIsolation = JdbcIsolation.DEFAULT;
 
-    public SqlIsolation getTrxIsolation() {
+    public JdbcIsolation getTrxIsolation() {
         return trxIsolation;
     }
 
-    public void setTrxIsolation(SqlIsolation trxIsolation) {
+    public void setTrxIsolation(JdbcIsolation trxIsolation) {
         this.trxIsolation = trxIsolation;
     }
 }

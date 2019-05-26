@@ -4,8 +4,8 @@ import io.sqlman.SqlScript;
 import io.sqlman.SqlSource;
 import io.sqlman.SqlVersion;
 import io.sqlman.provider.DuplicatedVersionException;
-import io.sqlman.provider.MalformedNameException;
 import io.sqlman.resolver.IncorrectSyntaxException;
+import io.sqlman.strategy.MalformedNameException;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -25,24 +25,6 @@ public interface SqlVersionManager {
      * @throws SQLException SQL异常
      */
     void upgrade() throws SQLException;
-
-    /**
-     * 执行事务
-     *
-     * @param transaction 事务
-     * @param <T>         事务执行结果类型
-     * @return 事务执行结果
-     * @throws SQLException SQL异常
-     */
-    <T> T execute(SqlTransaction<T> transaction) throws SQLException;
-
-    /**
-     * 执行操作
-     *
-     * @param action 操作
-     * @throws SQLException SQL异常
-     */
-    void perform(SqlAction action) throws SQLException;
 
     /**
      * 获取所有SQL脚本

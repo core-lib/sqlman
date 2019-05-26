@@ -8,7 +8,7 @@ import java.sql.Connection;
  * @author Payne 646742615@qq.com
  * 2019/5/24 10:57
  */
-public interface SqlTransaction<T> {
+public interface JdbcTransaction<T> {
 
     /**
      * 执行事务

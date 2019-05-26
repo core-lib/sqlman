@@ -1,7 +1,7 @@
 package io.sqlman.spring;
 
-import io.sqlman.manager.BasicVersionManager;
-import io.sqlman.manager.SqlIsolation;
+import io.sqlman.manager.JdbcIsolation;
+import io.sqlman.manager.JdbcVersionManager;
 import io.sqlman.provider.SqlSourceProvider;
 import io.sqlman.resolver.SqlScriptResolver;
 import io.sqlman.support.SqlDialectSupport;
@@ -24,7 +24,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableConfigurationProperties(BasicManagerProperties.class)
-@ConditionalOnClass(BasicVersionManager.class)
+@ConditionalOnClass(JdbcVersionManager.class)
 @ConditionalOnBean(DataSource.class)
 @ConditionalOnProperty(prefix = "sqlman", name = "manager", havingValue = "basic", matchIfMissing = true)
 public class BasicManagerConfiguration {
@@ -46,11 +46,11 @@ public class BasicManagerConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BasicVersionManager sqlmanBasicVersionManager() throws Exception {
-        SqlIsolation trxIsolation = properties.getTrxIsolation();
-        BasicVersionManager basicVersionManager = new BasicVersionManager(dataSource, trxIsolation, scriptProvider, scriptResolver, dialectSupport);
-        basicVersionManager.upgrade();
-        return basicVersionManager;
+    public JdbcVersionManager sqlmanBasicVersionManager() throws Exception {
+        JdbcIsolation trxIsolation = properties.getTrxIsolation();
+        JdbcVersionManager jdbcVersionManager = new JdbcVersionManager(dataSource, trxIsolation, scriptProvider, scriptResolver, dialectSupport);
+        jdbcVersionManager.upgrade();
+        return jdbcVersionManager;
     }
 
 }

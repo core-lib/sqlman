@@ -1,4 +1,4 @@
-package io.sqlman.provider;
+package io.sqlman.strategy;
 
 /**
  * 不正确的SQL资源命名异常

@@ -1,8 +1,8 @@
 package io.sqlman.spring.script;
 
-import io.sqlman.provider.BasicSourceProvider;
-import io.sqlman.provider.SqlNamingStrategy;
+import io.sqlman.provider.ClasspathSourceProvider;
 import io.sqlman.provider.SqlSourceProvider;
+import io.sqlman.strategy.SqlNamingStrategy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  */
 @Configuration
 @EnableConfigurationProperties(ClasspathProviderProperties.class)
-@ConditionalOnClass(BasicSourceProvider.class)
+@ConditionalOnClass(ClasspathSourceProvider.class)
 @ConditionalOnProperty(prefix = "sqlman.script", name = "provider", havingValue = "classpath", matchIfMissing = true)
 public class ClasspathProviderConfiguration {
 
@@ -32,9 +32,9 @@ public class ClasspathProviderConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(SqlSourceProvider.class)
-    public BasicSourceProvider sqlmanBasicScriptProvider() {
+    public ClasspathSourceProvider sqlmanBasicScriptProvider() {
         String location = properties.getLocation();
-        return new BasicSourceProvider(location, sqlNamingStrategy);
+        return new ClasspathSourceProvider(location, sqlNamingStrategy);
     }
 
 }

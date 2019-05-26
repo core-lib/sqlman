@@ -3,6 +3,8 @@ package io.sqlman.provider;
 import io.loadkit.Loaders;
 import io.loadkit.Resource;
 import io.sqlman.SqlSource;
+import io.sqlman.strategy.MalformedNameException;
+import io.sqlman.strategy.SqlNamingStrategy;
 
 import java.io.IOException;
 import java.util.*;
@@ -13,23 +15,23 @@ import java.util.*;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:02
  */
-public class BasicSourceProvider extends AbstractSourceProvider implements SqlSourceProvider {
+public class ClasspathSourceProvider extends AbstractSourceProvider implements SqlSourceProvider {
     private ClassLoader classLoader;
     private String scriptLocation = "sqlman/**/*.sql";
 
-    public BasicSourceProvider() {
+    public ClasspathSourceProvider() {
         super();
     }
 
-    public BasicSourceProvider(String scriptLocation) {
+    public ClasspathSourceProvider(String scriptLocation) {
         this(null, scriptLocation);
     }
 
-    public BasicSourceProvider(String scriptLocation, SqlNamingStrategy namingStrategy) {
+    public ClasspathSourceProvider(String scriptLocation, SqlNamingStrategy namingStrategy) {
         this(null, scriptLocation, namingStrategy);
     }
 
-    public BasicSourceProvider(ClassLoader classLoader, String scriptLocation) {
+    public ClasspathSourceProvider(ClassLoader classLoader, String scriptLocation) {
         if (scriptLocation == null || scriptLocation.trim().isEmpty()) {
             throw new IllegalArgumentException("scriptLocation must not be null or blank string");
         }
@@ -37,7 +39,7 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
         this.scriptLocation = scriptLocation;
     }
 
-    public BasicSourceProvider(ClassLoader classLoader, String scriptLocation, SqlNamingStrategy namingStrategy) {
+    public ClasspathSourceProvider(ClassLoader classLoader, String scriptLocation, SqlNamingStrategy namingStrategy) {
         super(namingStrategy);
         if (scriptLocation == null || scriptLocation.trim().isEmpty()) {
             throw new IllegalArgumentException("scriptLocation must not be null or blank string");
@@ -66,7 +68,7 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
             Resource element = enumeration.nextElement();
             String name = element.getName();
             SqlInfo info = namingStrategy.parse(name);
-            SqlSource resource = new BasicSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
+            SqlSource resource = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             if (!resources.add(resource)) {
                 throw new DuplicatedVersionException("duplicate SQL script version: " + resource.version(), resource.version());
             }
@@ -95,7 +97,7 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
             String name = element.getName();
             SqlInfo info = namingStrategy.parse(name);
             int comparision = namingStrategy.compare(info.getVersion(), version);
-            SqlSource resource = new BasicSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
+            SqlSource resource = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             boolean newer = comparision > 0 || (comparision == 0 && included);
             if (newer && !resources.add(resource)) {
                 throw new DuplicatedVersionException("duplicate SQL script version: " + resource.version(), resource.version());

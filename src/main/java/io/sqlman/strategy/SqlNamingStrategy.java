@@ -1,14 +1,16 @@
-package io.sqlman.provider;
+package io.sqlman.strategy;
+
+import io.sqlman.provider.SqlInfo;
 
 import java.util.Comparator;
 
 /**
- * SQL脚本名称解析器
+ * SQL脚本命名策略
  *
  * @author Payne 646742615@qq.com
- * 2019/5/25 20:55
+ * 2019/5/24 21:57
  */
-interface SqlNamingAnalyzer extends Comparator<String> {
+public interface SqlNamingStrategy extends Comparator<String> {
 
     /**
      * 验证命名是否合法

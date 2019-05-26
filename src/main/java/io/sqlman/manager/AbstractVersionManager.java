@@ -3,13 +3,13 @@ package io.sqlman.manager;
 import io.sqlman.SqlScript;
 import io.sqlman.SqlSource;
 import io.sqlman.SqlVersion;
-import io.sqlman.provider.BasicSourceProvider;
+import io.sqlman.provider.ClasspathSourceProvider;
 import io.sqlman.provider.DuplicatedVersionException;
-import io.sqlman.provider.MalformedNameException;
 import io.sqlman.provider.SqlSourceProvider;
 import io.sqlman.resolver.BasicScriptResolver;
 import io.sqlman.resolver.IncorrectSyntaxException;
 import io.sqlman.resolver.SqlScriptResolver;
+import io.sqlman.strategy.MalformedNameException;
 import io.sqlman.support.MySQLDialectSupport;
 import io.sqlman.support.SqlDialectSupport;
 
@@ -27,8 +27,8 @@ import java.util.Enumeration;
  */
 public abstract class AbstractVersionManager implements SqlVersionManager {
     protected DataSource dataSource;
-    protected SqlIsolation trxIsolation = SqlIsolation.DEFAULT;
-    protected SqlSourceProvider sourceProvider = new BasicSourceProvider();
+    protected JdbcIsolation trxIsolation = JdbcIsolation.DEFAULT;
+    protected SqlSourceProvider sourceProvider = new ClasspathSourceProvider();
     protected SqlScriptResolver scriptResolver = new BasicScriptResolver();
     protected SqlDialectSupport dialectSupport = new MySQLDialectSupport();
 
@@ -44,7 +44,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     protected AbstractVersionManager(
             DataSource dataSource,
-            SqlIsolation trxIsolation,
+            JdbcIsolation trxIsolation,
             SqlSourceProvider sourceProvider,
             SqlScriptResolver scriptResolver,
             SqlDialectSupport dialectSupport
@@ -71,13 +71,12 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         this.dialectSupport = dialectSupport;
     }
 
-    @Override
-    public <T> T execute(SqlTransaction<T> transaction) throws SQLException {
+    protected <T> T execute(JdbcTransaction<T> transaction) throws SQLException {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
-            if (trxIsolation != null && trxIsolation != SqlIsolation.DEFAULT) {
+            if (trxIsolation != null && trxIsolation != JdbcIsolation.DEFAULT) {
                 connection.setTransactionIsolation(trxIsolation.value);
             }
             T result = transaction.execute(connection);
@@ -100,9 +99,8 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         }
     }
 
-    @Override
-    public void perform(final SqlAction action) throws SQLException {
-        execute(new SqlTransaction<Void>() {
+    protected void perform(final JdbcAction action) throws SQLException {
+        execute(new JdbcTransaction<Void>() {
             @Override
             public Void execute(Connection connection) throws Exception {
                 action.perform(connection);
@@ -128,7 +126,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public void create() throws SQLException {
-        perform(new SqlAction() {
+        perform(new JdbcAction() {
             @Override
             public void perform(Connection connection) throws Exception {
                 dialectSupport.create(connection);
@@ -138,7 +136,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public SqlVersion detect() throws SQLException {
-        return execute(new SqlTransaction<SqlVersion>() {
+        return execute(new JdbcTransaction<SqlVersion>() {
             @Override
             public SqlVersion execute(Connection connection) throws Exception {
                 return dialectSupport.detect(connection);
@@ -148,7 +146,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public void update(final SqlVersion version) throws SQLException {
-        perform(new SqlAction() {
+        perform(new JdbcAction() {
             @Override
             public void perform(Connection connection) throws Exception {
                 dialectSupport.update(connection, version);
@@ -158,7 +156,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public void remove() throws SQLException {
-        perform(new SqlAction() {
+        perform(new JdbcAction() {
             @Override
             public void perform(Connection connection) throws Exception {
                 dialectSupport.remove(connection);
@@ -168,7 +166,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public void lockup() throws SQLException {
-        perform(new SqlAction() {
+        perform(new JdbcAction() {
             @Override
             public void perform(Connection connection) throws Exception {
                 dialectSupport.lockup(connection);
@@ -178,7 +176,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
 
     @Override
     public void unlock() throws SQLException {
-        perform(new SqlAction() {
+        perform(new JdbcAction() {
             @Override
             public void perform(Connection connection) throws Exception {
                 dialectSupport.unlock(connection);
@@ -194,11 +192,11 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         this.dataSource = dataSource;
     }
 
-    public SqlIsolation getTrxIsolation() {
+    public JdbcIsolation getTrxIsolation() {
         return trxIsolation;
     }
 
-    public void setTrxIsolation(SqlIsolation trxIsolation) {
+    public void setTrxIsolation(JdbcIsolation trxIsolation) {
         this.trxIsolation = trxIsolation;
     }
 

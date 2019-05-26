@@ -8,7 +8,7 @@ import java.sql.Connection;
  * @author Payne 646742615@qq.com
  * 2019/5/24 10:35
  */
-public enum SqlIsolation {
+public enum JdbcIsolation {
 
     /**
      * 缺省事务
@@ -37,7 +37,7 @@ public enum SqlIsolation {
 
     public final int value;
 
-    SqlIsolation(int value) {
+    JdbcIsolation(int value) {
         this.value = value;
     }
 }

@@ -1,8 +1,10 @@
 package io.sqlman.provider;
 
 import io.sqlman.SqlSource;
+import io.sqlman.strategy.MalformedNameException;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Enumeration;
 
 /**
@@ -11,7 +13,7 @@ import java.util.Enumeration;
  * @author Payne 646742615@qq.com
  * 2019/5/17 17:59
  */
-public interface SqlSourceProvider extends SqlNamingAnalyzer {
+public interface SqlSourceProvider extends Comparator<String> {
 
     /**
      * 获取所有SQL脚本
@@ -38,4 +40,20 @@ public interface SqlSourceProvider extends SqlNamingAnalyzer {
      */
     Enumeration<SqlSource> acquire(String version, boolean included) throws MalformedNameException, DuplicatedVersionException, IOException;
 
+    /**
+     * 验证命名是否合法
+     *
+     * @param name SQL脚本名称
+     * @return 如果名称合法则返回{@code true}否则返回{@code false}
+     */
+    boolean check(String name);
+
+    /**
+     * SQL脚本名称解析
+     *
+     * @param name SQL脚本名称
+     * @return SQL脚本信息
+     * @throws MalformedNameException SQL脚本资源命名不合法，即{@link this#check(String)}返回{@code false}。
+     */
+    SqlInfo parse(String name) throws MalformedNameException;
 }

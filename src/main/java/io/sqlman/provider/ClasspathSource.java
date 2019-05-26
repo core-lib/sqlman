@@ -13,13 +13,13 @@ import java.net.URL;
  * @author Payne 646742615@qq.com
  * 2019/5/24 17:57
  */
-public class BasicSource implements SqlSource {
+public class ClasspathSource implements SqlSource {
     private final String name;
     private final String version;
     private final String description;
     private final URL url;
 
-    public BasicSource(String name, String version, String description, URL url) {
+    public ClasspathSource(String name, String version, String description, URL url) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null");
         }

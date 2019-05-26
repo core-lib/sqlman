@@ -1,20 +1,22 @@
-package io.sqlman.provider;
+package io.sqlman.strategy;
+
+import io.sqlman.provider.SqlInfo;
 
 /**
- * 标准命名策略
+ * 缺省的命名策略
  *
  * @author Payne 646742615@qq.com
  * 2019/5/24 22:16
  */
-public class BasicNamingStrategy implements SqlNamingStrategy {
+public class DefaultNamingStrategy implements SqlNamingStrategy {
     private char separator = '/';
     private String delimiter = "-";
     private String extension = ".sql";
 
-    public BasicNamingStrategy() {
+    public DefaultNamingStrategy() {
     }
 
-    public BasicNamingStrategy(char separator, String delimiter, String extension) {
+    public DefaultNamingStrategy(char separator, String delimiter, String extension) {
         if (delimiter == null || delimiter.trim().isEmpty()) {
             throw new IllegalArgumentException("delimiter must not be null or blank string");
         }

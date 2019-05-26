@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * @author Payne 646742615@qq.com
  * 2019/5/25 23:54
  */
-public interface SqlAction {
+public interface JdbcAction {
 
     /**
      * 执行操作

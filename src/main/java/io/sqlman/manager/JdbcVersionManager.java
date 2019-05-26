@@ -20,20 +20,20 @@ import java.util.Enumeration;
  * @author Payne 646742615@qq.com
  * 2019/5/22 16:15
  */
-public class BasicVersionManager extends AbstractVersionManager implements SqlVersionManager, SqlAction {
+public class JdbcVersionManager extends AbstractVersionManager implements SqlVersionManager, JdbcAction {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected BasicVersionManager() {
+    protected JdbcVersionManager() {
         super();
     }
 
-    public BasicVersionManager(DataSource dataSource) {
+    public JdbcVersionManager(DataSource dataSource) {
         super(dataSource);
     }
 
-    public BasicVersionManager(
+    public JdbcVersionManager(
             DataSource dataSource,
-            SqlIsolation trxIsolation,
+            JdbcIsolation trxIsolation,
             SqlSourceProvider sourceProvider,
             SqlScriptResolver scriptResolver,
             SqlDialectSupport dialectSupport
