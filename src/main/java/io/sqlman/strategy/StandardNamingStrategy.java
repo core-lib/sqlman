@@ -5,7 +5,7 @@ import io.sqlman.SqlNamingStrategy;
 import io.sqlman.exception.MalformedNameException;
 
 /**
- * 缺省的命名策略
+ * 标准的命名策略
  *
  * @author Payne 646742615@qq.com
  * 2019/5/24 22:16
