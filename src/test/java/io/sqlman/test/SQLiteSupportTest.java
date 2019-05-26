@@ -1,8 +1,10 @@
 package io.sqlman.test;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.manager.BasicVersionManager;
 import io.sqlman.provider.BasicSourceProvider;
+import io.sqlman.resolver.BasicScriptResolver;
 import io.sqlman.support.SQLiteDialectSupport;
 import org.junit.Test;
 
@@ -24,6 +26,7 @@ public class SQLiteSupportTest {
             dataSource.setPassword("root");
             manager.setDataSource(dataSource);
             manager.setDialectSupport(new SQLiteDialectSupport());
+            manager.setScriptResolver(new BasicScriptResolver(JdbcUtils.SQLITE));
             manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
             manager.upgrade();
         } finally {

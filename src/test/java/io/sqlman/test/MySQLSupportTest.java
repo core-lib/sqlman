@@ -1,8 +1,10 @@
 package io.sqlman.test;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.manager.BasicVersionManager;
 import io.sqlman.provider.BasicSourceProvider;
+import io.sqlman.resolver.BasicScriptResolver;
 import io.sqlman.support.MySQLDialectSupport;
 import org.junit.Test;
 
@@ -22,8 +24,9 @@ public class MySQLSupportTest {
             dataSource.setUrl("jdbc:mysql://localhost:3306/sqlman?serverTimezone=GMT%2B8&useSSL=false");
             dataSource.setUsername("root");
             dataSource.setPassword("root");
-            manager.setDialectSupport(new MySQLDialectSupport());
             manager.setDataSource(dataSource);
+            manager.setDialectSupport(new MySQLDialectSupport());
+            manager.setScriptResolver(new BasicScriptResolver(JdbcUtils.MYSQL));
             manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
             manager.upgrade();
         } finally {

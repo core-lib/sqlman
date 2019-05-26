@@ -27,6 +27,10 @@ public class BasicScriptResolver implements SqlScriptResolver {
     public BasicScriptResolver() {
     }
 
+    public BasicScriptResolver(String dialect) {
+        this.dialect = dialect;
+    }
+
     public BasicScriptResolver(String dialect, String charset) {
         this.dialect = dialect;
         this.charset = charset;

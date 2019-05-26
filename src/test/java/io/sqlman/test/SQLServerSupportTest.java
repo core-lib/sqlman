@@ -1,8 +1,10 @@
 package io.sqlman.test;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.manager.BasicVersionManager;
 import io.sqlman.provider.BasicSourceProvider;
+import io.sqlman.resolver.BasicScriptResolver;
 import io.sqlman.support.SQLServerDialectSupport;
 import org.junit.Test;
 
@@ -22,8 +24,9 @@ public class SQLServerSupportTest {
             dataSource.setUrl("jdbc:sqlserver://182.254.171.152;database=ZT_MyRegentV3.0");
             dataSource.setUsername("SA");
             dataSource.setPassword("regentsoft!2019");
-            manager.setDialectSupport(new SQLServerDialectSupport());
             manager.setDataSource(dataSource);
+            manager.setDialectSupport(new SQLServerDialectSupport());
+            manager.setScriptResolver(new BasicScriptResolver(JdbcUtils.SQL_SERVER));
             manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
             manager.upgrade();
         } finally {
