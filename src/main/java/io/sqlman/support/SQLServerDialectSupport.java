@@ -43,7 +43,7 @@ public class SQLServerDialectSupport extends AbstractDialectSupport implements S
         ddl.append("   ERROR_STATE   VARCHAR(255) NOT NULL,");
         ddl.append("   ERROR_MESSAGE VARCHAR(255) NOT NULL,");
         ddl.append("   TIME_EXECUTED DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,");
-        ddl.append("   PRIMARY KEY (id)");
+        ddl.append("   PRIMARY KEY (ID)");
         ddl.append(" )");
         PreparedStatement statement = connection.prepareStatement(ddl.toString());
         statement.execute();
