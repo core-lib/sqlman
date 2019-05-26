@@ -1,1 +1,1 @@
-CREATE TABLE test (id int(11) primary  key)
+CREATE TABLE test (id int(11) PRIMARY KEY)

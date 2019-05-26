@@ -3,6 +3,7 @@ package io.sqlman.mysql;
 import com.alibaba.druid.pool.DruidDataSource;
 import io.sqlman.manager.BasicVersionManager;
 import io.sqlman.provider.BasicSourceProvider;
+import io.sqlman.support.MySQLDialectSupport;
 import org.junit.Test;
 
 /**
@@ -19,10 +20,11 @@ public class MySQLSupportTest {
         dataSource.setUrl("jdbc:mysql://localhost:3306/sqlman?serverTimezone=GMT%2B8&useSSL=false");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
-        BasicVersionManager upgrader = new BasicVersionManager();
-        upgrader.setDataSource(dataSource);
-        upgrader.setSourceProvider(new BasicSourceProvider("sqlman/MySQL/**/*.sql"));
-        upgrader.upgrade();
+        BasicVersionManager manager = new BasicVersionManager();
+        manager.setDialectSupport(new MySQLDialectSupport());
+        manager.setDataSource(dataSource);
+        manager.setSourceProvider(new BasicSourceProvider("sqlman/MySQL/**/*.sql"));
+        manager.upgrade();
     }
 
 }

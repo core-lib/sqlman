@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * 2019/5/24 9:52
  */
 public abstract class AbstractDialectSupport implements SqlDialectSupport {
-    protected String table = "sqlman";
+    protected String table = "SQLMAN";
 
     protected AbstractDialectSupport() {
     }
@@ -28,22 +28,22 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
     public SqlVersion detect(Connection connection) throws SQLException {
         StringBuilder dql = new StringBuilder();
         dql.append(" SELECT");
-        dql.append("     `id` AS id,");
-        dql.append("     `name` AS name,");
-        dql.append("     `version` AS version,");
-        dql.append("     `ordinal` AS ordinal,");
-        dql.append("     `description` AS description,");
-        dql.append("     `sql_quantity` AS sqlQuantity,");
-        dql.append("     `success` AS success,");
-        dql.append("     `row_effected` AS rowEffected,");
-        dql.append("     `error_code` AS errorCode,");
-        dql.append("     `error_state` AS errorState,");
-        dql.append("     `error_message` AS errorMessage,");
-        dql.append("     `time_executed` AS timeExecuted");
+        dql.append("     ID AS id,");
+        dql.append("     NAME AS name,");
+        dql.append("     VERSION AS version,");
+        dql.append("     ORDINAL AS ordinal,");
+        dql.append("     DESCRIPTION AS description,");
+        dql.append("     SQL_QUANTITY AS sqlQuantity,");
+        dql.append("     SUCCESS AS success,");
+        dql.append("     ROW_EFFECTED AS rowEffected,");
+        dql.append("     ERROR_CODE AS errorCode,");
+        dql.append("     ERROR_STATE AS errorState,");
+        dql.append("     ERROR_MESSAGE AS errorMessage,");
+        dql.append("     TIME_EXECUTED AS timeExecuted");
         dql.append(" FROM");
-        dql.append("     `").append(table).append("`");
+        dql.append("     ").append(table.toUpperCase());
         dql.append(" ORDER BY");
-        dql.append("     `id` DESC");
+        dql.append("     ID DESC");
         dql.append(" LIMIT 0, 1");
 
         PreparedStatement statement = connection.prepareStatement(dql.toString());
@@ -74,18 +74,18 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
     @Override
     public void update(Connection connection, SqlVersion version) throws SQLException {
         StringBuilder dml = new StringBuilder();
-        dml.append(" INSERT INTO ").append(table).append(" (");
-        dml.append("     `name`,");
-        dml.append("     `version`,");
-        dml.append("     `ordinal`,");
-        dml.append("     `description`,");
-        dml.append("     `sql_quantity`,");
-        dml.append("     `success`,");
-        dml.append("     `row_effected`,");
-        dml.append("     `error_code`,");
-        dml.append("     `error_state`,");
-        dml.append("     `error_message`,");
-        dml.append("     `time_executed`");
+        dml.append(" INSERT INTO ").append(table.toUpperCase()).append(" (");
+        dml.append("     NAME,");
+        dml.append("     VERSION,");
+        dml.append("     ORDINAL,");
+        dml.append("     DESCRIPTION,");
+        dml.append("     SQL_QUANTITY,");
+        dml.append("     SUCCESS,");
+        dml.append("     ROW_EFFECTED,");
+        dml.append("     ERROR_CODE,");
+        dml.append("     ERROR_STATE,");
+        dml.append("     ERROR_MESSAGE,");
+        dml.append("     TIME_EXECUTED");
         dml.append(" )");
         dml.append(" VALUES");
         dml.append("     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -108,19 +108,19 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
 
     @Override
     public void remove(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DELETE TABLE `" + table + "`");
+        PreparedStatement statement = connection.prepareStatement("DELETE TABLE " + table.toUpperCase() + "");
         statement.execute();
     }
 
     @Override
     public void lockup(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("CREATE TABLE `" + table + "_lock` (`nil` INTEGER PRIMARY KEY)");
+        PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + table.toUpperCase() + "_LOCK (NIL INTEGER)");
         statement.execute();
     }
 
     @Override
     public void unlock(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DROP TABLE `" + table + "_lock`");
+        PreparedStatement statement = connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "_LOCK");
         statement.execute();
     }
 

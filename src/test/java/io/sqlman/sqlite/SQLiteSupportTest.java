@@ -20,12 +20,11 @@ public class SQLiteSupportTest {
         dataSource.setUrl("jdbc:sqlite:target/SQLite.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
-        BasicVersionManager upgrader = new BasicVersionManager();
-        upgrader.setDataSource(dataSource);
-        upgrader.setDialectSupport(new SQLiteDialectSupport());
-        upgrader.setSourceProvider(new BasicSourceProvider("sqlman/SQLite/**/*.sql"));
-        upgrader.upgrade();
-        Thread.sleep(1000);
+        BasicVersionManager manager = new BasicVersionManager();
+        manager.setDataSource(dataSource);
+        manager.setDialectSupport(new SQLiteDialectSupport());
+        manager.setSourceProvider(new BasicSourceProvider("sqlman/SQLite/**/*.sql"));
+        manager.upgrade();
     }
 
 }
