@@ -4,10 +4,8 @@ import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.ParserException;
 import com.alibaba.druid.util.JdbcUtils;
-import io.sqlman.SqlScript;
-import io.sqlman.SqlSource;
-import io.sqlman.SqlStatement;
-import io.sqlman.SqlUtils;
+import io.sqlman.*;
+import io.sqlman.exception.IncorrectSyntaxException;
 
 import java.io.IOException;
 import java.io.InputStream;

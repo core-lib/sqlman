@@ -1,9 +1,6 @@
 package io.sqlman.manager;
 
 import io.sqlman.*;
-import io.sqlman.provider.SqlSourceProvider;
-import io.sqlman.resolver.SqlScriptResolver;
-import io.sqlman.support.SqlDialectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

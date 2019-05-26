@@ -1,6 +1,4 @@
-package io.sqlman.support;
-
-import io.sqlman.SqlVersion;
+package io.sqlman;
 
 import java.sql.Connection;
 import java.sql.SQLException;

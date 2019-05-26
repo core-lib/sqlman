@@ -1,4 +1,4 @@
-package io.sqlman.provider;
+package io.sqlman.exception;
 
 /**
  * 版本重复异常

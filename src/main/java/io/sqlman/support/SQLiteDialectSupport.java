@@ -1,5 +1,7 @@
 package io.sqlman.support;
 
+import io.sqlman.SqlDialectSupport;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 

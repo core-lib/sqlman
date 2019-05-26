@@ -1,4 +1,4 @@
-package io.sqlman.provider;
+package io.sqlman;
 
 import java.util.Objects;
 

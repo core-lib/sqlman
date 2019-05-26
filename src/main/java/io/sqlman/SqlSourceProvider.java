@@ -1,7 +1,7 @@
-package io.sqlman.provider;
+package io.sqlman;
 
-import io.sqlman.SqlSource;
-import io.sqlman.strategy.MalformedNameException;
+import io.sqlman.exception.DuplicatedVersionException;
+import io.sqlman.exception.MalformedNameException;
 
 import java.io.IOException;
 import java.util.Comparator;

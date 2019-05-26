@@ -1,6 +1,6 @@
-package io.sqlman.strategy;
+package io.sqlman;
 
-import io.sqlman.provider.SqlInfo;
+import io.sqlman.exception.MalformedNameException;
 
 import java.util.Comparator;
 

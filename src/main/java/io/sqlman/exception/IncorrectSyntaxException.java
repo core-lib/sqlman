@@ -1,4 +1,4 @@
-package io.sqlman.resolver;
+package io.sqlman.exception;
 
 /**
  * 错误的语法异常

@@ -1,6 +1,8 @@
 package io.sqlman.strategy;
 
-import io.sqlman.provider.SqlInfo;
+import io.sqlman.SqlInfo;
+import io.sqlman.SqlNamingStrategy;
+import io.sqlman.exception.MalformedNameException;
 
 /**
  * 缺省的命名策略

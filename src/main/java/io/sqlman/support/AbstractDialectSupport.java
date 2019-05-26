@@ -1,5 +1,6 @@
 package io.sqlman.support;
 
+import io.sqlman.SqlDialectSupport;
 import io.sqlman.SqlUtils;
 import io.sqlman.SqlVersion;
 

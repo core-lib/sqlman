@@ -1,7 +1,6 @@
-package io.sqlman.resolver;
+package io.sqlman;
 
-import io.sqlman.SqlScript;
-import io.sqlman.SqlSource;
+import io.sqlman.exception.IncorrectSyntaxException;
 
 import java.io.IOException;
 

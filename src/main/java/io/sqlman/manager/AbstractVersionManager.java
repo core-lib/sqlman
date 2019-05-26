@@ -1,17 +1,12 @@
 package io.sqlman.manager;
 
-import io.sqlman.SqlScript;
-import io.sqlman.SqlSource;
-import io.sqlman.SqlVersion;
+import io.sqlman.*;
+import io.sqlman.exception.DuplicatedVersionException;
+import io.sqlman.exception.IncorrectSyntaxException;
+import io.sqlman.exception.MalformedNameException;
 import io.sqlman.provider.ClasspathSourceProvider;
-import io.sqlman.provider.DuplicatedVersionException;
-import io.sqlman.provider.SqlSourceProvider;
 import io.sqlman.resolver.DruidScriptResolver;
-import io.sqlman.resolver.IncorrectSyntaxException;
-import io.sqlman.resolver.SqlScriptResolver;
-import io.sqlman.strategy.MalformedNameException;
 import io.sqlman.support.MySQLDialectSupport;
-import io.sqlman.support.SqlDialectSupport;
 
 import javax.sql.DataSource;
 import java.io.IOException;

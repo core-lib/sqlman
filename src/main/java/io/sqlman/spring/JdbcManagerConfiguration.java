@@ -1,10 +1,10 @@
 package io.sqlman.spring;
 
+import io.sqlman.SqlDialectSupport;
+import io.sqlman.SqlScriptResolver;
+import io.sqlman.SqlSourceProvider;
 import io.sqlman.manager.JdbcIsolation;
 import io.sqlman.manager.JdbcVersionManager;
-import io.sqlman.provider.SqlSourceProvider;
-import io.sqlman.resolver.SqlScriptResolver;
-import io.sqlman.support.SqlDialectSupport;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

@@ -1,7 +1,9 @@
 package io.sqlman.provider;
 
-import io.sqlman.strategy.MalformedNameException;
-import io.sqlman.strategy.SqlNamingStrategy;
+import io.sqlman.SqlInfo;
+import io.sqlman.SqlNamingStrategy;
+import io.sqlman.SqlSourceProvider;
+import io.sqlman.exception.MalformedNameException;
 import io.sqlman.strategy.StandardNamingStrategy;
 
 /**

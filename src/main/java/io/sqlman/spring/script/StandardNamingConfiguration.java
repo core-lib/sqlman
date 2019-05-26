@@ -1,6 +1,6 @@
 package io.sqlman.spring.script;
 
-import io.sqlman.strategy.SqlNamingStrategy;
+import io.sqlman.SqlNamingStrategy;
 import io.sqlman.strategy.StandardNamingStrategy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

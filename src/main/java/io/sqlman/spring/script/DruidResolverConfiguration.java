@@ -1,8 +1,8 @@
 package io.sqlman.spring.script;
 
+import io.sqlman.SqlScriptResolver;
 import io.sqlman.provider.ClasspathSourceProvider;
 import io.sqlman.resolver.DruidScriptResolver;
-import io.sqlman.resolver.SqlScriptResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
