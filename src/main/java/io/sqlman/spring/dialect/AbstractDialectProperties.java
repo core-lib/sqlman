@@ -8,7 +8,7 @@ package io.sqlman.spring.dialect;
  */
 public abstract class AbstractDialectProperties {
     private String type = "MySQL";
-    private String table = "sqlman";
+    private String table = "SQLMAN";
 
     public String getType() {
         return type;
