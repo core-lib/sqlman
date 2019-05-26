@@ -34,7 +34,7 @@ public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlD
         ddl.append("     ERROR_CODE INT(11) NOT NULL,");
         ddl.append("     ERROR_STATE VARCHAR(255) NOT NULL,");
         ddl.append("     ERROR_MESSAGE VARCHAR(255) NOT NULL,");
-        ddl.append("     TIME_EXECUTED TIMESTAMP NOT NULL DEFAULT (DATETIME('NOW', 'LOCALTIME'))");
+        ddl.append("     TIME_EXECUTED TIMESTAMP NOT NULL");
         ddl.append(" )");
         PreparedStatement statement = connection.prepareStatement(ddl.toString());
         statement.execute();

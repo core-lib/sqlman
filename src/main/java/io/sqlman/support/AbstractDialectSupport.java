@@ -42,9 +42,8 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
         dql.append("     TIME_EXECUTED AS timeExecuted");
         dql.append(" FROM");
         dql.append("     ").append(table.toUpperCase());
-        dql.append(" ORDER BY");
-        dql.append("     ID DESC");
-        dql.append(" LIMIT 0, 1");
+        dql.append(" WHERE");
+        dql.append("     ID = (SELECT MAX(ID) FROM ").append(table.toUpperCase()).append(")");
 
         PreparedStatement statement = connection.prepareStatement(dql.toString());
         ResultSet result = statement.executeQuery();
