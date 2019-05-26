@@ -7,6 +7,9 @@ package io.sqlman.spring.script;
  * 2019/5/25 9:03
  */
 public abstract class AbstractNamingProperties {
+    /**
+     * SQL script naming strategy implementation
+     */
     private String strategy = "standard";
 
     public String getStrategy() {

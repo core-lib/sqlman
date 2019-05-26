@@ -11,7 +11,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "sqlman")
 public class JdbcManagerProperties extends AbstractManagerProperties {
+    /**
+     * jdbc version manager transaction isolation level
+     */
     private JdbcIsolation jdbcIsolation = JdbcIsolation.DEFAULT;
+    /**
+     * the dataSource bean name. if your application has more than one dataSources
+     */
     private String dataSource = "dataSource";
 
     public JdbcIsolation getJdbcIsolation() {

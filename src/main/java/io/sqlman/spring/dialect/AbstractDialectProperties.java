@@ -7,7 +7,13 @@ package io.sqlman.spring.dialect;
  * 2019/5/25 8:28
  */
 public abstract class AbstractDialectProperties {
+    /**
+     * dataSource dialect
+     */
     private String type = "MySQL";
+    /**
+     * sqlman version table name
+     */
     private String table = "SQLMAN";
 
     public String getType() {

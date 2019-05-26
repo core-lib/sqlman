@@ -7,6 +7,9 @@ package io.sqlman.spring.script;
  * 2019/5/25 9:10
  */
 public abstract class AbstractProviderProperties {
+    /**
+     * SQL source provider implementation
+     */
     private String provider = "classpath";
 
     public String getProvider() {

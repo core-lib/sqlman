@@ -10,6 +10,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "sqlman.script")
 public class ClasspathProviderProperties extends AbstractProviderProperties {
+    /**
+     * SQL script location ANT path pattern
+     */
     private String location = "sqlman/**/*.sql";
 
     public String getLocation() {

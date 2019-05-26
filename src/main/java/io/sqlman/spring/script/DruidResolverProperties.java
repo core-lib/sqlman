@@ -10,7 +10,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "sqlman.script")
 public class DruidResolverProperties extends AbstractResolverProperties {
+    /**
+     * SQL script dialect
+     */
     private String dialect = "MySQL";
+    /**
+     * SQL script charset
+     */
     private String charset = "UTF-8";
 
     public String getDialect() {

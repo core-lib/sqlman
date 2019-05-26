@@ -10,8 +10,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "sqlman.script.naming")
 public class StandardNamingProperties extends AbstractNamingProperties {
+    /**
+     * SQL script name separator
+     */
     private char separator = '/';
+    /**
+     * SQL script name delimiter
+     */
     private String delimiter = "-";
+    /**
+     * SQL script name extension
+     */
     private String extension = ".sql";
 
     public char getSeparator() {
