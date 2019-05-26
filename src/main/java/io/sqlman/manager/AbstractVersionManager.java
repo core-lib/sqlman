@@ -39,7 +39,13 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         this.dataSource = dataSource;
     }
 
-    protected AbstractVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider sourceProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
+    protected AbstractVersionManager(
+            DataSource dataSource,
+            SqlIsolation trxIsolation,
+            SqlSourceProvider sourceProvider,
+            SqlScriptResolver scriptResolver,
+            SqlDialectSupport dialectSupport
+    ) {
         this.dataSource = dataSource;
         this.trxIsolation = trxIsolation;
         this.sourceProvider = sourceProvider;
@@ -52,6 +58,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             if (trxIsolation != null && trxIsolation != SqlIsolation.DEFAULT) {
                 connection.setTransactionIsolation(trxIsolation.value);
             }

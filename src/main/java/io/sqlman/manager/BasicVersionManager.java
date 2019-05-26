@@ -33,7 +33,13 @@ public class BasicVersionManager extends AbstractVersionManager implements SqlVe
         super(dataSource);
     }
 
-    public BasicVersionManager(DataSource dataSource, SqlIsolation trxIsolation, SqlSourceProvider sourceProvider, SqlScriptResolver scriptResolver, SqlDialectSupport dialectSupport) {
+    public BasicVersionManager(
+            DataSource dataSource,
+            SqlIsolation trxIsolation,
+            SqlSourceProvider sourceProvider,
+            SqlScriptResolver scriptResolver,
+            SqlDialectSupport dialectSupport
+    ) {
         super(dataSource, trxIsolation, sourceProvider, scriptResolver, dialectSupport);
     }
 
@@ -46,126 +52,100 @@ public class BasicVersionManager extends AbstractVersionManager implements SqlVe
                 logger.info("Upgrading database");
 
                 // 获取升级锁
-                lockup(connection);
+                try {
+                    logger.info("Locking sqlman");
+                    dialectSupport.lockup(connection);
+                    connection.commit();
+                    logger.info("Sqlman locked");
+                } catch (SQLException ex) {
+                    connection.rollback();
+                    logger.error("Fail to acquire sqlman upgrade lockup for " + ex.getMessage(), ex);
+                    throw ex;
+                } catch (Throwable ex) {
+                    connection.rollback();
+                    logger.error("Fail to acquire sqlman upgrade lockup for " + ex.getMessage(), ex);
+                    String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "unknown error" : ex.getMessage();
+                    throw new SQLException(state, state, -1, ex);
+                }
+
                 try {
                     // 创建版本记录表
-                    create(connection);
+                    logger.info("Initializing sqlman");
+                    dialectSupport.create(connection);
+                    connection.commit();
+                    logger.info("Sqlman initialize completed");
 
                     // 查询当前状态
-                    SqlVersion current = detect(connection);
+                    logger.info("Detecting sqlman current version");
+                    SqlVersion current = dialectSupport.detect(connection);
+                    connection.commit();
+                    logger.info("Sqlman current version is {}", current);
 
                     // 执行升级脚本
-                    upgrade(connection, current);
+                    String version = current != null ? current.getVersion() : null;
+                    int ordinal = current == null ? 0 : current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal();
+                    // 上次执行失败了或者还没执行完
+                    boolean included = current == null || !current.getSuccess() || ordinal < current.getSqlQuantity() - 1;
+                    Enumeration<SqlSource> resources = current == null
+                            ? sourceProvider.acquire()
+                            : sourceProvider.acquire(version, included);
+
+                    while (resources.hasMoreElements()) {
+                        SqlSource resource = resources.nextElement();
+                        SqlScript script = scriptResolver.resolve(resource);
+                        int count = script.sqls();
+                        for (int index = ordinal; index < count; index++) {
+                            int rowEffected = 0;
+                            SQLException sqlException = null;
+                            try {
+                                logger.info("Executing SQL script: {}", script.name());
+                                SqlStatement statement = script.statement(ordinal);
+                                String sql = statement.statement();
+                                logger.info("Executing SQL statement: {}#{}\n{}", script.version(), ordinal, sql);
+                                PreparedStatement stmt = connection.prepareStatement(sql);
+                                rowEffected = stmt.executeUpdate();
+                                connection.commit();
+                                logger.info("SQL statement: {}#{} execute completed with {} rows effected", script.version(), ordinal, rowEffected);
+                            } catch (SQLException ex) {
+                                connection.rollback();
+                                logger.error("Fail to execute SQL statement", ex);
+                                throw sqlException = ex;
+                            } catch (Throwable ex) {
+                                connection.rollback();
+                                logger.error("Fail to execute SQL statement", ex);
+                                String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "unknown error" : ex.getMessage();
+                                throw new SQLException(state, state, -1, ex);
+                            } finally {
+                                current = new SqlVersion();
+                                current.setName(script.name());
+                                current.setVersion(script.version());
+                                current.setOrdinal(ordinal);
+                                current.setDescription(script.description());
+                                current.setSqlQuantity(script.sqls());
+                                current.setSuccess(sqlException == null);
+                                current.setRowEffected(rowEffected);
+                                current.setErrorCode(sqlException == null ? 0 : sqlException.getErrorCode());
+                                current.setErrorState(sqlException == null ? "" : sqlException.getSQLState());
+                                current.setErrorMessage(sqlException == null ? "" : sqlException.getMessage());
+                                current.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
+                                dialectSupport.update(connection, current);
+                                connection.commit();
+                            }
+                        }
+                        ordinal = 0;
+                    }
                 } finally {
                     // 释放升级锁
-                    unlock(connection);
+                    logger.info("Unlocking sqlman");
+                    dialectSupport.unlock(connection);
+                    connection.commit();
+                    logger.info("Sqlman unlocked");
                 }
 
                 // 已经升级到最新
                 logger.info("Database is up to date");
             }
         });
-    }
-
-    private void create(Connection connection) throws SQLException {
-        logger.info("Initializing sqlman");
-        dialectSupport.create(connection);
-        logger.info("Sqlman initialize completed");
-    }
-
-    private void lockup(Connection connection) throws SQLException {
-        try {
-            logger.info("Locking sqlman");
-            dialectSupport.lockup(connection);
-            logger.info("Sqlman locked");
-        } catch (SQLException e) {
-            logger.error("Fail to acquire sqlman upgrade lockup for " + e.getMessage(), e);
-            throw e;
-        }
-    }
-
-    private SqlVersion detect(Connection connection) throws SQLException {
-        logger.info("Detecting sqlman current version");
-        SqlVersion current = dialectSupport.detect(connection);
-        logger.info("Sqlman current version is {}", current);
-        return current;
-    }
-
-    private void upgrade(Connection connection, SqlVersion current) throws Exception {
-        String version = current != null ? current.getVersion() : null;
-        int ordinal = current == null ? 0 : current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal();
-
-        Enumeration<SqlSource> resources = current == null
-                ? sourceProvider.acquire()
-                : sourceProvider.acquire(version, ordinal < current.getSqlQuantity() - 1);
-
-        while (resources.hasMoreElements()) {
-            SqlSource resource = resources.nextElement();
-            SqlScript script = scriptResolver.resolve(resource);
-            int count = script.sqls();
-            for (int index = ordinal; index < count; index++) {
-                int rowEffected = 0;
-                SQLException sqlException = null;
-                try {
-                    rowEffected = execute(connection, script, index);
-                } catch (SQLException e) {
-                    sqlException = e;
-                    throw e;
-                } finally {
-                    update(connection, script, index, rowEffected, sqlException);
-                }
-            }
-            ordinal = 0;
-        }
-    }
-
-    private int execute(Connection connection, SqlScript script, int ordinal) throws SQLException {
-        logger.info("Executing SQL script: {}", script.name());
-        SqlStatement statement = script.statement(ordinal);
-        String sql = statement.statement();
-        logger.info("Executing SQL statement: {}#{}\n{}", script.version(), ordinal, sql);
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        int rowEffected = stmt.executeUpdate();
-        logger.info("SQL statement: {}#{} execute completed with {} rows effected", script.version(), ordinal, rowEffected);
-        return rowEffected;
-    }
-
-    private void update(Connection connection, SqlScript script, int ordinal, int rowEffected, SQLException sqlException) throws SQLException {
-        if (sqlException == null) {
-            SqlVersion version = new SqlVersion();
-            version.setName(script.name());
-            version.setVersion(script.version());
-            version.setOrdinal(ordinal);
-            version.setDescription(script.description());
-            version.setSqlQuantity(script.sqls());
-            version.setSuccess(true);
-            version.setRowEffected(rowEffected);
-            version.setErrorCode(0);
-            version.setErrorState("");
-            version.setErrorMessage("");
-            version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-            dialectSupport.update(connection, version);
-        } else {
-            SqlVersion version = new SqlVersion();
-            version.setName(script.name());
-            version.setVersion(script.version());
-            version.setOrdinal(ordinal);
-            version.setDescription(script.description());
-            version.setSqlQuantity(script.sqls());
-            version.setSuccess(false);
-            version.setRowEffected(0);
-            version.setErrorCode(sqlException.getErrorCode());
-            version.setErrorState(sqlException.getSQLState());
-            version.setErrorMessage(sqlException.getMessage());
-            version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-            dialectSupport.update(connection, version);
-        }
-    }
-
-    private void unlock(Connection connection) throws SQLException {
-        logger.info("Unlocking sqlman");
-        dialectSupport.unlock(connection);
-        logger.info("Sqlman unlocked");
     }
 
 }

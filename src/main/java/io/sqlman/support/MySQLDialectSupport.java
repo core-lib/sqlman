@@ -1,8 +1,5 @@
 package io.sqlman.support;
 
-import io.sqlman.SqlUtils;
-import io.sqlman.SqlVersion;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -44,69 +41,4 @@ public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDi
         statement.execute();
     }
 
-    @Override
-    public void update(Connection connection, SqlVersion version) throws SQLException {
-        StringBuilder dml = new StringBuilder();
-        dml.append(" INSERT INTO `").append(table).append("` (");
-        dml.append("     name,");
-        dml.append("     version,");
-        dml.append("     ordinal,");
-        dml.append("     description,");
-        dml.append("     sql_quantity,");
-        dml.append("     success,");
-        dml.append("     row_effected,");
-        dml.append("     error_code,");
-        dml.append("     error_state,");
-        dml.append("     error_message,");
-        dml.append("     time_executed");
-        dml.append(" )");
-        dml.append(" VALUES");
-        dml.append("     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        dml.append(" ON DUPLICATE KEY UPDATE");
-        dml.append("     name = ?,");
-        dml.append("     description = ?,");
-        dml.append("     sql_quantity = ?,");
-        dml.append("     success = ?,");
-        dml.append("     row_effected = ?,");
-        dml.append("     error_code = ?,");
-        dml.append("     error_state = ?,");
-        dml.append("     error_message = ?,");
-        dml.append("     time_executed = ?");
-
-        PreparedStatement statement = connection.prepareStatement(dml.toString());
-        statement.setString(1, SqlUtils.truncate(version.getName(), 255));
-        statement.setString(2, SqlUtils.truncate(version.getVersion(), 24));
-        statement.setInt(3, version.getOrdinal());
-        statement.setString(4, SqlUtils.truncate(version.getDescription(), 128));
-        statement.setInt(5, version.getSqlQuantity());
-        statement.setBoolean(6, version.getSuccess());
-        statement.setInt(7, version.getRowEffected());
-        statement.setInt(8, version.getErrorCode());
-        statement.setString(9, SqlUtils.truncate(version.getErrorState(), 255));
-        statement.setString(10, SqlUtils.truncate(version.getErrorMessage(), 255));
-        statement.setTimestamp(11, version.getTimeExecuted());
-        statement.setString(12, SqlUtils.truncate(version.getName(), 255));
-        statement.setString(13, SqlUtils.truncate(version.getDescription(), 128));
-        statement.setInt(14, version.getSqlQuantity());
-        statement.setBoolean(15, version.getSuccess());
-        statement.setInt(16, version.getRowEffected());
-        statement.setInt(17, version.getErrorCode());
-        statement.setString(18, SqlUtils.truncate(version.getErrorState(), 255));
-        statement.setString(19, SqlUtils.truncate(version.getErrorMessage(), 255));
-        statement.setTimestamp(20, version.getTimeExecuted());
-
-        statement.executeUpdate();
-    }
-
-    @Override
-    public void lockup(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("CREATE TABLE " + table + "_lock (nil INT(1) PRIMARY KEY)");
-        statement.execute();
-    }
-
-    @Override
-    public void unlock(Connection connection) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DROP TABLE " + table + "_lock");
-        statement.execute();
-    }
 }
