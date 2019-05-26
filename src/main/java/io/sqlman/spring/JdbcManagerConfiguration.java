@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -45,7 +46,7 @@ public class JdbcManagerConfiguration {
     @Bean
     @ConditionalOnMissingBean(SqlVersionManager.class)
     @ConditionalOnProperty(prefix = "sqlman", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public JdbcVersionManager sqlmanBasicVersionManager(ApplicationContext applicationContext) {
+    public JdbcVersionManager sqlmanBasicVersionManager(ApplicationContext applicationContext) throws SQLException {
         Map<String, DataSource> map = applicationContext.getBeansOfType(DataSource.class);
         if (map.isEmpty()) {
             throw new IllegalStateException("no dataSource found in application context");
@@ -55,7 +56,9 @@ public class JdbcManagerConfiguration {
             throw new IllegalStateException("no dataSource found in application context named: " + properties.getDataSource());
         }
         JdbcIsolation jdbcIsolation = properties.getJdbcIsolation();
-        return new JdbcVersionManager(dataSource, jdbcIsolation, scriptProvider, scriptResolver, dialectSupport);
+        JdbcVersionManager jdbcVersionManager = new JdbcVersionManager(dataSource, jdbcIsolation, scriptProvider, scriptResolver, dialectSupport);
+        jdbcVersionManager.upgrade();
+        return jdbcVersionManager;
     }
 
 }
