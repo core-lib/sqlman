@@ -36,6 +36,9 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     }
 
     protected AbstractVersionManager(DataSource dataSource) {
+        if (dataSource == null) {
+            throw new IllegalArgumentException("dataSource must not be null");
+        }
         this.dataSource = dataSource;
     }
 
@@ -46,6 +49,21 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
             SqlScriptResolver scriptResolver,
             SqlDialectSupport dialectSupport
     ) {
+        if (dataSource == null) {
+            throw new IllegalArgumentException("dataSource must not be null");
+        }
+        if (trxIsolation == null) {
+            throw new IllegalArgumentException("trxIsolation must not be null");
+        }
+        if (sourceProvider == null) {
+            throw new IllegalArgumentException("sourceProvider must not be null");
+        }
+        if (scriptResolver == null) {
+            throw new IllegalArgumentException("scriptResolver must not be null");
+        }
+        if (dialectSupport == null) {
+            throw new IllegalArgumentException("dialectSupport must not be null");
+        }
         this.dataSource = dataSource;
         this.trxIsolation = trxIsolation;
         this.sourceProvider = sourceProvider;

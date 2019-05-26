@@ -13,6 +13,12 @@ public class BasicStatement implements SqlStatement {
     private final String statement;
 
     public BasicStatement(int ordinal, String statement) {
+        if (ordinal < 0) {
+            throw new IllegalArgumentException("ordinal must not be negative");
+        }
+        if (statement == null || statement.trim().isEmpty()) {
+            throw new IllegalArgumentException("statement must not be null or blank string");
+        }
         this.ordinal = ordinal;
         this.statement = statement;
     }

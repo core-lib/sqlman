@@ -28,10 +28,19 @@ public class BasicScriptResolver implements SqlScriptResolver {
     }
 
     public BasicScriptResolver(String dialect) {
+        if (dialect == null || dialect.trim().isEmpty()) {
+            throw new IllegalArgumentException("dialect must not be null or blank string");
+        }
         this.dialect = dialect;
     }
 
     public BasicScriptResolver(String dialect, String charset) {
+        if (dialect == null || dialect.trim().isEmpty()) {
+            throw new IllegalArgumentException("dialect must not be null or blank string");
+        }
+        if (charset == null || charset.trim().isEmpty()) {
+            throw new IllegalArgumentException("charset must not be null or blank string");
+        }
         this.dialect = dialect;
         this.charset = charset;
     }

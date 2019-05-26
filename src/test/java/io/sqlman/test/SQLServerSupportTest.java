@@ -18,19 +18,22 @@ public class SQLServerSupportTest {
 
     @Test
     public void test() throws Exception {
-        BasicVersionManager manager = new BasicVersionManager();
+        BasicVersionManager manager = null;
         try {
             DruidDataSource dataSource = new DruidDataSource();
             dataSource.setUrl("jdbc:sqlserver://182.254.171.152;database=ZT_MyRegentV3.0");
             dataSource.setUsername("SA");
             dataSource.setPassword("regentsoft!2019");
+            manager = new BasicVersionManager(dataSource);
             manager.setDataSource(dataSource);
             manager.setDialectSupport(new SQLServerDialectSupport());
             manager.setScriptResolver(new BasicScriptResolver(JdbcUtils.SQL_SERVER));
             manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
             manager.upgrade();
         } finally {
-            manager.remove();
+            if (manager != null) {
+                manager.remove();
+            }
         }
     }
 

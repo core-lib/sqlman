@@ -5,7 +5,6 @@ import io.sqlman.SqlSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Objects;
 
 
 /**
@@ -21,6 +20,18 @@ public class BasicSource implements SqlSource {
     private final URL url;
 
     public BasicSource(String name, String version, String description, URL url) {
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null");
+        }
+        if (version == null) {
+            throw new IllegalArgumentException("version must not be null");
+        }
+        if (description == null) {
+            throw new IllegalArgumentException("description must not be null");
+        }
+        if (url == null) {
+            throw new IllegalArgumentException("url must not be null");
+        }
         this.name = name;
         this.version = version;
         this.description = description;
@@ -45,19 +56,6 @@ public class BasicSource implements SqlSource {
     @Override
     public InputStream open() throws IOException {
         return url.openStream();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BasicSource that = (BasicSource) o;
-        return Objects.equals(version, that.version);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(version);
     }
 
     @Override

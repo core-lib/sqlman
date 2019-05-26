@@ -23,7 +23,8 @@ import java.util.Enumeration;
 public class BasicVersionManager extends AbstractVersionManager implements SqlVersionManager, SqlAction {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public BasicVersionManager() {
+    protected BasicVersionManager() {
+        super();
     }
 
     public BasicVersionManager(DataSource dataSource) {

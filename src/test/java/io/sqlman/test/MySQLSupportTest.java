@@ -18,19 +18,22 @@ public class MySQLSupportTest {
 
     @Test
     public void test() throws Exception {
-        BasicVersionManager manager = new BasicVersionManager();
+        BasicVersionManager manager = null;
         try {
             DruidDataSource dataSource = new DruidDataSource();
             dataSource.setUrl("jdbc:mysql://localhost:3306/sqlman?serverTimezone=GMT%2B8&useSSL=false");
             dataSource.setUsername("root");
             dataSource.setPassword("root");
+            manager = new BasicVersionManager(dataSource);
             manager.setDataSource(dataSource);
             manager.setDialectSupport(new MySQLDialectSupport());
             manager.setScriptResolver(new BasicScriptResolver(JdbcUtils.MYSQL));
             manager.setSourceProvider(new BasicSourceProvider("sqlman/**/*.sql"));
             manager.upgrade();
         } finally {
-            manager.remove();
+            if (manager != null) {
+                manager.remove();
+            }
         }
     }
 

@@ -13,6 +13,9 @@ public abstract class AbstractSourceProvider implements SqlSourceProvider {
     }
 
     protected AbstractSourceProvider(SqlNamingStrategy namingStrategy) {
+        if (namingStrategy == null) {
+            throw new IllegalArgumentException("namingStrategy must not be null");
+        }
         this.namingStrategy = namingStrategy;
     }
 

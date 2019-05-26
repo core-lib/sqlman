@@ -21,6 +21,9 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
     }
 
     protected AbstractDialectSupport(String table) {
+        if (table == null || table.trim().isEmpty()) {
+            throw new IllegalArgumentException("table must not be null or blank string");
+        }
         this.table = table;
     }
 

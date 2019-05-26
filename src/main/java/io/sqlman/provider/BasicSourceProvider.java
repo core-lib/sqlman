@@ -5,10 +5,7 @@ import io.loadkit.Resource;
 import io.sqlman.SqlSource;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * 标准脚本资源提供器
@@ -21,15 +18,32 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
     private String scriptLocation = "sqlman/**/*.sql";
 
     public BasicSourceProvider() {
+        super();
     }
 
     public BasicSourceProvider(String scriptLocation) {
-        this.scriptLocation = scriptLocation;
+        this(null, scriptLocation);
     }
 
     public BasicSourceProvider(String scriptLocation, SqlNamingStrategy namingStrategy) {
+        this(null, scriptLocation, namingStrategy);
+    }
+
+    public BasicSourceProvider(ClassLoader classLoader, String scriptLocation) {
+        if (scriptLocation == null || scriptLocation.trim().isEmpty()) {
+            throw new IllegalArgumentException("scriptLocation must not be null or blank string");
+        }
+        this.classLoader = classLoader;
         this.scriptLocation = scriptLocation;
-        this.namingStrategy = namingStrategy;
+    }
+
+    public BasicSourceProvider(ClassLoader classLoader, String scriptLocation, SqlNamingStrategy namingStrategy) {
+        super(namingStrategy);
+        if (scriptLocation == null || scriptLocation.trim().isEmpty()) {
+            throw new IllegalArgumentException("scriptLocation must not be null or blank string");
+        }
+        this.classLoader = classLoader;
+        this.scriptLocation = scriptLocation;
     }
 
     @Override
@@ -42,7 +56,12 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
             resourceLoader = this.getClass().getClassLoader();
         }
         Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
-        Set<SqlSource> resources = new TreeSet<>(new BasicVersionComparator(namingStrategy));
+        Set<SqlSource> resources = new TreeSet<>(new Comparator<SqlSource>() {
+            @Override
+            public int compare(SqlSource o1, SqlSource o2) {
+                return namingStrategy.compare(o1.version(), o2.version());
+            }
+        });
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
@@ -65,7 +84,12 @@ public class BasicSourceProvider extends AbstractSourceProvider implements SqlSo
             resourceLoader = this.getClass().getClassLoader();
         }
         Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
-        Set<SqlSource> resources = new TreeSet<>(new BasicVersionComparator(namingStrategy));
+        Set<SqlSource> resources = new TreeSet<>(new Comparator<SqlSource>() {
+            @Override
+            public int compare(SqlSource o1, SqlSource o2) {
+                return namingStrategy.compare(o1.version(), o2.version());
+            }
+        });
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();

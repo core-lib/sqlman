@@ -15,6 +15,12 @@ public class BasicNamingStrategy implements SqlNamingStrategy {
     }
 
     public BasicNamingStrategy(char separator, String delimiter, String extension) {
+        if (delimiter == null || delimiter.isEmpty()) {
+            throw new IllegalArgumentException("delimiter must not be null or empty string");
+        }
+        if (extension == null || extension.isEmpty()) {
+            throw new IllegalArgumentException("extension must not be null or empty string");
+        }
         this.separator = separator;
         this.delimiter = delimiter;
         this.extension = extension;
