@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "sqlman")
 public class JdbcManagerProperties extends AbstractManagerProperties {
     private JdbcIsolation jdbcIsolation = JdbcIsolation.DEFAULT;
+    private String dataSource = "dataSource";
 
     public JdbcIsolation getJdbcIsolation() {
         return jdbcIsolation;
@@ -19,5 +20,13 @@ public class JdbcManagerProperties extends AbstractManagerProperties {
 
     public void setJdbcIsolation(JdbcIsolation jdbcIsolation) {
         this.jdbcIsolation = jdbcIsolation;
+    }
+
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 }

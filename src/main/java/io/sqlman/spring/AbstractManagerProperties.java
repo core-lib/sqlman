@@ -7,7 +7,16 @@ package io.sqlman.spring;
  * 2019/5/25 9:39
  */
 public class AbstractManagerProperties {
+    private boolean enabled = true;
     private String manager = "jdbc";
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public String getManager() {
         return manager;
