@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 基本SQL脚本
+ * 基于druid的SQL脚本
  *
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:44

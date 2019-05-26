@@ -3,7 +3,7 @@ package io.sqlman.resolver;
 import io.sqlman.SqlStatement;
 
 /**
- * 基本SQL脚本语句
+ * 基于druid的SQL脚本语句
  *
  * @author Payne 646742615@qq.com
  * 2019/5/22 11:15
