@@ -3,6 +3,7 @@ package io.sqlman.spring;
 import io.sqlman.SqlDialectSupport;
 import io.sqlman.SqlScriptResolver;
 import io.sqlman.SqlSourceProvider;
+import io.sqlman.SqlVersionManager;
 import io.sqlman.manager.JdbcIsolation;
 import io.sqlman.manager.JdbcVersionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -42,21 +43,19 @@ public class JdbcManagerConfiguration {
     private SqlDialectSupport dialectSupport;
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(SqlVersionManager.class)
     @ConditionalOnProperty(prefix = "sqlman", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public JdbcVersionManager sqlmanBasicVersionManager(ApplicationContext applicationContext) throws Exception {
-        Map<String, DataSource> dataSources = applicationContext.getBeansOfType(DataSource.class);
-        if (dataSources.isEmpty()) {
+    public JdbcVersionManager sqlmanBasicVersionManager(ApplicationContext applicationContext) {
+        Map<String, DataSource> map = applicationContext.getBeansOfType(DataSource.class);
+        if (map.isEmpty()) {
             throw new IllegalStateException("no dataSource found in application context");
         }
-        DataSource dataSource = dataSources.size() == 1 ? dataSources.values().iterator().next() : dataSources.get(properties.getDataSource());
+        DataSource dataSource = map.size() == 1 ? map.values().iterator().next() : map.get(properties.getDataSource());
         if (dataSource == null) {
             throw new IllegalStateException("no dataSource found in application context named: " + properties.getDataSource());
         }
         JdbcIsolation jdbcIsolation = properties.getJdbcIsolation();
-        JdbcVersionManager jdbcVersionManager = new JdbcVersionManager(dataSource, jdbcIsolation, scriptProvider, scriptResolver, dialectSupport);
-        jdbcVersionManager.upgrade();
-        return jdbcVersionManager;
+        return new JdbcVersionManager(dataSource, jdbcIsolation, scriptProvider, scriptResolver, dialectSupport);
     }
 
 }

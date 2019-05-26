@@ -17,6 +17,7 @@ sqlman:
     location: sqlman/**/*.sql
     provider: classpath
     resolver: druid
+    dialect: MySQL
   dialect:
     table: SQLMAN_VERSION
-    type: Oracle
+    type: MySQL
