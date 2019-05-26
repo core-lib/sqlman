@@ -6,7 +6,7 @@
 
     <groupId>io.sqlman</groupId>
     <artifactId>sqlman</artifactId>
-    <version>v0.0.8-alpha</version>
+    <version>v1.0.0</version>
 
     <name>sqlman</name>
 
