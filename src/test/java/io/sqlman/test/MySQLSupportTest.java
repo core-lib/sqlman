@@ -4,7 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.manager.JdbcVersionManager;
 import io.sqlman.provider.ClasspathSourceProvider;
-import io.sqlman.resolver.BasicScriptResolver;
+import io.sqlman.resolver.DruidScriptResolver;
 import io.sqlman.support.MySQLDialectSupport;
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class MySQLSupportTest {
             manager = new JdbcVersionManager(dataSource);
             manager.setDataSource(dataSource);
             manager.setDialectSupport(new MySQLDialectSupport());
-            manager.setScriptResolver(new BasicScriptResolver(JdbcUtils.MYSQL));
+            manager.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL));
             manager.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));
             manager.upgrade();
         } finally {

@@ -1,7 +1,7 @@
 package io.sqlman.spring.script;
 
 import io.sqlman.provider.ClasspathSourceProvider;
-import io.sqlman.resolver.BasicScriptResolver;
+import io.sqlman.resolver.DruidScriptResolver;
 import io.sqlman.resolver.SqlScriptResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,20 +19,20 @@ import javax.annotation.Resource;
  * 2019/5/25 9:30
  */
 @Configuration
-@EnableConfigurationProperties(BasicResolverProperties.class)
+@EnableConfigurationProperties(DruidResolverProperties.class)
 @ConditionalOnClass(ClasspathSourceProvider.class)
-@ConditionalOnProperty(prefix = "sqlman.script", name = "resolver", havingValue = "basic", matchIfMissing = true)
-public class BasicResolverConfiguration {
+@ConditionalOnProperty(prefix = "sqlman.script", name = "resolver", havingValue = "druid", matchIfMissing = true)
+public class DruidResolverConfiguration {
 
     @Resource
-    private BasicResolverProperties properties;
+    private DruidResolverProperties properties;
 
     @Bean
     @ConditionalOnMissingBean(SqlScriptResolver.class)
-    public BasicScriptResolver sqlmanBasicScriptResolver() {
+    public DruidScriptResolver sqlmanBasicScriptResolver() {
         String dialect = properties.getDialect();
         String charset = properties.getCharset();
-        return new BasicScriptResolver(dialect, charset);
+        return new DruidScriptResolver(dialect, charset);
     }
 
 }

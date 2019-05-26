@@ -14,13 +14,13 @@ import java.util.Objects;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:44
  */
-public class BasicScript implements SqlScript {
+public class DruidScript implements SqlScript {
     private final String name;
     private final String version;
     private final String description;
     private final List<SqlStatement> statements;
 
-    public BasicScript(String name, String version, String description, List<SqlStatement> statements) {
+    public DruidScript(String name, String version, String description, List<SqlStatement> statements) {
         if (version == null || version.isEmpty()) {
             throw new IllegalArgumentException("version must not be null or empty string");
         }
@@ -71,7 +71,7 @@ public class BasicScript implements SqlScript {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        BasicScript that = (BasicScript) o;
+        DruidScript that = (DruidScript) o;
         return Objects.equals(version, that.version);
     }
 

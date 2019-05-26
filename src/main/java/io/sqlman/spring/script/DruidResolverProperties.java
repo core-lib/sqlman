@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 2019/5/25 9:28
  */
 @ConfigurationProperties(prefix = "sqlman.script")
-public class BasicResolverProperties extends AbstractResolverProperties {
+public class DruidResolverProperties extends AbstractResolverProperties {
     private String dialect = "MySQL";
     private String charset = "UTF-8";
 

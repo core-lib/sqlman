@@ -4,7 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.manager.JdbcVersionManager;
 import io.sqlman.provider.ClasspathSourceProvider;
-import io.sqlman.resolver.BasicScriptResolver;
+import io.sqlman.resolver.DruidScriptResolver;
 import io.sqlman.support.SQLiteDialectSupport;
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class SQLiteSupportTest {
             manager = new JdbcVersionManager(dataSource);
             manager.setDataSource(dataSource);
             manager.setDialectSupport(new SQLiteDialectSupport());
-            manager.setScriptResolver(new BasicScriptResolver(JdbcUtils.SQLITE));
+            manager.setScriptResolver(new DruidScriptResolver(JdbcUtils.SQLITE));
             manager.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));
             manager.upgrade();
         } finally {

@@ -20,21 +20,21 @@ import java.util.List;
  * @author Payne 646742615@qq.com
  * 2019/5/22 10:42
  */
-public class BasicScriptResolver implements SqlScriptResolver {
+public class DruidScriptResolver implements SqlScriptResolver {
     private String dialect = JdbcUtils.MYSQL;
     private String charset = "UTF-8";
 
-    public BasicScriptResolver() {
+    public DruidScriptResolver() {
     }
 
-    public BasicScriptResolver(String dialect) {
+    public DruidScriptResolver(String dialect) {
         if (dialect == null || dialect.trim().isEmpty()) {
             throw new IllegalArgumentException("dialect must not be null or blank string");
         }
         this.dialect = dialect;
     }
 
-    public BasicScriptResolver(String dialect, String charset) {
+    public DruidScriptResolver(String dialect, String charset) {
         if (dialect == null || dialect.trim().isEmpty()) {
             throw new IllegalArgumentException("dialect must not be null or blank string");
         }
@@ -53,10 +53,10 @@ public class BasicScriptResolver implements SqlScriptResolver {
             List<SqlStatement> statements = new ArrayList<>(sqls.size());
             for (int ordinal = 0; ordinal < sqls.size(); ordinal++) {
                 SQLStatement sql = sqls.get(ordinal);
-                SqlStatement statement = new BasicStatement(ordinal, sql.toString());
+                SqlStatement statement = new DruidStatement(ordinal, sql.toString());
                 statements.add(statement);
             }
-            return new BasicScript(resource.name(), resource.version(), resource.description(), statements);
+            return new DruidScript(resource.name(), resource.version(), resource.description(), statements);
         } catch (ParserException e) {
             throw new IncorrectSyntaxException(e);
         }

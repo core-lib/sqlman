@@ -6,7 +6,7 @@ import io.sqlman.SqlVersion;
 import io.sqlman.provider.ClasspathSourceProvider;
 import io.sqlman.provider.DuplicatedVersionException;
 import io.sqlman.provider.SqlSourceProvider;
-import io.sqlman.resolver.BasicScriptResolver;
+import io.sqlman.resolver.DruidScriptResolver;
 import io.sqlman.resolver.IncorrectSyntaxException;
 import io.sqlman.resolver.SqlScriptResolver;
 import io.sqlman.strategy.MalformedNameException;
@@ -29,7 +29,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     protected DataSource dataSource;
     protected JdbcIsolation jdbcIsolation = JdbcIsolation.DEFAULT;
     protected SqlSourceProvider sourceProvider = new ClasspathSourceProvider();
-    protected SqlScriptResolver scriptResolver = new BasicScriptResolver();
+    protected SqlScriptResolver scriptResolver = new DruidScriptResolver();
     protected SqlDialectSupport dialectSupport = new MySQLDialectSupport();
 
     protected AbstractVersionManager() {

@@ -11,5 +11,9 @@ spring:
     password: root
 
 sqlman:
+  enabled: false
+  manager: jdbc
   script:
     location: sqlman/**/*.sql
+    provider: classpath
+    resolver: basic

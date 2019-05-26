@@ -7,7 +7,7 @@ package io.sqlman.spring.script;
  * 2019/5/25 9:28
  */
 public class AbstractResolverProperties {
-    private String resolver = "basic";
+    private String resolver = "druid";
 
     public String getResolver() {
         return resolver;

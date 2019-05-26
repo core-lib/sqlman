@@ -8,11 +8,11 @@ import io.sqlman.SqlStatement;
  * @author Payne 646742615@qq.com
  * 2019/5/22 11:15
  */
-public class BasicStatement implements SqlStatement {
+public class DruidStatement implements SqlStatement {
     private final int ordinal;
     private final String statement;
 
-    public BasicStatement(int ordinal, String statement) {
+    public DruidStatement(int ordinal, String statement) {
         if (ordinal < 0) {
             throw new IllegalArgumentException("ordinal must not be negative");
         }
