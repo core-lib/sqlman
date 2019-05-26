@@ -17,3 +17,6 @@ sqlman:
     location: sqlman/**/*.sql
     provider: classpath
     resolver: druid
+  dialect:
+    table: SQLMAN_VERSION
+    type: Oracle

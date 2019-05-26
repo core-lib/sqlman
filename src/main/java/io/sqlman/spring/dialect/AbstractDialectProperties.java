@@ -8,7 +8,7 @@ package io.sqlman.spring.dialect;
  */
 public abstract class AbstractDialectProperties {
     /**
-     * dataSource dialect
+     * dataSource dialect. MySQL, SQLite, Oracle, SQLServer, eg.
      */
     private String type = "MySQL";
     /**
