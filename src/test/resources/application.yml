@@ -11,13 +11,21 @@ spring:
     password: root
 
 sqlman:
-  enabled: true
   manager: jdbc
-  script:
-    location: sqlman/**/*.sql
-    provider: classpath
-    resolver: druid
-    dialect: MySQL
+  enabled: true
   dialect:
     table: SQLMAN_VERSION
     type: MySQL
+  script:
+    provider: classpath
+    location: sqlman/**/*.sql
+    resolver: druid
+    dialect: MySQL
+    naming:
+      strategy: standard
+      separator: /
+      delimiter: "-"
+      extension: .sql
+  logger:
+    supplier: slf4j
+    level: INFO
