@@ -12,6 +12,8 @@ spring:
 
 sqlman:
   manager: jdbc
+  data-source: dataSource
+  jdbc-isolation: DEFAULT
   enabled: true
   dialect:
     table: SQLMAN_VERSION
@@ -21,6 +23,7 @@ sqlman:
     location: sqlman/**/*.sql
     resolver: druid
     dialect: MySQL
+    charset: UTF-8
     naming:
       strategy: standard
       separator: /
