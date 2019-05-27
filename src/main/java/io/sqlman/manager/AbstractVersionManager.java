@@ -225,4 +225,12 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     public void setDialectSupport(SqlDialectSupport dialectSupport) {
         this.dialectSupport = dialectSupport;
     }
+
+    public SqlLoggerSupplier getLoggerSupplier() {
+        return loggerSupplier;
+    }
+
+    public void setLoggerSupplier(SqlLoggerSupplier loggerSupplier) {
+        this.loggerSupplier = loggerSupplier;
+    }
 }
