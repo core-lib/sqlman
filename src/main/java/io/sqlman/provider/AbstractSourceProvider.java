@@ -1,6 +1,6 @@
 package io.sqlman.provider;
 
-import io.sqlman.SqlInfo;
+import io.sqlman.SqlNaming;
 import io.sqlman.SqlNamingStrategy;
 import io.sqlman.SqlSourceProvider;
 import io.sqlman.exception.MalformedNameException;
@@ -31,7 +31,7 @@ public abstract class AbstractSourceProvider implements SqlSourceProvider {
     }
 
     @Override
-    public SqlInfo parse(String name) throws MalformedNameException {
+    public SqlNaming parse(String name) throws MalformedNameException {
         return namingStrategy.parse(name);
     }
 

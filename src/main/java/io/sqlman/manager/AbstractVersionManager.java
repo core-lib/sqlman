@@ -4,6 +4,7 @@ import io.sqlman.*;
 import io.sqlman.exception.DuplicatedVersionException;
 import io.sqlman.exception.IncorrectSyntaxException;
 import io.sqlman.exception.MalformedNameException;
+import io.sqlman.logger.Slf4jLoggerSupplier;
 import io.sqlman.provider.ClasspathSourceProvider;
 import io.sqlman.resolver.DruidScriptResolver;
 import io.sqlman.support.MySQLDialectSupport;
@@ -26,6 +27,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     protected SqlSourceProvider sourceProvider = new ClasspathSourceProvider();
     protected SqlScriptResolver scriptResolver = new DruidScriptResolver();
     protected SqlDialectSupport dialectSupport = new MySQLDialectSupport();
+    protected SqlLoggerSupplier loggerSupplier = new Slf4jLoggerSupplier();
 
     protected AbstractVersionManager() {
     }
@@ -42,7 +44,8 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
             JdbcIsolation jdbcIsolation,
             SqlSourceProvider sourceProvider,
             SqlScriptResolver scriptResolver,
-            SqlDialectSupport dialectSupport
+            SqlDialectSupport dialectSupport,
+            SqlLoggerSupplier loggerSupplier
     ) {
         if (dataSource == null) {
             throw new IllegalArgumentException("dataSource must not be null");
@@ -59,11 +62,15 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         if (dialectSupport == null) {
             throw new IllegalArgumentException("dialectSupport must not be null");
         }
+        if (loggerSupplier == null) {
+            throw new IllegalArgumentException("loggerSupplier must not be null");
+        }
         this.dataSource = dataSource;
         this.jdbcIsolation = jdbcIsolation;
         this.sourceProvider = sourceProvider;
         this.scriptResolver = scriptResolver;
         this.dialectSupport = dialectSupport;
+        this.loggerSupplier = loggerSupplier;
     }
 
     protected <T> T execute(JdbcTransaction<T> transaction) throws SQLException {

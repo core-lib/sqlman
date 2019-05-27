@@ -1,6 +1,6 @@
 package io.sqlman.strategy;
 
-import io.sqlman.SqlInfo;
+import io.sqlman.SqlNaming;
 import io.sqlman.SqlNamingStrategy;
 import io.sqlman.exception.MalformedNameException;
 
@@ -53,7 +53,7 @@ public class StandardNamingStrategy implements SqlNamingStrategy {
     }
 
     @Override
-    public SqlInfo parse(String name) throws MalformedNameException {
+    public SqlNaming parse(String name) throws MalformedNameException {
         if (!check(name)) {
             throw new MalformedNameException("invalid name ： " + name, name);
         }
@@ -68,7 +68,7 @@ public class StandardNamingStrategy implements SqlNamingStrategy {
         String version = index < 0 ? n : n.substring(0, index);
         String description = index < 0 ? "" : n.substring(index + 1);
 
-        return new SqlInfo(name, version, description);
+        return new SqlNaming(name, version, description);
     }
 
     /**

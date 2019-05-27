@@ -1,8 +1,6 @@
 package io.sqlman.manager;
 
 import io.sqlman.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -18,7 +16,6 @@ import java.util.Enumeration;
  * 2019/5/22 16:15
  */
 public class JdbcVersionManager extends AbstractVersionManager implements SqlVersionManager, JdbcAction {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected JdbcVersionManager() {
         super();
@@ -33,9 +30,10 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             JdbcIsolation jdbcIsolation,
             SqlSourceProvider sourceProvider,
             SqlScriptResolver scriptResolver,
-            SqlDialectSupport dialectSupport
+            SqlDialectSupport dialectSupport,
+            SqlLoggerSupplier loggerSupplier
     ) {
-        super(dataSource, jdbcIsolation, sourceProvider, scriptResolver, dialectSupport);
+        super(dataSource, jdbcIsolation, sourceProvider, scriptResolver, dialectSupport, loggerSupplier);
     }
 
     @Override
@@ -45,6 +43,9 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     @Override
     public void perform(Connection connection) throws Exception {
+        // 获取日志记录器
+        SqlLogger logger = loggerSupplier.supply(this.getClass());
+
         // 开始升级
         logger.info("Upgrading database");
 

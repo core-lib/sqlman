@@ -27,6 +27,6 @@ public interface SqlNamingStrategy extends Comparator<String> {
      * @return SQL脚本信息
      * @throws MalformedNameException SQL脚本资源命名不合法，即{@link this#check(String)}返回{@code false}。
      */
-    SqlInfo parse(String name) throws MalformedNameException;
+    SqlNaming parse(String name) throws MalformedNameException;
 
 }

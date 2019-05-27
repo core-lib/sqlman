@@ -1,9 +1,6 @@
 package io.sqlman.spring;
 
-import io.sqlman.SqlDialectSupport;
-import io.sqlman.SqlScriptResolver;
-import io.sqlman.SqlSourceProvider;
-import io.sqlman.SqlVersionManager;
+import io.sqlman.*;
 import io.sqlman.manager.JdbcIsolation;
 import io.sqlman.manager.JdbcVersionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -43,6 +40,9 @@ public class JdbcManagerConfiguration {
     @Resource
     private SqlDialectSupport dialectSupport;
 
+    @Resource
+    private SqlLoggerSupplier loggerSupplier;
+
     @Bean
     @ConditionalOnMissingBean(SqlVersionManager.class)
     @ConditionalOnProperty(prefix = "sqlman", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -56,7 +56,14 @@ public class JdbcManagerConfiguration {
             throw new IllegalStateException("no dataSource found in application context named: " + properties.getDataSource());
         }
         JdbcIsolation jdbcIsolation = properties.getJdbcIsolation();
-        JdbcVersionManager jdbcVersionManager = new JdbcVersionManager(dataSource, jdbcIsolation, scriptProvider, scriptResolver, dialectSupport);
+        JdbcVersionManager jdbcVersionManager = new JdbcVersionManager(
+                dataSource,
+                jdbcIsolation,
+                scriptProvider,
+                scriptResolver,
+                dialectSupport,
+                loggerSupplier
+        );
         jdbcVersionManager.upgrade();
         return jdbcVersionManager;
     }

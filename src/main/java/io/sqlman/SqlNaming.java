@@ -8,12 +8,12 @@ import java.util.Objects;
  * @author Payne 646742615@qq.com
  * 2019/5/24 20:48
  */
-public class SqlInfo {
+public class SqlNaming {
     private final String name;
     private final String version;
     private final String description;
 
-    public SqlInfo(String name, String version, String description) {
+    public SqlNaming(String name, String version, String description) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null");
         }
@@ -44,8 +44,8 @@ public class SqlInfo {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SqlInfo sqlInfo = (SqlInfo) o;
-        return Objects.equals(version, sqlInfo.version);
+        SqlNaming sqlNaming = (SqlNaming) o;
+        return Objects.equals(version, sqlNaming.version);
     }
 
     @Override

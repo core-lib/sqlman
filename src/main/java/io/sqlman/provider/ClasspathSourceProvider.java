@@ -2,7 +2,7 @@ package io.sqlman.provider;
 
 import io.loadkit.Loaders;
 import io.loadkit.Resource;
-import io.sqlman.SqlInfo;
+import io.sqlman.SqlNaming;
 import io.sqlman.SqlNamingStrategy;
 import io.sqlman.SqlSource;
 import io.sqlman.SqlSourceProvider;
@@ -70,7 +70,7 @@ public class ClasspathSourceProvider extends AbstractSourceProvider implements S
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
-            SqlInfo info = namingStrategy.parse(name);
+            SqlNaming info = namingStrategy.parse(name);
             SqlSource resource = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             if (!resources.add(resource)) {
                 throw new DuplicatedVersionException("duplicate SQL script version: " + resource.version(), resource.version());
@@ -98,7 +98,7 @@ public class ClasspathSourceProvider extends AbstractSourceProvider implements S
         while (enumeration.hasMoreElements()) {
             Resource element = enumeration.nextElement();
             String name = element.getName();
-            SqlInfo info = namingStrategy.parse(name);
+            SqlNaming info = namingStrategy.parse(name);
             int comparision = namingStrategy.compare(info.getVersion(), version);
             SqlSource resource = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
             boolean newer = comparision > 0 || (comparision == 0 && included);
