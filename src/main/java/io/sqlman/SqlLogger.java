@@ -56,7 +56,26 @@ public interface SqlLogger {
      * 日志级别
      */
     enum Level {
-        TRACE, DEBUG, INFO, WARN, ERROR
+        /**
+         * TRACE
+         */
+        TRACE,
+        /**
+         * DEBUG
+         */
+        DEBUG,
+        /**
+         * INFO
+         */
+        INFO,
+        /**
+         * WARN
+         */
+        WARN,
+        /**
+         * ERROR
+         */
+        ERROR
     }
 
 }

@@ -38,103 +38,138 @@ public class Slf4jLogger implements SqlLogger {
         return level;
     }
 
+
     @Override
     public boolean isTraceEnabled() {
-        return logger.isTraceEnabled();
+        return Level.TRACE.compareTo(level) >= 0 && logger.isTraceEnabled();
     }
 
     @Override
     public void trace(String msg) {
-        logger.trace(msg);
+        if (isTraceEnabled()) {
+            logger.trace(msg);
+        }
     }
 
     @Override
     public void trace(String format, Object... arguments) {
-        logger.trace(format, arguments);
+        if (isTraceEnabled()) {
+            logger.trace(format, arguments);
+        }
     }
 
     @Override
     public void trace(String msg, Throwable t) {
-        logger.trace(msg, t);
+        if (isTraceEnabled()) {
+            logger.trace(msg, t);
+        }
     }
+
 
     @Override
     public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
+        return Level.DEBUG.compareTo(level) >= 0 && logger.isDebugEnabled();
     }
 
     @Override
     public void debug(String msg) {
-        logger.debug(msg);
+        if (isDebugEnabled()) {
+            logger.debug(msg);
+        }
     }
 
     @Override
     public void debug(String format, Object... arguments) {
-        logger.debug(format, arguments);
+        if (isDebugEnabled()) {
+            logger.debug(format, arguments);
+        }
     }
 
     @Override
     public void debug(String msg, Throwable t) {
-        logger.debug(msg, t);
+        if (isDebugEnabled()) {
+            logger.debug(msg, t);
+        }
     }
+
 
     @Override
     public boolean isInfoEnabled() {
-        return logger.isInfoEnabled();
+        return Level.INFO.compareTo(level) >= 0 && logger.isInfoEnabled();
     }
 
     @Override
     public void info(String msg) {
-        logger.info(msg);
+        if (isInfoEnabled()) {
+            logger.info(msg);
+        }
     }
 
     @Override
     public void info(String format, Object... arguments) {
-        logger.info(format, arguments);
+        if (isInfoEnabled()) {
+            logger.info(format, arguments);
+        }
     }
 
     @Override
     public void info(String msg, Throwable t) {
-        logger.info(msg, t);
+        if (isInfoEnabled()) {
+            logger.info(msg, t);
+        }
     }
+
 
     @Override
     public boolean isWarnEnabled() {
-        return logger.isWarnEnabled();
+        return Level.WARN.compareTo(level) >= 0 && logger.isWarnEnabled();
     }
 
     @Override
     public void warn(String msg) {
-        logger.warn(msg);
+        if (isWarnEnabled()) {
+            logger.warn(msg);
+        }
     }
 
     @Override
     public void warn(String format, Object... arguments) {
-        logger.warn(format, arguments);
+        if (isWarnEnabled()) {
+            logger.warn(format, arguments);
+        }
     }
 
     @Override
     public void warn(String msg, Throwable t) {
-        logger.warn(msg, t);
+        if (isWarnEnabled()) {
+            logger.warn(msg, t);
+        }
     }
+
 
     @Override
     public boolean isErrorEnabled() {
-        return logger.isErrorEnabled();
+        return Level.ERROR.compareTo(level) >= 0 && logger.isErrorEnabled();
     }
 
     @Override
     public void error(String msg) {
-        logger.error(msg);
+        if (isErrorEnabled()) {
+            logger.error(msg);
+        }
     }
 
     @Override
     public void error(String format, Object... arguments) {
-        logger.error(format, arguments);
+        if (isErrorEnabled()) {
+            logger.error(format, arguments);
+        }
     }
 
     @Override
     public void error(String msg, Throwable t) {
-        logger.error(msg, t);
+        if (isErrorEnabled()) {
+            logger.error(msg, t);
+        }
     }
 }
