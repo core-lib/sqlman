@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
  * 2019/5/27 11:19
  */
 public class Slf4jLoggerSupplier extends AbstractLoggerSupplier implements SqlLoggerSupplier {
-    private final ILoggerFactory loggerFactory;
-    private final SqlLogger.Level level;
+    private ILoggerFactory loggerFactory;
+    private SqlLogger.Level level;
 
     public Slf4jLoggerSupplier() {
         this(LoggerFactory.getILoggerFactory(), SqlLogger.Level.INFO);
@@ -47,5 +47,17 @@ public class Slf4jLoggerSupplier extends AbstractLoggerSupplier implements SqlLo
 
     public ILoggerFactory getLoggerFactory() {
         return loggerFactory;
+    }
+
+    public void setLoggerFactory(ILoggerFactory loggerFactory) {
+        this.loggerFactory = loggerFactory;
+    }
+
+    public SqlLogger.Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(SqlLogger.Level level) {
+        this.level = level;
     }
 }
