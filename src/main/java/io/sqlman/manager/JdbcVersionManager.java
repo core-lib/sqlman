@@ -97,20 +97,20 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                     SQLException sqlException = null;
                     try {
                         logger.info("Executing SQL script: {}", script.name());
-                        SqlStatement statement = script.statement(ordinal);
-                        String sql = statement.statement();
-                        logger.info("Executing SQL statement: {}#{}\n{}", script.version(), ordinal, sql);
-                        PreparedStatement stmt = connection.prepareStatement(sql);
-                        rowEffected = stmt.executeUpdate();
+                        SqlSentence sentence = script.sentence(ordinal);
+                        String sql = sentence.value();
+                        logger.info("Executing SQL sentence: {}#{}\n{}", script.version(), ordinal, sql);
+                        PreparedStatement statement = connection.prepareStatement(sql);
+                        rowEffected = statement.executeUpdate();
                         connection.commit();
-                        logger.info("SQL statement: {}#{} execute completed with {} rows effected", script.version(), ordinal, rowEffected);
+                        logger.info("SQL sentence: {}#{} execute completed with {} rows effected", script.version(), ordinal, rowEffected);
                     } catch (SQLException ex) {
                         connection.rollback();
-                        logger.error("Fail to execute SQL statement", ex);
+                        logger.error("Fail to execute SQL sentence", ex);
                         throw sqlException = ex;
                     } catch (Throwable ex) {
                         connection.rollback();
-                        logger.error("Fail to execute SQL statement", ex);
+                        logger.error("Fail to execute SQL sentence", ex);
                         String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "Unknown error" : ex.getMessage();
                         throw new SQLException(state, state, -1, ex);
                     } finally {

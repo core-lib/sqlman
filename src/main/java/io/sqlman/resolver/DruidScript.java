@@ -1,7 +1,7 @@
 package io.sqlman.resolver;
 
 import io.sqlman.SqlScript;
-import io.sqlman.SqlStatement;
+import io.sqlman.SqlSentence;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -18,34 +18,34 @@ public class DruidScript implements SqlScript {
     private final String name;
     private final String version;
     private final String description;
-    private final List<SqlStatement> statements;
+    private final List<SqlSentence> sentences;
 
-    public DruidScript(String name, String version, String description, List<SqlStatement> statements) {
+    public DruidScript(String name, String version, String description, List<SqlSentence> sentences) {
         if (version == null || version.isEmpty()) {
             throw new IllegalArgumentException("version must not be null or empty string");
         }
-        if (statements == null || statements.isEmpty()) {
-            throw new IllegalArgumentException("statements must not be null or empty list");
+        if (sentences == null || sentences.isEmpty()) {
+            throw new IllegalArgumentException("sentences must not be null or empty list");
         }
         this.name = name;
         this.version = version;
         this.description = description;
-        this.statements = statements;
+        this.sentences = sentences;
     }
 
     @Override
     public int sqls() {
-        return statements.size();
+        return sentences.size();
     }
 
     @Override
-    public SqlStatement statement(int ordinal) {
-        return statements.get(ordinal);
+    public SqlSentence sentence(int ordinal) {
+        return sentences.get(ordinal);
     }
 
     @Override
-    public Enumeration<SqlStatement> statements() {
-        return Collections.enumeration(statements);
+    public Enumeration<SqlSentence> sentences() {
+        return Collections.enumeration(sentences);
     }
 
     @Override

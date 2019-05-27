@@ -1,6 +1,6 @@
 package io.sqlman.resolver;
 
-import io.sqlman.SqlStatement;
+import io.sqlman.SqlSentence;
 
 /**
  * 基于druid的SQL脚本语句
@@ -8,19 +8,19 @@ import io.sqlman.SqlStatement;
  * @author Payne 646742615@qq.com
  * 2019/5/22 11:15
  */
-public class DruidStatement implements SqlStatement {
+public class DruidSentence implements SqlSentence {
     private final int ordinal;
-    private final String statement;
+    private final String value;
 
-    public DruidStatement(int ordinal, String statement) {
+    public DruidSentence(int ordinal, String value) {
         if (ordinal < 0) {
             throw new IllegalArgumentException("ordinal must not be negative");
         }
-        if (statement == null || statement.trim().isEmpty()) {
-            throw new IllegalArgumentException("statement must not be null or blank string");
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("value must not be null or blank string");
         }
         this.ordinal = ordinal;
-        this.statement = statement;
+        this.value = value;
     }
 
     @Override
@@ -29,12 +29,12 @@ public class DruidStatement implements SqlStatement {
     }
 
     @Override
-    public String statement() {
-        return statement;
+    public String value() {
+        return value;
     }
 
     @Override
     public String toString() {
-        return statement;
+        return value;
     }
 }

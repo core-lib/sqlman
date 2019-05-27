@@ -47,14 +47,14 @@ public class DruidScriptResolver implements SqlScriptResolver {
     public SqlScript resolve(SqlSource resource) throws IncorrectSyntaxException, IOException {
         try (InputStream in = resource.open()) {
             String text = SqlUtils.stringify(in, charset);
-            List<SQLStatement> sqls = SQLUtils.parseStatements(text, dialect.toLowerCase());
-            List<SqlStatement> statements = new ArrayList<>(sqls.size());
-            for (int ordinal = 0; ordinal < sqls.size(); ordinal++) {
-                SQLStatement sql = sqls.get(ordinal);
-                SqlStatement statement = new DruidStatement(ordinal, sql.toString());
-                statements.add(statement);
+            List<SQLStatement> statements = SQLUtils.parseStatements(text, dialect.toLowerCase());
+            List<SqlSentence> sentences = new ArrayList<>(statements.size());
+            for (int ordinal = 0; ordinal < statements.size(); ordinal++) {
+                SQLStatement statement = statements.get(ordinal);
+                SqlSentence sentence = new DruidSentence(ordinal, statement.toString());
+                sentences.add(sentence);
             }
-            return new DruidScript(resource.name(), resource.version(), resource.description(), statements);
+            return new DruidScript(resource.name(), resource.version(), resource.description(), sentences);
         } catch (ParserException e) {
             throw new IncorrectSyntaxException(e);
         }

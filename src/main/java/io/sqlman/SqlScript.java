@@ -24,14 +24,14 @@ public interface SqlScript {
      * @return 指定序号的SQL语句
      * @throws IndexOutOfBoundsException 序号超出边界时抛出
      */
-    SqlStatement statement(int ordinal) throws IndexOutOfBoundsException;
+    SqlSentence sentence(int ordinal) throws IndexOutOfBoundsException;
 
     /**
      * SQL语句列表
      *
      * @return 语句列表
      */
-    Enumeration<SqlStatement> statements();
+    Enumeration<SqlSentence> sentences();
 
     /**
      * 脚本名称
