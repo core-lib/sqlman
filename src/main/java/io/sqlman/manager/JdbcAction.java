@@ -16,6 +16,7 @@ public interface JdbcAction {
      *
      * @param connection 连接
      * @throws SQLException 操作异常
+     * @throws Exception    操作异常
      */
     void perform(Connection connection) throws Exception;
 

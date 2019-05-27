@@ -51,18 +51,18 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
         // 获取升级锁
         try {
-            logger.info("Locking sqlman");
+            logger.info("Locking up sqlman");
             dialectSupport.lockup(connection);
             connection.commit();
-            logger.info("Sqlman locked");
+            logger.info("Sqlman locked up");
         } catch (SQLException ex) {
             connection.rollback();
-            logger.error("Fail to acquire sqlman upgrade lockup for " + ex.getMessage(), ex);
+            logger.error("Fail to lock up sqlman for " + ex.getMessage(), ex);
             throw ex;
         } catch (Throwable ex) {
             connection.rollback();
-            logger.error("Fail to acquire sqlman upgrade lockup for " + ex.getMessage(), ex);
-            String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "unknown error" : ex.getMessage();
+            logger.error("Fail to lock up sqlman for " + ex.getMessage(), ex);
+            String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "Unknown Error" : ex.getMessage();
             throw new SQLException(state, state, -1, ex);
         }
 
