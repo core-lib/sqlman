@@ -17,11 +17,31 @@ import java.util.Enumeration;
 public interface SqlVersionManager {
 
     /**
-     * 执行SQL脚本升级
+     * 执行SQL脚本的升级
      *
      * @throws SQLException SQL异常
      */
     void upgrade() throws SQLException;
+
+    /**
+     * 执行指定SQL脚本的升级。
+     *
+     * @param script 指定脚本
+     * @throws SQLException SQL异常
+     * @see NullPointerException 当指定脚本为{@code null} 时
+     */
+    void upgrade(SqlScript script) throws SQLException;
+
+    /**
+     * 执行指定SQL脚本指定语句序号的升级。
+     *
+     * @param script  指定脚本
+     * @param ordinal 指定语句序号
+     * @throws SQLException SQL异常
+     * @see NullPointerException 当指定脚本为{@code null} 时
+     * @see IndexOutOfBoundsException 当指定语句序号超出边界时
+     */
+    void upgrade(SqlScript script, int ordinal) throws SQLException;
 
     /**
      * 获取所有SQL脚本

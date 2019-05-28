@@ -84,16 +84,16 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
             T result = transaction.execute(connection);
             connection.commit();
             return result;
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
             if (connection != null) {
                 connection.rollback();
             }
-            throw e;
-        } catch (Throwable e) {
+            throw ex;
+        } catch (Exception ex) {
             if (connection != null) {
                 connection.rollback();
             }
-            throw new SQLException(e.getMessage(), e);
+            throw new SQLException(ex.getMessage(), ex);
         } finally {
             if (connection != null) {
                 connection.close();
@@ -104,7 +104,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     protected void perform(final JdbcAction action) throws SQLException {
         execute(new JdbcTransaction<Void>() {
             @Override
-            public Void execute(Connection connection) throws Exception {
+            public Void execute(Connection connection) throws SQLException {
                 action.perform(connection);
                 return null;
             }
@@ -130,7 +130,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     public void create() throws SQLException {
         perform(new JdbcAction() {
             @Override
-            public void perform(Connection connection) throws Exception {
+            public void perform(Connection connection) throws SQLException {
                 dialectSupport.create(connection);
             }
         });
@@ -140,7 +140,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     public SqlVersion detect() throws SQLException {
         return execute(new JdbcTransaction<SqlVersion>() {
             @Override
-            public SqlVersion execute(Connection connection) throws Exception {
+            public SqlVersion execute(Connection connection) throws SQLException {
                 return dialectSupport.detect(connection);
             }
         });
@@ -150,7 +150,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     public void update(final SqlVersion version) throws SQLException {
         perform(new JdbcAction() {
             @Override
-            public void perform(Connection connection) throws Exception {
+            public void perform(Connection connection) throws SQLException {
                 dialectSupport.update(connection, version);
             }
         });
@@ -160,7 +160,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     public void remove() throws SQLException {
         perform(new JdbcAction() {
             @Override
-            public void perform(Connection connection) throws Exception {
+            public void perform(Connection connection) throws SQLException {
                 dialectSupport.remove(connection);
             }
         });
@@ -170,7 +170,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     public void lockup() throws SQLException {
         perform(new JdbcAction() {
             @Override
-            public void perform(Connection connection) throws Exception {
+            public void perform(Connection connection) throws SQLException {
                 dialectSupport.lockup(connection);
             }
         });
@@ -180,7 +180,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     public void unlock() throws SQLException {
         perform(new JdbcAction() {
             @Override
-            public void perform(Connection connection) throws Exception {
+            public void perform(Connection connection) throws SQLException {
                 dialectSupport.unlock(connection);
             }
         });

@@ -1,6 +1,7 @@
 package io.sqlman.manager;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * 数据库事务
@@ -15,8 +16,8 @@ public interface JdbcTransaction<T> {
      *
      * @param connection 连接
      * @return 事务执行结果
-     * @throws Exception 事务执行异常
+     * @throws SQLException SQL异常
      */
-    T execute(Connection connection) throws Exception;
+    T execute(Connection connection) throws SQLException;
 
 }

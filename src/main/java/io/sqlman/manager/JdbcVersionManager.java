@@ -42,7 +42,17 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
     }
 
     @Override
-    public void perform(Connection connection) throws Exception {
+    public void upgrade(SqlScript script) {
+
+    }
+
+    @Override
+    public void upgrade(SqlScript script, int ordinal) {
+
+    }
+
+    @Override
+    public void perform(Connection connection) throws SQLException {
         // 获取日志记录器
         SqlLogger logger = loggerSupplier.supply(this.getClass());
 
@@ -59,7 +69,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             connection.rollback();
             logger.error("Fail to lock up sqlman for " + ex.getMessage(), ex);
             throw ex;
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             connection.rollback();
             logger.error("Fail to lock up sqlman for " + ex.getMessage(), ex);
             String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "Unknown Error" : ex.getMessage();
@@ -107,12 +117,14 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                     } catch (SQLException ex) {
                         connection.rollback();
                         logger.error("Fail to execute SQL sentence", ex);
-                        throw sqlException = ex;
-                    } catch (Throwable ex) {
+                        sqlException = ex;
+                        throw sqlException;
+                    } catch (Exception ex) {
                         connection.rollback();
                         logger.error("Fail to execute SQL sentence", ex);
                         String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "Unknown error" : ex.getMessage();
-                        throw new SQLException(state, state, -1, ex);
+                        sqlException = new SQLException(state, state, -1, ex);
+                        throw sqlException;
                     } finally {
                         current = new SqlVersion();
                         current.setName(SqlUtils.ifEmpty(script.name(), "NO NAME"));
@@ -132,6 +144,10 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                 }
                 ordinal = 0;
             }
+        } catch (SQLException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new SQLException(ex.getMessage(), ex);
         } finally {
             // 释放升级锁
             logger.info("Unlocking sqlman");

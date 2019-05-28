@@ -55,8 +55,8 @@ public class DruidScriptResolver implements SqlScriptResolver {
                 sentences.add(sentence);
             }
             return new DruidScript(resource.name(), resource.version(), resource.description(), sentences);
-        } catch (ParserException e) {
-            throw new IncorrectSyntaxException(e);
+        } catch (ParserException ex) {
+            throw new IncorrectSyntaxException(ex);
         }
     }
 
