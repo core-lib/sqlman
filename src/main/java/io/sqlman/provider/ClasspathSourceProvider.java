@@ -60,23 +60,23 @@ public class ClasspathSourceProvider extends AbstractSourceProvider implements S
         if (resourceLoader == null) {
             resourceLoader = this.getClass().getClassLoader();
         }
-        Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
-        Set<SqlSource> resources = new TreeSet<>(new Comparator<SqlSource>() {
+        Enumeration<Resource> resources = Loaders.ant(resourceLoader).load(scriptLocation);
+        Set<SqlSource> sources = new TreeSet<>(new Comparator<SqlSource>() {
             @Override
             public int compare(SqlSource o1, SqlSource o2) {
                 return namingStrategy.compare(o1.version(), o2.version());
             }
         });
-        while (enumeration.hasMoreElements()) {
-            Resource element = enumeration.nextElement();
-            String name = element.getName();
+        while (resources.hasMoreElements()) {
+            Resource resource = resources.nextElement();
+            String name = resource.getName();
             SqlNaming info = namingStrategy.parse(name);
-            SqlSource resource = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
-            if (!resources.add(resource)) {
-                throw new DuplicatedVersionException("duplicate SQL script version: " + resource.version(), resource.version());
+            SqlSource source = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), resource.getUrl());
+            if (!sources.add(source)) {
+                throw new DuplicatedVersionException("duplicate SQL script version: " + source.version(), source.version());
             }
         }
-        return Collections.enumeration(resources);
+        return Collections.enumeration(sources);
     }
 
     @Override
@@ -88,25 +88,25 @@ public class ClasspathSourceProvider extends AbstractSourceProvider implements S
         if (resourceLoader == null) {
             resourceLoader = this.getClass().getClassLoader();
         }
-        Enumeration<Resource> enumeration = Loaders.ant(resourceLoader).load(scriptLocation);
-        Set<SqlSource> resources = new TreeSet<>(new Comparator<SqlSource>() {
+        Enumeration<Resource> resources = Loaders.ant(resourceLoader).load(scriptLocation);
+        Set<SqlSource> sources = new TreeSet<>(new Comparator<SqlSource>() {
             @Override
             public int compare(SqlSource o1, SqlSource o2) {
                 return namingStrategy.compare(o1.version(), o2.version());
             }
         });
-        while (enumeration.hasMoreElements()) {
-            Resource element = enumeration.nextElement();
-            String name = element.getName();
+        while (resources.hasMoreElements()) {
+            Resource resource = resources.nextElement();
+            String name = resource.getName();
             SqlNaming info = namingStrategy.parse(name);
             int comparision = namingStrategy.compare(info.getVersion(), version);
-            SqlSource resource = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), element.getUrl());
+            SqlSource source = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), resource.getUrl());
             boolean newer = comparision > 0 || (comparision == 0 && included);
-            if (newer && !resources.add(resource)) {
-                throw new DuplicatedVersionException("duplicate SQL script version: " + resource.version(), resource.version());
+            if (newer && !sources.add(source)) {
+                throw new DuplicatedVersionException("duplicate SQL script version: " + source.version(), source.version());
             }
         }
-        return Collections.enumeration(resources);
+        return Collections.enumeration(sources);
     }
 
     public ClassLoader getClassLoader() {

@@ -38,17 +38,88 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     @Override
     public void upgrade() throws SQLException {
-        perform(this);
+        lockup();
+        try {
+            create();
+
+            SqlVersion current = detect();
+
+            String version = current != null ? current.getVersion() : null;
+            int ordinal = current != null ? current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal() : 0;
+            boolean included = current == null || !current.getSuccess() || ordinal < current.getSqlQuantity() - 1;
+            Enumeration<SqlSource> sources = current != null ? acquire(version, included) : acquire();
+
+            while (sources.hasMoreElements()) {
+                SqlSource source = sources.nextElement();
+                SqlScript script = resolve(source);
+                if (ordinal == 0) {
+                    upgrade(script);
+                } else {
+                    int sqls = script.sqls();
+                    for (int index = ordinal; index < sqls; index++) {
+                        upgrade(script, index);
+                    }
+                    ordinal = 0;
+                }
+            }
+
+        } catch (SQLException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new SQLException(ex.getMessage(), ex);
+        } finally {
+            unlock();
+        }
     }
 
     @Override
-    public void upgrade(SqlScript script) {
-
+    public void upgrade(SqlScript script) throws SQLException {
+        int sqls = script.sqls();
+        for (int ordinal = 0; ordinal < sqls; ordinal++) {
+            upgrade(script, ordinal);
+        }
     }
 
     @Override
-    public void upgrade(SqlScript script, int ordinal) {
-
+    public void upgrade(final SqlScript script, final int ordinal) throws SQLException {
+        perform(new JdbcAction() {
+            @Override
+            public void perform(Connection connection) throws SQLException {
+                int rowEffected = 0;
+                SQLException sqlException = null;
+                try {
+                    SqlSentence sentence = script.sentence(ordinal);
+                    String sql = sentence.value();
+                    PreparedStatement statement = connection.prepareStatement(sql);
+                    rowEffected = statement.executeUpdate();
+                    connection.commit();
+                } catch (SQLException ex) {
+                    connection.rollback();
+                    sqlException = ex;
+                    throw sqlException;
+                } catch (Exception ex) {
+                    connection.rollback();
+                    String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "Unknown error" : ex.getMessage();
+                    sqlException = new SQLException(state, state, -1, ex);
+                    throw sqlException;
+                } finally {
+                    SqlVersion ver = new SqlVersion();
+                    ver.setName(SqlUtils.ifEmpty(script.name(), "NO NAME"));
+                    ver.setVersion(script.version());
+                    ver.setOrdinal(ordinal);
+                    ver.setDescription(SqlUtils.ifEmpty(script.description(), "NO DESCRIPTION"));
+                    ver.setSqlQuantity(script.sqls());
+                    ver.setSuccess(sqlException == null);
+                    ver.setRowEffected(rowEffected);
+                    ver.setErrorCode(sqlException == null ? 0 : sqlException.getErrorCode());
+                    ver.setErrorState(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getSQLState(), "NO STATE"));
+                    ver.setErrorMessage(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getMessage(), "NO MESSAGE"));
+                    ver.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
+                    update(ver);
+                    connection.commit();
+                }
+            }
+        });
     }
 
     @Override
@@ -94,12 +165,12 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             int ordinal = current == null ? 0 : current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal();
             // 上次执行失败了或者还没执行完
             boolean included = current == null || !current.getSuccess() || ordinal < current.getSqlQuantity() - 1;
-            Enumeration<SqlSource> resources = current == null
+            Enumeration<SqlSource> sources = current == null
                     ? sourceProvider.acquire()
                     : sourceProvider.acquire(version, included);
 
-            while (resources.hasMoreElements()) {
-                SqlSource resource = resources.nextElement();
+            while (sources.hasMoreElements()) {
+                SqlSource resource = sources.nextElement();
                 SqlScript script = scriptResolver.resolve(resource);
                 int count = script.sqls();
                 for (int index = ordinal; index < count; index++) {
@@ -107,13 +178,13 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                     SQLException sqlException = null;
                     try {
                         logger.info("Executing SQL script: {}", script.name());
-                        SqlSentence sentence = script.sentence(ordinal);
+                        SqlSentence sentence = script.sentence(index);
                         String sql = sentence.value();
-                        logger.info("Executing SQL sentence: {}#{}\n{}", script.version(), ordinal, sql);
+                        logger.info("Executing SQL sentence: {}#{}\n{}", script.version(), index, sql);
                         PreparedStatement statement = connection.prepareStatement(sql);
                         rowEffected = statement.executeUpdate();
                         connection.commit();
-                        logger.info("SQL sentence: {}#{} execute completed with {} rows effected", script.version(), ordinal, rowEffected);
+                        logger.info("SQL sentence: {}#{} execute completed with {} rows effected", script.version(), index, rowEffected);
                     } catch (SQLException ex) {
                         connection.rollback();
                         logger.error("Fail to execute SQL sentence", ex);
@@ -126,20 +197,21 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                         sqlException = new SQLException(state, state, -1, ex);
                         throw sqlException;
                     } finally {
-                        current = new SqlVersion();
-                        current.setName(SqlUtils.ifEmpty(script.name(), "NO NAME"));
-                        current.setVersion(script.version());
-                        current.setOrdinal(ordinal);
-                        current.setDescription(SqlUtils.ifEmpty(script.description(), "NO DESCRIPTION"));
-                        current.setSqlQuantity(script.sqls());
-                        current.setSuccess(sqlException == null);
-                        current.setRowEffected(rowEffected);
-                        current.setErrorCode(sqlException == null ? 0 : sqlException.getErrorCode());
-                        current.setErrorState(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getSQLState(), "NO STATE"));
-                        current.setErrorMessage(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getMessage(), "NO MESSAGE"));
-                        current.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                        dialectSupport.update(connection, current);
+                        SqlVersion ver = new SqlVersion();
+                        ver.setName(SqlUtils.ifEmpty(script.name(), "NO NAME"));
+                        ver.setVersion(script.version());
+                        ver.setOrdinal(index);
+                        ver.setDescription(SqlUtils.ifEmpty(script.description(), "NO DESCRIPTION"));
+                        ver.setSqlQuantity(script.sqls());
+                        ver.setSuccess(sqlException == null);
+                        ver.setRowEffected(rowEffected);
+                        ver.setErrorCode(sqlException == null ? 0 : sqlException.getErrorCode());
+                        ver.setErrorState(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getSQLState(), "NO STATE"));
+                        ver.setErrorMessage(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getMessage(), "NO MESSAGE"));
+                        ver.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
+                        dialectSupport.update(connection, ver);
                         connection.commit();
+                        logger.info("Sqlman version is upgraded to {}", ver);
                     }
                 }
                 ordinal = 0;

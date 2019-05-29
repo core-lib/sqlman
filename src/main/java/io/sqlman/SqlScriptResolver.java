@@ -15,11 +15,11 @@ public interface SqlScriptResolver {
     /**
      * 解析SQL脚本
      *
-     * @param resource 脚本资源
+     * @param source 脚本资源
      * @return SQL脚本
      * @throws IncorrectSyntaxException 语法错误异常
      * @throws IOException              I/O异常
      */
-    SqlScript resolve(SqlSource resource) throws IncorrectSyntaxException, IOException;
+    SqlScript resolve(SqlSource source) throws IncorrectSyntaxException, IOException;
 
 }

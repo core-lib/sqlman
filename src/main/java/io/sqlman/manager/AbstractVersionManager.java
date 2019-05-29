@@ -122,8 +122,8 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     }
 
     @Override
-    public SqlScript resolve(SqlSource resource) throws IncorrectSyntaxException, IOException {
-        return scriptResolver.resolve(resource);
+    public SqlScript resolve(SqlSource source) throws IncorrectSyntaxException, IOException {
+        return scriptResolver.resolve(source);
     }
 
     @Override
