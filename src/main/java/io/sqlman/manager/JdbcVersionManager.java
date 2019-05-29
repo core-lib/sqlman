@@ -82,40 +82,43 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     @Override
     public void upgrade(final SqlScript script, final int ordinal) throws SQLException {
-        perform(new JdbcAction() {
-            @Override
-            public void perform(Connection connection) throws SQLException {
-                int rowEffected = 0;
-                SQLException sqlException = null;
-                try {
-                    SqlSentence sentence = script.sentence(ordinal);
-                    String sql = sentence.value();
-                    PreparedStatement statement = connection.prepareStatement(sql);
-                    rowEffected = statement.executeUpdate();
-                } catch (SQLException ex) {
-                    sqlException = ex;
-                    throw sqlException;
-                } catch (Exception ex) {
-                    String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "Unknown error" : ex.getMessage();
-                    sqlException = new SQLException(state, state, -1, ex);
-                    throw sqlException;
-                } finally {
-                    SqlVersion version = new SqlVersion();
-                    version.setName(SqlUtils.ifEmpty(script.name(), "NO NAME"));
-                    version.setVersion(script.version());
-                    version.setOrdinal(ordinal);
-                    version.setDescription(SqlUtils.ifEmpty(script.description(), "NO DESCRIPTION"));
-                    version.setSqlQuantity(script.sqls());
-                    version.setSuccess(sqlException == null);
-                    version.setRowEffected(rowEffected);
-                    version.setErrorCode(sqlException == null ? 0 : sqlException.getErrorCode());
-                    version.setErrorState(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getSQLState(), "NO STATE"));
-                    version.setErrorMessage(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getMessage(), "NO MESSAGE"));
-                    version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
-                    update(version);
+        Integer rowEffected = null;
+        SQLException sqlException = null;
+        try {
+            rowEffected = execute(new JdbcTransaction<Integer>() {
+                @Override
+                public Integer execute(Connection connection) throws SQLException {
+                    try {
+                        SqlSentence sentence = script.sentence(ordinal);
+                        String sql = sentence.value();
+                        PreparedStatement statement = connection.prepareStatement(sql);
+                        return statement.executeUpdate();
+                    } catch (SQLException ex) {
+                        throw ex;
+                    } catch (Exception ex) {
+                        String state = ex.getMessage() == null || ex.getMessage().isEmpty() ? "Unknown error" : ex.getMessage();
+                        throw new SQLException(state, state, -1, ex);
+                    }
                 }
-            }
-        });
+            });
+        } catch (SQLException ex) {
+            sqlException = ex;
+            throw sqlException;
+        } finally {
+            SqlVersion version = new SqlVersion();
+            version.setName(SqlUtils.ifEmpty(script.name(), "NO NAME"));
+            version.setVersion(script.version());
+            version.setOrdinal(ordinal);
+            version.setDescription(SqlUtils.ifEmpty(script.description(), "NO DESCRIPTION"));
+            version.setSqlQuantity(script.sqls());
+            version.setSuccess(sqlException == null);
+            version.setRowEffected(rowEffected == null ? 0 : rowEffected);
+            version.setErrorCode(sqlException == null ? 0 : sqlException.getErrorCode());
+            version.setErrorState(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getSQLState(), "NO STATE"));
+            version.setErrorMessage(sqlException == null ? "OK" : SqlUtils.ifEmpty(sqlException.getMessage(), "NO MESSAGE"));
+            version.setTimeExecuted(new Timestamp(System.currentTimeMillis()));
+            update(version);
+        }
     }
 
 }
