@@ -53,7 +53,8 @@ public class DruidScriptResolver implements SqlScriptResolver {
                 SQLStatement statement = statements.get(ordinal);
                 String sql = statement.toString();
                 sql = sql.trim();
-                while (sql.endsWith(";")) {
+                String suffix = ";";
+                while (sql.endsWith(suffix)) {
                     sql = sql.substring(0, sql.length() - 1);
                 }
                 SqlSentence sentence = new DruidSentence(ordinal, sql);
