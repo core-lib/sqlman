@@ -1,4 +1,4 @@
-package io.sqlman.strategy;
+package io.sqlman.naming;
 
 import io.sqlman.SqlNaming;
 import io.sqlman.SqlNamingStrategy;

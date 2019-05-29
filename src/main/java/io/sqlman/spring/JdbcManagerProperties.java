@@ -1,6 +1,6 @@
 package io.sqlman.spring;
 
-import io.sqlman.manager.JdbcIsolation;
+import io.sqlman.version.JdbcIsolation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

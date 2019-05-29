@@ -1,4 +1,4 @@
-package io.sqlman.provider;
+package io.sqlman.source;
 
 import io.sqlman.SqlSource;
 

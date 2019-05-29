@@ -1,7 +1,7 @@
 package io.sqlman.spring.dialect;
 
 import io.sqlman.SqlDialectSupport;
-import io.sqlman.support.OracleDialectSupport;
+import io.sqlman.dialect.OracleDialectSupport;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

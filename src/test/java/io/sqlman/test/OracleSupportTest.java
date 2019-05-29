@@ -2,10 +2,10 @@ package io.sqlman.test;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.JdbcUtils;
-import io.sqlman.manager.JdbcVersionManager;
-import io.sqlman.provider.ClasspathSourceProvider;
-import io.sqlman.resolver.DruidScriptResolver;
-import io.sqlman.support.OracleDialectSupport;
+import io.sqlman.dialect.OracleDialectSupport;
+import io.sqlman.script.DruidScriptResolver;
+import io.sqlman.source.ClasspathSourceProvider;
+import io.sqlman.version.JdbcVersionManager;
 import org.junit.Test;
 
 /**

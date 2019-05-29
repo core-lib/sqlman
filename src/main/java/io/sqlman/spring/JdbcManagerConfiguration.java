@@ -1,8 +1,8 @@
 package io.sqlman.spring;
 
 import io.sqlman.*;
-import io.sqlman.manager.JdbcIsolation;
-import io.sqlman.manager.JdbcVersionManager;
+import io.sqlman.version.JdbcIsolation;
+import io.sqlman.version.JdbcVersionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

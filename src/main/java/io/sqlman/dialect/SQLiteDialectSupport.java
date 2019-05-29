@@ -1,33 +1,32 @@
-package io.sqlman.support;
+package io.sqlman.dialect;
 
 import io.sqlman.SqlDialectSupport;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * MySQL方言
+ * SQLite方言
  *
  * @author Payne 646742615@qq.com
- * 2019/5/21 17:19
+ * 2019/5/23 15:52
  */
-public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDialectSupport {
+public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlDialectSupport {
 
-    public MySQLDialectSupport() {
+    public SQLiteDialectSupport() {
     }
 
-    public MySQLDialectSupport(String table) {
-        super(table);
+    public SQLiteDialectSupport(String table) {
+        super(table.toUpperCase());
     }
 
     @Override
     public void create(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();
 
-        ddl.append(" CREATE TABLE IF NOT EXISTS ").append(table).append(" (");
-        ddl.append("     ID INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,");
-        ddl.append("     NAME VARCHAR(255) NOT NULL,");
+        ddl.append(" CREATE TABLE IF NOT EXISTS ").append(table.toUpperCase()).append(" (");
+        ddl.append("     ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,");
+        ddl.append("     NAME VARCHAR(225) NOT NULL,");
         ddl.append("     VERSION VARCHAR(24) NOT NULL,");
         ddl.append("     ORDINAL INT(11) NOT NULL,");
         ddl.append("     DESCRIPTION VARCHAR(128) NOT NULL,");
@@ -40,8 +39,7 @@ public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDi
         ddl.append("     TIME_EXECUTED TIMESTAMP NOT NULL");
         ddl.append(" )");
 
-        PreparedStatement statement = connection.prepareStatement(ddl.toString());
-        statement.executeUpdate();
+        connection.prepareStatement(ddl.toString()).executeUpdate();
     }
 
 }

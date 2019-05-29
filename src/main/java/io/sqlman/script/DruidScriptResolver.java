@@ -1,4 +1,4 @@
-package io.sqlman.resolver;
+package io.sqlman.script;
 
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;

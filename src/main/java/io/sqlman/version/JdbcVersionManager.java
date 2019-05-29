@@ -1,4 +1,4 @@
-package io.sqlman.manager;
+package io.sqlman.version;
 
 import io.sqlman.*;
 

@@ -2,7 +2,7 @@ package io.sqlman.spring.script;
 
 import io.sqlman.SqlNamingStrategy;
 import io.sqlman.SqlSourceProvider;
-import io.sqlman.provider.ClasspathSourceProvider;
+import io.sqlman.source.ClasspathSourceProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

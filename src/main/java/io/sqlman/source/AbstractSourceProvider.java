@@ -1,10 +1,10 @@
-package io.sqlman.provider;
+package io.sqlman.source;
 
 import io.sqlman.SqlNaming;
 import io.sqlman.SqlNamingStrategy;
 import io.sqlman.SqlSourceProvider;
 import io.sqlman.exception.MalformedNameException;
-import io.sqlman.strategy.StandardNamingStrategy;
+import io.sqlman.naming.StandardNamingStrategy;
 
 /**
  * 抽象的SQL脚本资源提供器

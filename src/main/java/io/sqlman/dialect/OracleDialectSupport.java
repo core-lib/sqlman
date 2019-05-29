@@ -1,4 +1,4 @@
-package io.sqlman.support;
+package io.sqlman.dialect;
 
 import io.sqlman.SqlDialectSupport;
 

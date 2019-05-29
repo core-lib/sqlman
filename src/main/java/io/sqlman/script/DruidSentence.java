@@ -1,4 +1,4 @@
-package io.sqlman.resolver;
+package io.sqlman.script;
 
 import io.sqlman.SqlSentence;
 
