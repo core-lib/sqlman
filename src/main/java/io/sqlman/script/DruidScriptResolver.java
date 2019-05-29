@@ -51,7 +51,12 @@ public class DruidScriptResolver implements SqlScriptResolver {
             List<SqlSentence> sentences = new ArrayList<>(statements.size());
             for (int ordinal = 0; ordinal < statements.size(); ordinal++) {
                 SQLStatement statement = statements.get(ordinal);
-                SqlSentence sentence = new DruidSentence(ordinal, statement.toString());
+                String sql = statement.toString();
+                sql = sql.trim();
+                while (sql.endsWith(";")) {
+                    sql = sql.substring(0, sql.length() - 1);
+                }
+                SqlSentence sentence = new DruidSentence(ordinal, sql);
                 sentences.add(sentence);
             }
             return new DruidScript(source.name(), source.version(), source.description(), sentences);
