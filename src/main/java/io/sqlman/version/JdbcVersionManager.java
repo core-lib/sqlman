@@ -27,13 +27,12 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     public JdbcVersionManager(
             DataSource dataSource,
-            JdbcIsolation jdbcIsolation,
             SqlSourceProvider sourceProvider,
             SqlScriptResolver scriptResolver,
             SqlDialectSupport dialectSupport,
             SqlLoggerSupplier loggerSupplier
     ) {
-        super(dataSource, jdbcIsolation, sourceProvider, scriptResolver, dialectSupport, loggerSupplier);
+        super(dataSource, sourceProvider, scriptResolver, dialectSupport, loggerSupplier);
     }
 
     @Override
@@ -82,6 +81,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     @Override
     public void upgrade(final SqlScript script, final int ordinal) throws SQLException {
+
         Integer rowEffected = null;
         SQLException sqlException = null;
         try {

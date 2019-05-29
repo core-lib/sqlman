@@ -13,7 +13,6 @@ spring:
 sqlman:
   manager: jdbc
   data-source: dataSource
-  jdbc-isolation: DEFAULT
   enabled: true
   dialect:
     table: SQLMAN_VERSION
