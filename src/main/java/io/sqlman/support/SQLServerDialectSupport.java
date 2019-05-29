@@ -44,7 +44,7 @@ public class SQLServerDialectSupport extends AbstractDialectSupport implements S
         ddl.append("   TIME_EXECUTED DATETIME     NOT NULL");
         ddl.append(" )");
 
-        connection.prepareStatement(ddl.toString()).execute();
+        connection.prepareStatement(ddl.toString()).executeUpdate();
     }
 
 }

@@ -113,17 +113,17 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
 
     @Override
     public void remove(Connection connection) throws SQLException {
-        connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "").execute();
+        connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "").executeUpdate();
     }
 
     @Override
     public void lockup(Connection connection) throws SQLException {
-        connection.prepareStatement("CREATE TABLE " + table.toUpperCase() + "_LOCK (NIL INTEGER)").execute();
+        connection.prepareStatement("CREATE TABLE " + table.toUpperCase() + "_LOCK (NIL INTEGER)").executeUpdate();
     }
 
     @Override
     public void unlock(Connection connection) throws SQLException {
-        connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "_LOCK").execute();
+        connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "_LOCK").executeUpdate();
     }
 
     public String getTable() {

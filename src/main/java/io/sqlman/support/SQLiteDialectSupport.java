@@ -39,7 +39,7 @@ public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlD
         ddl.append("     TIME_EXECUTED TIMESTAMP NOT NULL");
         ddl.append(" )");
 
-        connection.prepareStatement(ddl.toString()).execute();
+        connection.prepareStatement(ddl.toString()).executeUpdate();
     }
 
 }

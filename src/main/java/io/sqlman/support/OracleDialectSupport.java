@@ -62,13 +62,13 @@ public class OracleDialectSupport extends AbstractDialectSupport implements SqlD
         ddl.append("   END IF;");
         ddl.append(" END;");
 
-        connection.prepareStatement(ddl.toString()).execute();
+        connection.prepareStatement(ddl.toString()).executeUpdate();
     }
 
     @Override
     public void remove(Connection connection) throws SQLException {
-        connection.prepareStatement("DROP TRIGGER " + table.toUpperCase() + "_TRIGGER").execute();
-        connection.prepareStatement("DROP SEQUENCE " + table.toUpperCase() + "_SEQUENCE").execute();
+        connection.prepareStatement("DROP TRIGGER " + table.toUpperCase() + "_TRIGGER").executeUpdate();
+        connection.prepareStatement("DROP SEQUENCE " + table.toUpperCase() + "_SEQUENCE").executeUpdate();
         super.remove(connection);
     }
 }

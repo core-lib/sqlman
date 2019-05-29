@@ -41,7 +41,7 @@ public class MySQLDialectSupport extends AbstractDialectSupport implements SqlDi
         ddl.append(" )");
 
         PreparedStatement statement = connection.prepareStatement(ddl.toString());
-        statement.execute();
+        statement.executeUpdate();
     }
 
 }
