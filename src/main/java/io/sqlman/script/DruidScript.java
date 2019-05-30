@@ -39,7 +39,7 @@ public class DruidScript implements SqlScript {
 
     @Override
     public SqlSentence sentence(int ordinal) {
-        return sentences.get(ordinal);
+        return sentences.get(ordinal - 1);
     }
 
     @Override

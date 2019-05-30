@@ -13,8 +13,8 @@ public class DruidSentence implements SqlSentence {
     private final String value;
 
     public DruidSentence(int ordinal, String value) {
-        if (ordinal < 0) {
-            throw new IllegalArgumentException("ordinal must not be negative");
+        if (ordinal < 1) {
+            throw new IllegalArgumentException("ordinal must not lesser than 1");
         }
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("value must not be null or blank string");

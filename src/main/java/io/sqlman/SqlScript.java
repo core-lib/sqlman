@@ -20,6 +20,7 @@ public interface SqlScript {
 
     /**
      * 获取该脚本指定序号的SQL语句
+     * 序号从{@code 1}开始
      *
      * @param ordinal SQL语句序号
      * @return 指定序号的SQL语句

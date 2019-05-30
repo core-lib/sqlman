@@ -51,11 +51,11 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             logger.info("Schema current version is {}", current);
 
             String version = current != null ? current.getVersion() : null;
-            int ordinal = current != null ? current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal() : 0;
-            boolean included = current == null || !current.getSuccess() || ordinal < current.getSqlQuantity() - 1;
+            int ordinal = current != null ? current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal() : 1;
+            boolean included = current == null || !current.getSuccess() || ordinal < current.getSqlQuantity();
             Enumeration<SqlSource> sources = current != null ? acquire(version, included) : acquire();
             if (!included) {
-                ordinal = 0;
+                ordinal = 1;
             }
 
             if (sources.hasMoreElements()) {
@@ -65,14 +65,14 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             while (sources.hasMoreElements()) {
                 SqlSource source = sources.nextElement();
                 SqlScript script = resolve(source);
-                if (ordinal == 0) {
+                if (ordinal == 1) {
                     upgrade(script);
                 } else {
                     int sqls = script.sqls();
-                    for (int index = ordinal; index < sqls; index++) {
+                    for (int index = ordinal; index <= sqls; index++) {
                         upgrade(script, index);
                     }
-                    ordinal = 0;
+                    ordinal = 1;
                 }
             }
 
@@ -102,7 +102,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                 @Override
                 public void perform(Connection connection) throws SQLException {
                     int sqls = script.sqls();
-                    for (int ordinal = 0; ordinal < sqls; ordinal++) {
+                    for (int ordinal = 1; ordinal <= sqls; ordinal++) {
                         upgrade(script, ordinal);
                     }
                 }
@@ -112,7 +112,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
         else {
             logger.info("Executing script {} non-atomically", script.name());
             int sqls = script.sqls();
-            for (int ordinal = 0; ordinal < sqls; ordinal++) {
+            for (int ordinal = 1; ordinal <= sqls; ordinal++) {
                 upgrade(script, ordinal);
             }
         }
@@ -150,7 +150,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                         SqlSentence sentence = script.sentence(ordinal);
                         String sql = sentence.value();
 
-                        logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level : {}", ordinal + 1, script.sqls(), script.version(), isolation, sql.replaceAll("\\s+", " "));
+                        logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level : {}", ordinal, script.sqls(), script.version(), isolation, sql.replaceAll("\\s+", " "));
 
                         PreparedStatement statement = connection.prepareStatement(sql);
                         int rows = statement.executeUpdate();

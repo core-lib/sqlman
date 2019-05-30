@@ -24,7 +24,7 @@ public interface SqlVersionManager {
     void upgrade() throws SQLException;
 
     /**
-     * 执行指定SQL脚本的升级。
+     * 执行指定SQL脚本的升级
      *
      * @param script 指定脚本
      * @throws SQLException SQL异常
@@ -33,7 +33,7 @@ public interface SqlVersionManager {
     void upgrade(SqlScript script) throws SQLException;
 
     /**
-     * 执行指定SQL脚本指定语句序号的升级。
+     * 执行指定SQL脚本指定语句序号的升级，语句序号从{@code 1}开始
      *
      * @param script  指定脚本
      * @param ordinal 指定语句序号
@@ -45,7 +45,7 @@ public interface SqlVersionManager {
 
     /**
      * 获取所有SQL脚本
-     * 实现类返回的结果必须遵循脚本版本的先后顺序。
+     * 实现类返回的结果必须遵循脚本版本的先后顺序
      * 实现类当发现脚本资源中包含重复的SQL脚本版本时应当抛出
      *
      * @return 所有SQL脚本

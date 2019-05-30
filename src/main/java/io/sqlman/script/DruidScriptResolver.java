@@ -49,15 +49,15 @@ public class DruidScriptResolver implements SqlScriptResolver {
             String text = SqlUtils.stringify(in, charset);
             List<SQLStatement> statements = SQLUtils.parseStatements(text, dialect.toLowerCase());
             List<SqlSentence> sentences = new ArrayList<>(statements.size());
-            for (int ordinal = 0; ordinal < statements.size(); ordinal++) {
-                SQLStatement statement = statements.get(ordinal);
+            for (int index = 0; index < statements.size(); index++) {
+                SQLStatement statement = statements.get(index);
                 String sql = statement.toString();
                 sql = sql.trim();
                 String suffix = ";";
                 while (sql.endsWith(suffix)) {
                     sql = sql.substring(0, sql.length() - 1);
                 }
-                SqlSentence sentence = new DruidSentence(ordinal, sql);
+                SqlSentence sentence = new DruidSentence(index + 1, sql);
                 sentences.add(sentence);
             }
             return new DruidScript(source.name(), source.version(), source.parameters(), source.description(), sentences);
