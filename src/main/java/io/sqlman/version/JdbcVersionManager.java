@@ -43,12 +43,12 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
         lockup();
         logger.info("Locked");
         try {
-            logger.info("Creating version table");
+            logger.info("Creating schema version table");
             create();
 
-            logger.info("Detecting current version");
+            logger.info("Detecting schema current version");
             SqlVersion current = detect();
-            logger.info("Current version is {}", current);
+            logger.info("Schema current version is {}", current);
 
             String version = current != null ? current.getVersion() : null;
             int ordinal = current != null ? current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal() : 0;
@@ -59,7 +59,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             }
 
             if (sources.hasMoreElements()) {
-                logger.info("DataSource upgrading");
+                logger.info("Schema upgrading");
             }
 
             while (sources.hasMoreElements()) {
@@ -76,7 +76,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                 }
             }
 
-            logger.info("DataSource is up to date");
+            logger.info("Schema is up to date");
         } catch (SQLException ex) {
             throw ex;
         } catch (Exception ex) {
