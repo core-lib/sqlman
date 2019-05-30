@@ -21,7 +21,7 @@ public class SQLiteSupportTest {
         JdbcVersionManager manager = null;
         try {
             DruidDataSource dataSource = new DruidDataSource();
-            dataSource.setUrl("jdbc:sqlite:target/SQLite.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL");
+            dataSource.setUrl("jdbc:sqlite:target/sqlman.db?date_string_format=yyyy-MM-dd HH:mm:ss&date_class=TEXT&journal_mode=WAL");
             dataSource.setUsername("root");
             dataSource.setPassword("root");
             manager = new JdbcVersionManager(dataSource);

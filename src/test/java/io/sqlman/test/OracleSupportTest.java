@@ -21,9 +21,9 @@ public class OracleSupportTest {
         JdbcVersionManager manager = null;
         try {
             DruidDataSource dataSource = new DruidDataSource();
-            dataSource.setUrl("jdbc:oracle:thin:@//203.195.172.217:1521/regent");
-            dataSource.setUsername("regent");
-            dataSource.setPassword("regent2019");
+            dataSource.setUrl("jdbc:oracle:thin:@//localhost:1521/sqlman");
+            dataSource.setUsername("root");
+            dataSource.setPassword("root");
             manager = new JdbcVersionManager(dataSource);
             manager.setDataSource(dataSource);
             manager.setDialectSupport(new OracleDialectSupport());
