@@ -47,6 +47,9 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             int ordinal = current != null ? current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal() : 0;
             boolean included = current == null || !current.getSuccess() || ordinal < current.getSqlQuantity() - 1;
             Enumeration<SqlSource> sources = current != null ? acquire(version, included) : acquire();
+            if (!included) {
+                ordinal = 0;
+            }
 
             while (sources.hasMoreElements()) {
                 SqlSource source = sources.nextElement();
