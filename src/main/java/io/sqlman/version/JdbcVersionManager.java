@@ -39,9 +39,9 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
     public void upgrade() throws SQLException {
         SqlLogger logger = logger(this.getClass());
 
-        logger.info("Locking");
+        logger.info("Schema locking");
         lockup();
-        logger.info("Locked");
+        logger.info("Schema locked");
         try {
             logger.info("Creating schema version table");
             create();
@@ -82,9 +82,9 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
         } catch (Exception ex) {
             throw new SQLException(ex.getMessage(), ex);
         } finally {
-            logger.info("Unlocking");
+            logger.info("Schema unlocking");
             unlock();
-            logger.info("Unlocked");
+            logger.info("Schema unlocked");
         }
     }
 
@@ -150,11 +150,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                         SqlSentence sentence = script.sentence(ordinal);
                         String sql = sentence.value();
 
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Executing sentence {}/{} of script version {} in {} transaction isolation level \n{}", ordinal + 1, script.sqls(), script.version(), isolation, sql);
-                        } else {
-                            logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level", ordinal + 1, script.sqls(), script.version(), isolation);
-                        }
+                        logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level : {}", ordinal + 1, script.sqls(), script.version(), isolation, sql.replaceAll("\\s+", " "));
 
                         PreparedStatement statement = connection.prepareStatement(sql);
                         int rows = statement.executeUpdate();
