@@ -177,6 +177,16 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
         });
     }
 
+    @Override
+    public SqlLogger logger(Class<?> clazz) {
+        return loggerSupplier.supply(clazz);
+    }
+
+    @Override
+    public SqlLogger logger(String name) {
+        return loggerSupplier.supply(name);
+    }
+
     public DataSource getDataSource() {
         return dataSource;
     }

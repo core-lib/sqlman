@@ -122,4 +122,20 @@ public interface SqlVersionManager {
      */
     void unlock() throws SQLException;
 
+    /**
+     * 获取日志记录器
+     *
+     * @param clazz 日志记录器所在类
+     * @return 日志记录器
+     */
+    SqlLogger logger(Class<?> clazz);
+
+    /**
+     * 获取日志记录器
+     *
+     * @param name 日志记录器名称
+     * @return 日志记录器
+     */
+    SqlLogger logger(String name);
+
 }
