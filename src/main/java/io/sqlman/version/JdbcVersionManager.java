@@ -151,7 +151,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                         String sql = sentence.value();
 
                         if (logger.isDebugEnabled()) {
-                            logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level \n{}", ordinal + 1, script.sqls(), script.version(), isolation, sql);
+                            logger.debug("Executing sentence {}/{} of script version {} in {} transaction isolation level \n{}", ordinal + 1, script.sqls(), script.version(), isolation, sql);
                         } else {
                             logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level", ordinal + 1, script.sqls(), script.version(), isolation);
                         }
