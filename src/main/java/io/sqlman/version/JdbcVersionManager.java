@@ -37,11 +37,18 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     @Override
     public void upgrade() throws SQLException {
+        SqlLogger logger = logger(this.getClass());
+
+        logger.info("Locking");
         lockup();
+        logger.info("Locked");
         try {
+            logger.info("Creating version table");
             create();
 
+            logger.info("Detecting current version");
             SqlVersion current = detect();
+            logger.info("Current version is {}", current);
 
             String version = current != null ? current.getVersion() : null;
             int ordinal = current != null ? current.getSuccess() ? current.getOrdinal() + 1 : current.getOrdinal() : 0;
@@ -49,6 +56,10 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             Enumeration<SqlSource> sources = current != null ? acquire(version, included) : acquire();
             if (!included) {
                 ordinal = 0;
+            }
+
+            if (sources.hasMoreElements()) {
+                logger.info("DataSource upgrading");
             }
 
             while (sources.hasMoreElements()) {
@@ -65,22 +76,28 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                 }
             }
 
+            logger.info("DataSource is up to date");
         } catch (SQLException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new SQLException(ex.getMessage(), ex);
         } finally {
+            logger.info("Unlocking");
             unlock();
+            logger.info("Unlocked");
         }
     }
 
     @Override
     public void upgrade(final SqlScript script) throws SQLException {
+        SqlLogger logger = logger(this.getClass());
+
         Set<String> instructions = script.instructions();
         boolean atomic = instructions != null && instructions.contains(INSTRUCTION_ATOMIC);
 
         // 原子执行
         if (atomic) {
+            logger.info("Executing script {} atomically", script.name());
             perform(new JdbcAction() {
                 @Override
                 public void perform(Connection connection) throws SQLException {
@@ -93,6 +110,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
         }
         // 逐条执行
         else {
+            logger.info("Executing script {} non-atomically", script.name());
             int sqls = script.sqls();
             for (int ordinal = 0; ordinal < sqls; ordinal++) {
                 upgrade(script, ordinal);
@@ -102,6 +120,8 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     @Override
     public void upgrade(final SqlScript script, final int ordinal) throws SQLException {
+        final SqlLogger logger = logger(this.getClass());
+
         Integer rowEffected = null;
         SQLException sqlException = null;
         try {
@@ -109,21 +129,39 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                 @Override
                 public Integer execute(Connection connection) throws SQLException {
                     try {
+                        String isolation;
                         Set<String> instructions = script.instructions();
                         if (instructions != null && instructions.contains(INSTRUCTION_SERIALIZABLE)) {
                             connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                            isolation = "serializable";
                         } else if (instructions != null && instructions.contains(INSTRUCTION_REPEATABLE_READ)) {
                             connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+                            isolation = "repeatable read";
                         } else if (instructions != null && instructions.contains(INSTRUCTION_READ_COMMITTED)) {
                             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+                            isolation = "read committed";
                         } else if (instructions != null && instructions.contains(INSTRUCTION_READ_UNCOMMITTED)) {
                             connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+                            isolation = "read uncommitted";
+                        } else {
+                            isolation = "default";
                         }
 
                         SqlSentence sentence = script.sentence(ordinal);
                         String sql = sentence.value();
+
+                        if (logger.isDebugEnabled()) {
+                            logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level \n{}", ordinal + 1, script.sqls(), script.version(), isolation, sql);
+                        } else {
+                            logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level", ordinal + 1, script.sqls(), script.version(), isolation);
+                        }
+
                         PreparedStatement statement = connection.prepareStatement(sql);
-                        return statement.executeUpdate();
+                        int rows = statement.executeUpdate();
+
+                        logger.info("Execution completed with {} rows effected", rows);
+
+                        return rows;
                     } catch (SQLException ex) {
                         throw ex;
                     } catch (Exception ex) {

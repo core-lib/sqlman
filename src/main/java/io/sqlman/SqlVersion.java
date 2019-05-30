@@ -121,6 +121,6 @@ public class SqlVersion {
 
     @Override
     public String toString() {
-        return "" + version + "/" + ordinal;
+        return "" + version + "#" + ordinal;
     }
 }
