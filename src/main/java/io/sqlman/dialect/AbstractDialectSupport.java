@@ -16,7 +16,7 @@ import java.sql.SQLException;
  * 2019/5/24 9:52
  */
 public abstract class AbstractDialectSupport implements SqlDialectSupport {
-    protected String table = "SQLMAN";
+    protected String table = "SCHEMA_VERSION";
 
     protected AbstractDialectSupport() {
     }

@@ -14,7 +14,7 @@ public abstract class AbstractDialectProperties {
     /**
      * sqlman version table name
      */
-    private String table = "SQLMAN";
+    private String table = "SCHEMA_VERSION";
 
     public String getType() {
         return type;
