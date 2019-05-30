@@ -16,13 +16,7 @@ import java.util.Set;
  * @author Payne 646742615@qq.com
  * 2019/5/22 16:15
  */
-public class JdbcVersionManager extends AbstractVersionManager implements SqlVersionManager {
-    public static String INSTRUCTION_ATOMIC = "ATOMIC";
-    public static String INSTRUCTION_READ_UNCOMMITTED = "READ_UNCOMMITTED";
-    public static String INSTRUCTION_READ_COMMITTED = "READ_COMMITTED";
-    public static String INSTRUCTION_REPEATABLE_READ = "REPEATABLE_READ";
-    public static String INSTRUCTION_SERIALIZABLE = "SERIALIZABLE";
-
+public class JdbcVersionManager extends AbstractVersionManager implements SqlVersionManager, JdbcInstruction {
     protected JdbcVersionManager() {
         super();
     }
