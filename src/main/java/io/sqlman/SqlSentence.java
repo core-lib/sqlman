@@ -9,7 +9,7 @@ package io.sqlman;
 public interface SqlSentence {
 
     /**
-     * 语句序号
+     * 语句序号，从{@code 1}开始
      *
      * @return 语句序号
      */
