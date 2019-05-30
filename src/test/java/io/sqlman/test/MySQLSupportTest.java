@@ -31,9 +31,9 @@ public class MySQLSupportTest {
             manager.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));
             manager.upgrade();
         } finally {
-//            if (manager != null) {
-//                manager.remove();
-//            }
+            if (manager != null) {
+                manager.remove();
+            }
         }
     }
 
