@@ -109,7 +109,7 @@ public interface SqlVersionManager {
     void remove() throws SQLException;
 
     /**
-     * 获取版本升级的排他锁，当获取失败时抛出{@link SQLException}
+     * 获取版本升级的排他锁，当获取失败时抛出{@link SQLException}。
      *
      * @throws SQLException SQL异常
      */
