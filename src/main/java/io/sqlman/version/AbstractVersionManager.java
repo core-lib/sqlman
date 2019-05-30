@@ -27,6 +27,7 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     protected SqlScriptResolver scriptResolver = new DruidScriptResolver();
     protected SqlDialectSupport dialectSupport = new MySQLDialectSupport();
     protected SqlLoggerSupplier loggerSupplier = new Slf4jLoggerSupplier();
+    protected ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
     protected AbstractVersionManager() {
     }
@@ -68,25 +69,34 @@ public abstract class AbstractVersionManager implements SqlVersionManager {
     }
 
     protected <T> T execute(JdbcTransaction<T> transaction) throws SQLException {
+        boolean created = false;
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
+            connection = connectionThreadLocal.get();
+            if (connection == null) {
+                connection = dataSource.getConnection();
+                connection.setAutoCommit(false);
+                connectionThreadLocal.set(connection);
+                created = true;
+            }
             T result = transaction.execute(connection);
-            connection.commit();
+            if (created) {
+                connection.commit();
+            }
             return result;
         } catch (SQLException ex) {
-            if (connection != null) {
+            if (connection != null && created) {
                 connection.rollback();
             }
             throw ex;
         } catch (Exception ex) {
-            if (connection != null) {
+            if (connection != null && created) {
                 connection.rollback();
             }
             throw new SQLException(ex.getMessage(), ex);
         } finally {
-            if (connection != null) {
+            if (connection != null && created) {
+                connectionThreadLocal.remove();
                 connection.close();
             }
         }

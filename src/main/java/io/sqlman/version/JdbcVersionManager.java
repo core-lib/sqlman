@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Enumeration;
+import java.util.Set;
 
 /**
  * 基础SQL版本管理器
@@ -16,6 +17,11 @@ import java.util.Enumeration;
  * 2019/5/22 16:15
  */
 public class JdbcVersionManager extends AbstractVersionManager implements SqlVersionManager {
+    public static String INSTRUCTION_ATOMIC = "ATOMIC";
+    public static String INSTRUCTION_READ_UNCOMMITTED = "READ_UNCOMMITTED";
+    public static String INSTRUCTION_READ_COMMITTED = "READ_COMMITTED";
+    public static String INSTRUCTION_REPEATABLE_READ = "REPEATABLE_READ";
+    public static String INSTRUCTION_SERIALIZABLE = "SERIALIZABLE";
 
     protected JdbcVersionManager() {
         super();
@@ -72,10 +78,28 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
     }
 
     @Override
-    public void upgrade(SqlScript script) throws SQLException {
-        int sqls = script.sqls();
-        for (int ordinal = 0; ordinal < sqls; ordinal++) {
-            upgrade(script, ordinal);
+    public void upgrade(final SqlScript script) throws SQLException {
+        Set<String> instructions = script.instructions();
+        boolean atomic = instructions != null && instructions.contains(INSTRUCTION_ATOMIC);
+
+        // 原子执行
+        if (atomic) {
+            perform(new JdbcAction() {
+                @Override
+                public void perform(Connection connection) throws SQLException {
+                    int sqls = script.sqls();
+                    for (int ordinal = 0; ordinal < sqls; ordinal++) {
+                        upgrade(script, ordinal);
+                    }
+                }
+            });
+        }
+        // 逐条执行
+        else {
+            int sqls = script.sqls();
+            for (int ordinal = 0; ordinal < sqls; ordinal++) {
+                upgrade(script, ordinal);
+            }
         }
     }
 
@@ -88,6 +112,17 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                 @Override
                 public Integer execute(Connection connection) throws SQLException {
                     try {
+                        Set<String> instructions = script.instructions();
+                        if (instructions != null && instructions.contains(INSTRUCTION_SERIALIZABLE)) {
+                            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                        } else if (instructions != null && instructions.contains(INSTRUCTION_REPEATABLE_READ)) {
+                            connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+                        } else if (instructions != null && instructions.contains(INSTRUCTION_READ_COMMITTED)) {
+                            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+                        } else if (instructions != null && instructions.contains(INSTRUCTION_READ_UNCOMMITTED)) {
+                            connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+                        }
+
                         SqlSentence sentence = script.sentence(ordinal);
                         String sql = sentence.value();
                         PreparedStatement statement = connection.prepareStatement(sql);
