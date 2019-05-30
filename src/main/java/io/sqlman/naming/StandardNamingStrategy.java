@@ -86,11 +86,11 @@ public class StandardNamingStrategy implements SqlNamingStrategy {
         String parameter = index < 0 ? "" : value.substring(index + splitter.length());
         Set<String> parameters = new LinkedHashSet<>();
         while ((index = parameter.indexOf(splitter)) > 0) {
-            parameters.add(parameter.substring(0, index).trim());
+            parameters.add(parameter.substring(0, index).trim().toUpperCase());
             parameter = parameter.substring(index + splitter.length());
         }
         if (!parameter.trim().isEmpty()) {
-            parameters.add(parameter.trim());
+            parameters.add(parameter.trim().toUpperCase());
         }
 
         return new SqlNaming(name, version, parameters, description);
