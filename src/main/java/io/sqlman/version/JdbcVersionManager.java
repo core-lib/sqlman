@@ -81,7 +81,6 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
 
     @Override
     public void upgrade(final SqlScript script, final int ordinal) throws SQLException {
-
         Integer rowEffected = null;
         SQLException sqlException = null;
         try {
