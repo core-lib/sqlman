@@ -60,7 +60,7 @@ public class DruidScriptResolver implements SqlScriptResolver {
                 SqlSentence sentence = new DruidSentence(ordinal, sql);
                 sentences.add(sentence);
             }
-            return new DruidScript(source.name(), source.version(), source.description(), sentences);
+            return new DruidScript(source.name(), source.version(), source.parameters(), source.description(), sentences);
         } catch (ParserException ex) {
             throw new IncorrectSyntaxException(ex);
         }

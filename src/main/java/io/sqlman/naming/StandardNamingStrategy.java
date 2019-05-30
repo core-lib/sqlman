@@ -4,6 +4,9 @@ import io.sqlman.SqlNaming;
 import io.sqlman.SqlNamingStrategy;
 import io.sqlman.exception.MalformedNameException;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * 标准的命名策略
  *
@@ -12,22 +15,27 @@ import io.sqlman.exception.MalformedNameException;
  */
 public class StandardNamingStrategy implements SqlNamingStrategy {
     private char separator = '/';
-    private String delimiter = "-";
+    private String splitter = "-";
+    private String delimiter = "!";
     private String extension = ".sql";
 
     public StandardNamingStrategy() {
     }
 
-    public StandardNamingStrategy(char separator, String delimiter, String extension) {
+    public StandardNamingStrategy(char separator, String splitter, String delimiter, String extension) {
         if (delimiter == null || delimiter.trim().isEmpty()) {
             throw new IllegalArgumentException("delimiter must not be null or blank string");
+        }
+        if (splitter == null || splitter.trim().isEmpty()) {
+            throw new IllegalArgumentException("splitter must not be null or blank string");
         }
         if (extension == null || extension.trim().isEmpty()) {
             throw new IllegalArgumentException("extension must not be null or blank string");
         }
         this.separator = separator;
-        this.delimiter = delimiter;
-        this.extension = extension;
+        this.splitter = splitter.trim();
+        this.delimiter = delimiter.trim();
+        this.extension = extension.trim();
     }
 
     @Override
@@ -40,14 +48,18 @@ public class StandardNamingStrategy implements SqlNamingStrategy {
         }
 
         // 去掉后缀
-        name = name.substring(0, name.length() - extension.length());
+        String n = name.substring(0, name.length() - extension.length());
 
         // 取最后一截
-        name = name.substring(name.lastIndexOf(separator) + 1);
+        n = n.substring(n.lastIndexOf(separator) + 1);
 
-        // 分隔符前面的是版本号后面是描述，描述可以没有
-        int index = name.indexOf(delimiter);
-        String version = index < 0 ? name : name.substring(0, index);
+        // 分隔符前面的是版本号 + 参数后面是描述，描述可以没有
+        int index = n.lastIndexOf(delimiter);
+        String value = index < 0 ? n : n.substring(0, index);
+
+        // 拆分符前面是版本号后面是参数
+        index = value.indexOf(splitter);
+        String version = index < 0 ? value : value.substring(0, index);
 
         return version.matches("v?\\d+(\\.\\d+)*");
     }
@@ -63,12 +75,25 @@ public class StandardNamingStrategy implements SqlNamingStrategy {
         // 取最后一截
         n = n.substring(n.lastIndexOf(separator) + 1);
 
-        // 分隔符前面的是版本号后面是描述，描述可以没有
-        int index = n.indexOf(delimiter);
-        String version = index < 0 ? n : n.substring(0, index);
-        String description = index < 0 ? "" : n.substring(index + 1);
+        // 分隔符前面的是版本号 + 参数后面是描述，描述可以没有
+        int index = n.lastIndexOf(delimiter);
+        String value = index < 0 ? n : n.substring(0, index);
+        String description = index < 0 ? "" : n.substring(index + delimiter.length());
 
-        return new SqlNaming(name, version, description);
+        // 拆分符前面是版本号后面是参数
+        index = value.indexOf(splitter);
+        String version = index < 0 ? value : value.substring(0, index);
+        String parameter = index < 0 ? "" : value.substring(index + splitter.length());
+        Set<String> parameters = new LinkedHashSet<>();
+        while ((index = parameter.indexOf(splitter)) > 0) {
+            parameters.add(parameter.substring(0, index).trim());
+            parameter = parameter.substring(index + splitter.length());
+        }
+        if (!parameter.trim().isEmpty()) {
+            parameters.add(parameter.trim());
+        }
+
+        return new SqlNaming(name, version, parameters, description);
     }
 
     /**
@@ -105,6 +130,14 @@ public class StandardNamingStrategy implements SqlNamingStrategy {
 
     public void setSeparator(char separator) {
         this.separator = separator;
+    }
+
+    public String getSplitter() {
+        return splitter;
+    }
+
+    public void setSplitter(String splitter) {
+        this.splitter = splitter;
     }
 
     public String getDelimiter() {

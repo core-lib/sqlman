@@ -1,6 +1,7 @@
 package io.sqlman;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * SQL脚本信息
@@ -11,20 +12,25 @@ import java.util.Objects;
 public class SqlNaming {
     private final String name;
     private final String version;
+    private final Set<String> parameters;
     private final String description;
 
-    public SqlNaming(String name, String version, String description) {
+    public SqlNaming(String name, String version, Set<String> parameters, String description) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null");
         }
         if (version == null) {
             throw new IllegalArgumentException("version must not be null");
         }
+        if (parameters == null) {
+            throw new IllegalArgumentException("parameters must not be null");
+        }
         if (description == null) {
             throw new IllegalArgumentException("description must not be null");
         }
         this.name = name;
         this.version = version;
+        this.parameters = parameters;
         this.description = description;
     }
 
@@ -34,6 +40,10 @@ public class SqlNaming {
 
     public String getVersion() {
         return version;
+    }
+
+    public Set<String> getParameters() {
+        return parameters;
     }
 
     public String getDescription() {

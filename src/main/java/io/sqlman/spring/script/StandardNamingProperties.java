@@ -15,9 +15,13 @@ public class StandardNamingProperties extends AbstractNamingProperties {
      */
     private char separator = '/';
     /**
+     * SQL script name splitter
+     */
+    private String splitter = "-";
+    /**
      * SQL script name delimiter
      */
-    private String delimiter = "-";
+    private String delimiter = "!";
     /**
      * SQL script name extension
      */
@@ -29,6 +33,14 @@ public class StandardNamingProperties extends AbstractNamingProperties {
 
     public void setSeparator(char separator) {
         this.separator = separator;
+    }
+
+    public String getSplitter() {
+        return splitter;
+    }
+
+    public void setSplitter(String splitter) {
+        this.splitter = splitter;
     }
 
     public String getDelimiter() {

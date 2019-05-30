@@ -5,6 +5,7 @@ import io.sqlman.SqlSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Set;
 
 
 /**
@@ -16,15 +17,19 @@ import java.net.URL;
 public class ClasspathSource implements SqlSource {
     private final String name;
     private final String version;
+    private final Set<String> parameters;
     private final String description;
     private final URL url;
 
-    public ClasspathSource(String name, String version, String description, URL url) {
+    public ClasspathSource(String name, String version, Set<String> parameters, String description, URL url) {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null");
         }
         if (version == null) {
             throw new IllegalArgumentException("version must not be null");
+        }
+        if (parameters == null) {
+            throw new IllegalArgumentException("parameters must not be null");
         }
         if (description == null) {
             throw new IllegalArgumentException("description must not be null");
@@ -34,6 +39,7 @@ public class ClasspathSource implements SqlSource {
         }
         this.name = name;
         this.version = version;
+        this.parameters = parameters;
         this.description = description;
         this.url = url;
     }
@@ -46,6 +52,11 @@ public class ClasspathSource implements SqlSource {
     @Override
     public String version() {
         return version;
+    }
+
+    @Override
+    public Set<String> parameters() {
+        return parameters;
     }
 
     @Override

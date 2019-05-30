@@ -2,6 +2,7 @@ package io.sqlman;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  * SQL脚本资源
@@ -24,6 +25,13 @@ public interface SqlSource {
      * @return 脚本版本号
      */
     String version();
+
+    /**
+     * 参数列表
+     *
+     * @return 参数列表
+     */
+    Set<String> parameters();
 
     /**
      * 脚本描述

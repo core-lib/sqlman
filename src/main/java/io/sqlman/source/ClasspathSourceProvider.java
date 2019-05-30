@@ -70,8 +70,8 @@ public class ClasspathSourceProvider extends AbstractSourceProvider implements S
         while (resources.hasMoreElements()) {
             Resource resource = resources.nextElement();
             String name = resource.getName();
-            SqlNaming info = namingStrategy.parse(name);
-            SqlSource source = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), resource.getUrl());
+            SqlNaming naming = namingStrategy.parse(name);
+            SqlSource source = new ClasspathSource(naming.getName(), naming.getVersion(), naming.getParameters(), naming.getDescription(), resource.getUrl());
             if (!sources.add(source)) {
                 throw new DuplicatedVersionException("duplicate SQL script version: " + source.version(), source.version());
             }
@@ -98,9 +98,9 @@ public class ClasspathSourceProvider extends AbstractSourceProvider implements S
         while (resources.hasMoreElements()) {
             Resource resource = resources.nextElement();
             String name = resource.getName();
-            SqlNaming info = namingStrategy.parse(name);
-            int comparision = namingStrategy.compare(info.getVersion(), version);
-            SqlSource source = new ClasspathSource(info.getName(), info.getVersion(), info.getDescription(), resource.getUrl());
+            SqlNaming naming = namingStrategy.parse(name);
+            int comparision = namingStrategy.compare(naming.getVersion(), version);
+            SqlSource source = new ClasspathSource(naming.getName(), naming.getVersion(), naming.getParameters(), naming.getDescription(), resource.getUrl());
             boolean newer = comparision > 0 || (comparision == 0 && included);
             if (newer && !sources.add(source)) {
                 throw new DuplicatedVersionException("duplicate SQL script version: " + source.version(), source.version());

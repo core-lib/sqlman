@@ -32,7 +32,7 @@ public class StandardNamingConfiguration {
         char separator = properties.getSeparator();
         String delimiter = properties.getDelimiter();
         String extension = properties.getExtension();
-        return new StandardNamingStrategy(separator, delimiter, extension);
+        return new StandardNamingStrategy(separator, properties.getSplitter(), delimiter, extension);
     }
 
 }

@@ -1,6 +1,7 @@
 package io.sqlman;
 
 import java.util.Enumeration;
+import java.util.Set;
 
 /**
  * SQL脚本
@@ -46,6 +47,13 @@ public interface SqlScript {
      * @return 脚本版本号
      */
     String version();
+
+    /**
+     * 指令列表
+     *
+     * @return 指令列表
+     */
+    Set<String> instructions();
 
     /**
      * 脚本描述

@@ -26,7 +26,8 @@ sqlman:
     naming:
       strategy: standard
       separator: /
-      delimiter: "-"
+      splitter: "-"
+      delimiter: "#"
       extension: .sql
   logger:
     supplier: slf4j

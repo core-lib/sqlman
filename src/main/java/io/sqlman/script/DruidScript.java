@@ -3,10 +3,7 @@ package io.sqlman.script;
 import io.sqlman.SqlScript;
 import io.sqlman.SqlSentence;
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 基于druid的SQL脚本
@@ -17,10 +14,11 @@ import java.util.Objects;
 public class DruidScript implements SqlScript {
     private final String name;
     private final String version;
+    private final Set<String> instructions;
     private final String description;
     private final List<SqlSentence> sentences;
 
-    public DruidScript(String name, String version, String description, List<SqlSentence> sentences) {
+    public DruidScript(String name, String version, Set<String> instructions, String description, List<SqlSentence> sentences) {
         if (version == null || version.isEmpty()) {
             throw new IllegalArgumentException("version must not be null or empty string");
         }
@@ -29,6 +27,7 @@ public class DruidScript implements SqlScript {
         }
         this.name = name;
         this.version = version;
+        this.instructions = instructions;
         this.description = description;
         this.sentences = sentences;
     }
@@ -56,6 +55,11 @@ public class DruidScript implements SqlScript {
     @Override
     public String version() {
         return version;
+    }
+
+    @Override
+    public Set<String> instructions() {
+        return instructions;
     }
 
     @Override
