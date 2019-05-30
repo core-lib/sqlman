@@ -30,9 +30,10 @@ public class StandardNamingConfiguration {
     @ConditionalOnMissingBean(SqlNamingStrategy.class)
     public SqlNamingStrategy sqlmanBasicNamingStrategy() {
         char separator = properties.getSeparator();
+        String splitter = properties.getSplitter();
         String delimiter = properties.getDelimiter();
         String extension = properties.getExtension();
-        return new StandardNamingStrategy(separator, properties.getSplitter(), delimiter, extension);
+        return new StandardNamingStrategy(separator, splitter, delimiter, extension);
     }
 
 }
