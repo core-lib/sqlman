@@ -69,8 +69,8 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                     upgrade(script);
                 } else {
                     int sqls = script.sqls();
-                    for (int index = ordinal; index <= sqls; index++) {
-                        upgrade(script, index);
+                    for (int odn = ordinal; odn <= sqls; odn++) {
+                        upgrade(script, odn);
                     }
                     ordinal = 1;
                 }
