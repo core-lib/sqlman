@@ -150,7 +150,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                         SqlSentence sentence = script.sentence(ordinal);
                         String sql = sentence.value();
 
-                        logger.info("Executing sentence {}/{} of script version {} in {} transaction isolation level : {}", ordinal, script.sqls(), script.version(), isolation, sql.replaceAll("\\s+", " "));
+                        logger.info("Executing sentence {}/{} of script version {} under {} transaction isolation level : {}", ordinal, script.sqls(), script.version(), isolation, sql.replaceAll("\\s+", " "));
 
                         PreparedStatement statement = connection.prepareStatement(sql);
                         int rows = statement.executeUpdate();

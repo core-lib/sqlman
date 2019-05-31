@@ -15,7 +15,7 @@ sqlman:
   data-source: dataSource
   enabled: true
   dialect:
-    table: SQLMAN_VERSION
+    table: SCHEMA_VERSION
     type: MySQL
   script:
     provider: classpath

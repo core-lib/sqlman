@@ -1,0 +1,7 @@
+set transaction isolation level read committed;
+INSERT INTO SQLMAN_TEST1 (ID)
+VALUES (1);
+INSERT INTO SQLMAN_TEST2 (ID)
+VALUES (2);
+INSERT INTO SQLMAN_TEST3 (ID)
+VALUES (3);
