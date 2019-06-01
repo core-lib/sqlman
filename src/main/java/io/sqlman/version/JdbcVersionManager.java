@@ -129,22 +129,10 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                 @Override
                 public Integer execute(Connection connection) throws SQLException {
                     try {
-                        String isolation;
                         Set<String> instructions = script.instructions();
-                        if (instructions != null && instructions.contains(INSTRUCTION_SERIALIZABLE)) {
-                            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-                            isolation = "serializable";
-                        } else if (instructions != null && instructions.contains(INSTRUCTION_REPEATABLE_READ)) {
-                            connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
-                            isolation = "repeatable read";
-                        } else if (instructions != null && instructions.contains(INSTRUCTION_READ_COMMITTED)) {
-                            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-                            isolation = "read committed";
-                        } else if (instructions != null && instructions.contains(INSTRUCTION_READ_UNCOMMITTED)) {
-                            connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-                            isolation = "read uncommitted";
-                        } else {
-                            isolation = "default";
+                        JdbcIsolation isolation = JdbcIsolation.valueOf(instructions);
+                        if (isolation != null && connection.getTransactionIsolation() != isolation.level) {
+                            connection.setTransactionIsolation(isolation.level);
                         }
 
                         SqlSentence sentence = script.sentence(ordinal);
