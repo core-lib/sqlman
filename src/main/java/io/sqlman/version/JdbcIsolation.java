@@ -57,12 +57,17 @@ public enum JdbcIsolation implements JdbcInstruction {
         if (instructions == null || instructions.isEmpty()) {
             return null;
         }
+        JdbcIsolation isolation = null;
         for (JdbcIsolation value : values()) {
             if (instructions.contains(value.instruction)) {
-                return value;
+                if (isolation != null) {
+                    throw new IllegalArgumentException("multiple transaction isolation level instructions");
+                } else {
+                    isolation = value;
+                }
             }
         }
-        return null;
+        return isolation;
     }
 
     @Override
