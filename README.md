@@ -23,20 +23,22 @@
 6. 释放数据库升级排它锁。
 
 ## 安装说明
-```xml
-<!-- 设置 jitpack.io 仓库 -->
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
+1. 设置 jitpack.io 仓库
+    ```xml
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+    ```
 
-<!-- 添加 SQLMan 依赖 -->
-<dependency>
-    <groupId>com.github.core-lib</groupId>
-    <artifactId>sqlman</artifactId>
-    <version>v1.0.5</version>
-</dependency>
-```
+2. 添加 SQLMan 依赖
+    ```xml
+    <dependency>
+        <groupId>com.github.core-lib</groupId>
+        <artifactId>sqlman</artifactId>
+        <version>v1.0.5</version>
+    </dependency>
+    ```
 
 ## 使用说明
 * 纯代码调用
