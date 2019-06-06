@@ -26,7 +26,7 @@
 1. 纯代码调用方式
 ```java
 JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);             // dataSource 为项目的数据源对象
-sqlman.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version")); // MySQL 方言，表名为 sqlman_schema_version
+sqlman.setDialectSupport(new MySQLDialectSupport("schema_version"));        // MySQL 方言，表名为 schema_version
 sqlman.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL));         // 使用 Druid SQL解析器
 sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));   // 加载 sqlman/**/*.sql 路径的脚本
 sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));    // 采用 SLF4J 日志实现，日志级别为 INFO
