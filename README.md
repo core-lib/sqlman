@@ -39,26 +39,44 @@
         <version>v1.0.5</version>
     </dependency>
     ```
-
-## 代码调用
-```java
-// dataSource 为项目的数据源对象
-JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);
-
-// MySQL 方言，表名为 sqlman_schema_version
-sqlman.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version"));
-
-// 加载 sqlman/**/*.sql 路径的脚本，使用标准SQL脚本命名策略
-sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql", new StandardNamingStrategy()));
-
-// 使用 Druid SQL 解析器，方言为 MySQL，字符集为 UTF-8
-sqlman.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL, "UTF-8"));
-
-// 采用 SLF4J 日志实现，日志级别为 INFO
-sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));
-
-// 执行升级流程
-sqlman.upgrade();
+## Spring-Boot 集成
+```yaml
+# SQLMan 配置
+sqlman:
+  # 是否开启
+  enabled: true
+  # 管理器实现方式，目前支持 jdbc
+  manager: jdbc
+  # 当项目有多个数据源时，指定对应的数据源 bean 名称
+  data-source: dataSource
+  # 方言配置
+  dialect:
+    # 版本记录表表名
+    table: sqlman_schema_version
+    # 方言类型
+    type: MySQL
+  # 脚本配置
+  script:
+    # 脚本资源提供器
+    provider: classpath
+    # 脚本位置的 ANT 路径表达式
+    location: sqlman/**/*.sql
+    # 脚本解析器
+    resolver: druid
+    # SQL脚本方言
+    dialect: MySQL
+    # SQL脚本字符集
+    charset: UTF-8
+    # 命名配置
+    naming:
+      # SQL脚本命名策略
+      strategy: standard
+  # 日志配置
+  logger:
+    # 日志提供器
+    supplier: slf4j
+    # 日志级别
+    level: INFO
 ```
 
 ## Spring-MVC 集成
@@ -98,42 +116,23 @@ sqlman.upgrade();
 </bean>
 ```
 
-## Spring-Boot 集成
-```yaml
-# SQLMan 配置
-sqlman:
-  # 是否开启
-  enabled: true
-  # 管理器实现方式，目前支持 jdbc
-  manager: jdbc
-  # 当项目有多个数据源时，指定对应的数据源 bean 名称
-  data-source: dataSource
-  # 方言配置
-  dialect:
-    # 版本记录表表名
-    table: sqlman_schema_version
-    # 方言类型
-    type: MySQL
-  # 脚本配置
-  script:
-    # 脚本资源提供器
-    provider: classpath
-    # 脚本位置的 ANT 路径表达式
-    location: sqlman/**/*.sql
-    # 脚本解析器
-    resolver: druid
-    # SQL脚本方言
-    dialect: MySQL
-    # SQL脚本字符集
-    charset: UTF-8
-    # 命名配置
-    naming:
-      # SQL脚本命名策略
-      strategy: standard
-  # 日志配置
-  logger:
-    # 日志提供器
-    supplier: slf4j
-    # 日志级别
-    level: INFO
+## 代码调用
+```java
+// dataSource 为项目的数据源对象
+JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);
+
+// MySQL 方言，表名为 sqlman_schema_version
+sqlman.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version"));
+
+// 加载 sqlman/**/*.sql 路径的脚本，使用标准SQL脚本命名策略
+sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql", new StandardNamingStrategy()));
+
+// 使用 Druid SQL 解析器，方言为 MySQL，字符集为 UTF-8
+sqlman.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL, "UTF-8"));
+
+// 采用 SLF4J 日志实现，日志级别为 INFO
+sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));
+
+// 执行升级流程
+sqlman.upgrade();
 ```
