@@ -5,6 +5,7 @@ import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.SqlLogger;
 import io.sqlman.dialect.MySQLDialectSupport;
 import io.sqlman.logger.Slf4jLoggerSupplier;
+import io.sqlman.naming.StandardNamingStrategy;
 import io.sqlman.script.DruidScriptResolver;
 import io.sqlman.source.ClasspathSourceProvider;
 import io.sqlman.version.JdbcVersionManager;
@@ -28,9 +29,9 @@ public class MySQLSupportTest {
             dataSource.setPassword("root");
             manager = new JdbcVersionManager(dataSource);
             manager.setDataSource(dataSource);
-            manager.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version"));
+            manager.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql", new StandardNamingStrategy()));
             manager.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL, "UTF-8"));
-            manager.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));
+            manager.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version"));
             manager.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));
             manager.upgrade();
         } finally {

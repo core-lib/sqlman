@@ -31,8 +31,8 @@ JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);
 // MySQL 方言，表名为 sqlman_schema_version
 sqlman.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version"));
 
-// 加载 sqlman/**/*.sql 路径的脚本
-sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));
+// 加载 sqlman/**/*.sql 路径的脚本，使用标准SQL脚本命名策略
+sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql", new StandardNamingStrategy()));
 
 // 使用 Druid SQL 解析器，方言为 MySQL，字符集为 UTF-8
 sqlman.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL, "UTF-8"));
@@ -44,16 +44,20 @@ sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));
 sqlman.upgrade();
 ```
 
-* 与 Spring-MVC 集成
+* Spring-MVC 集成
 ```xml
 <!-- MySQL 数据库方言，表名为 sqlman_schema_version -->
 <bean id="sqlDialectSupport" class="io.sqlman.dialect.MySQLDialectSupport">
     <property name="table" value="sqlman_schema_version"/>
 </bean>
 
-<!-- 加载 sqlman/**/*.sql 路径的脚本 -->
+<!-- 标准SQL脚本命名策略 -->
+<bean id="sqlNamingStrategy" class="io.sqlman.naming.StandardNamingStrategy"/>
+
+<!-- 加载 sqlman/**/*.sql 路径的脚本，使用标准SQL脚本命名策略 -->
 <bean id="sqlSourceProvider" class="io.sqlman.source.ClasspathSourceProvider">
     <property name="scriptLocation" value="scripts/**/*.sql"/>
+    <property name="namingStrategy" ref="sqlNamingStrategy"/>
 </bean>
 
 <!-- 使用 Druid SQL解析器，方言为 MySQL，字符集为 UTF-8 -->
@@ -77,7 +81,7 @@ sqlman.upgrade();
 </bean>
 ```
 
-* 与 Spring-Boot 集成
+* Spring-Boot 集成
 ```yaml
 sqlman:
   manager: jdbc
