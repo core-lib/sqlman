@@ -22,6 +22,22 @@
 5. 遍历SQL脚本资源，解析SQL脚本语句以执行，并插入当前最新版本记录。
 6. 释放数据库升级排它锁。
 
+## 安装说明
+```xml
+<!-- 设置 jitpack.io 仓库 -->
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+
+<!-- 添加 SQLMan 依赖 -->
+<dependency>
+    <groupId>com.github.core-lib</groupId>
+    <artifactId>sqlman</artifactId>
+    <version>v1.0.5</version>
+</dependency>
+```
+
 ## 使用说明
 * 纯代码调用
 ```java
