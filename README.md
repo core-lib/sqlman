@@ -156,11 +156,14 @@ SQL脚本需要遵循一定的命名规则以配合SQLMan进行版本高低的�
 5. 以 .sql 为后缀。（必选）
 
 命名例子：
-* v1.0.0.sql                                        // 只有版本号
-* v2.4.13.8-ATOMIC.sql                              // 版本号 + 一个指令
-* v2.4.13.8-ATOMIC-REPEATABLE_READ.sql              // 版本号 + 多个指令
-* v2019.06.13!drop-useless-tables.sql               // 版本号 + 备注
-* v2019.06.13-REPEATABLE_READ!init-admin-data.sql   // 版本号 + 指令 + 备注
+
+|  |  |
+| :------- | :------- |
+|  v1.0.0.sql                                        | 只有版本号 |
+|  v2.4.13.8-ATOMIC.sql                              | 版本号 + 一个指令 |
+|  v2.4.13.8-ATOMIC-REPEATABLE_READ.sql              | 版本号 + 多个指令 |
+|  v2019.06.13!drop-useless-tables.sql               | 版本号 + 备注 |
+|  v2019.06.13-REPEATABLE_READ!init-admin-data.sql   | 版本号 + 指令 + 备注 |
 
 标准命名策略中版本号的高低对比基于版本数字的分段对比，并不是字符串对比。例如：
 * 1.0.0 比 0.0.1 高
