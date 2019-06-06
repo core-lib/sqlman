@@ -23,12 +23,67 @@
 6. 释放数据库升级排它锁。
 
 ## 使用说明
-1. 纯代码调用方式
+* 纯代码调用方式
 ```java
 JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);             // dataSource 为项目的数据源对象
 sqlman.setDialectSupport(new MySQLDialectSupport("schema_version"));        // MySQL 方言，表名为 schema_version
-sqlman.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL));         // 使用 Druid SQL解析器
 sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));   // 加载 sqlman/**/*.sql 路径的脚本
+sqlman.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL));         // 使用 Druid SQL解析器
 sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));    // 采用 SLF4J 日志实现，日志级别为 INFO
 sqlman.upgrade();                                                           // 执行升级流程
+```
+
+* 与 Spring-MVC 集成
+```xml
+<!-- MySQL 数据库方言，表名为 schema_version -->
+<bean id="sqlDialectSupport" class="io.sqlman.dialect.MySQLDialectSupport">
+    <property name="table" value="schema_version"/>
+</bean>
+<!-- 加载 sqlman/**/*.sql 路径的脚本 -->
+<bean id="sqlSourceProvider" class="io.sqlman.source.ClasspathSourceProvider">
+    <property name="scriptLocation" value="scripts/**/*.sql"/>
+</bean>
+<!-- 使用 Druid SQL解析器，方言为 MySQL，字符集为 UTF-8 -->
+<bean id="sqlScriptResolver" class="io.sqlman.script.DruidScriptResolver">
+    <property name="dialect" value="MySQL"/>
+    <property name="charset" value="UTF-8"/>
+</bean>
+<!-- 采用 SLF4J 日志实现，日志级别为 INFO -->
+<bean id="sqlLoggerSupplier" class="io.sqlman.logger.Slf4jLoggerSupplier">
+    <property name="level" value="INFO"/>
+</bean>
+<!-- 执行升级流程，注意这里需要有 init-method="upgrade" -->
+<bean id="sqlVersionManager" class="io.sqlman.version.JdbcVersionManager" init-method="upgrade">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="dialectSupport" ref="sqlDialectSupport"/>
+    <property name="sourceProvider" ref="sqlSourceProvider"/>
+    <property name="scriptResolver" ref="sqlScriptResolver"/>
+    <property name="loggerSupplier" ref="sqlLoggerSupplier"/>
+</bean>
+```
+
+* 与 Spring-Boot 集成
+```yaml
+sqlman:
+  manager: jdbc
+  data-source: dataSource
+  enabled: true
+  dialect:
+    table: SCHEMA_VERSION
+    type: MySQL
+  script:
+    provider: classpath
+    location: sqlman/**/*.sql
+    resolver: druid
+    dialect: MySQL
+    charset: UTF-8
+    naming:
+      strategy: standard
+      separator: /
+      splitter: "-"
+      delimiter: "!"
+      extension: .sql
+  logger:
+    supplier: slf4j
+    level: INFO
 ```
