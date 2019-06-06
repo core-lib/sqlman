@@ -22,7 +22,7 @@
 5. 遍历SQL脚本资源，解析SQL脚本语句以执行，并插入当前最新版本记录。
 6. 释放数据库升级排它锁。
 
-## 安装说明
+## 安装步骤
 1. 设置 jitpack.io 仓库
     ```xml
     <repository>
@@ -40,6 +40,9 @@
     </dependency>
     ```
 ## Spring-Boot 集成
+SQLMan 与 Spring-Boot 集成时，只需要通过配置即可，下面展示的是 SQLMan 所有配置项及其缺省值。
+为了方便说明则将其都展示出来，如果缺省配置合适的话，就无需在项目配置文件中加入这些配置。
+只需要在项目中加入SQLMan依赖以及在 resource/sqlman/ 目录或子目录下放置SQL脚本即可，SQL脚本的命名规则在文档后面会详细说明。
 ```yaml
 # SQLMan 配置
 sqlman:
@@ -52,7 +55,7 @@ sqlman:
   # 方言配置
   dialect:
     # 版本记录表表名
-    table: sqlman_schema_version
+    table: schema_version
     # 方言类型
     type: MySQL
   # 脚本配置
@@ -80,10 +83,13 @@ sqlman:
 ```
 
 ## Spring-MVC 集成
+SQLMan 与 Spring-MVC 集成核心的 bean 为最后面的 SqlVersionManager 并且需要注入对应的数据源 bean 和指定其初始化方法为 upgrade ，其余的注入均有其缺省值，
+且缺省值如文中所示。
+
 ```xml
-<!-- MySQL 数据库方言，表名为 sqlman_schema_version -->
+<!-- MySQL 数据库方言，表名为 schema_version -->
 <bean id="sqlDialectSupport" class="io.sqlman.dialect.MySQLDialectSupport">
-    <property name="table" value="sqlman_schema_version"/>
+    <property name="table" value="schema_version"/>
 </bean>
 
 <!-- 标准SQL脚本命名策略 -->
@@ -91,7 +97,7 @@ sqlman:
 
 <!-- 加载 sqlman/**/*.sql 路径的脚本，使用标准SQL脚本命名策略 -->
 <bean id="sqlSourceProvider" class="io.sqlman.source.ClasspathSourceProvider">
-    <property name="scriptLocation" value="scripts/**/*.sql"/>
+    <property name="scriptLocation" value="sqlman/**/*.sql"/>
     <property name="namingStrategy" ref="sqlNamingStrategy"/>
 </bean>
 
@@ -117,12 +123,14 @@ sqlman:
 ```
 
 ## 代码调用
+当项目采用的框架不是基于 Spring 家族的，可以参考与 Spring-MVC 集成的思路或采用纯代码调用方式来集成。同样的，只有数据源参数是必选的，其余都有其缺省值，且缺省值如下面代码所示。
+
 ```java
 // dataSource 为项目的数据源对象
 JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);
 
-// MySQL 方言，表名为 sqlman_schema_version
-sqlman.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version"));
+// MySQL 方言，表名为 schema_version
+sqlman.setDialectSupport(new MySQLDialectSupport("schema_version"));
 
 // 加载 sqlman/**/*.sql 路径的脚本，使用标准SQL脚本命名策略
 sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql", new StandardNamingStrategy()));
@@ -136,3 +144,25 @@ sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));
 // 执行升级流程
 sqlman.upgrade();
 ```
+
+## 命名规则
+SQL脚本需要遵循一定的命名规则以配合SQLMan进行版本高低的区分以及执行脚本时采用的指令。
+
+插件内部提供了一个标准的SQL脚本资源命名策略解析器（StandardNamingStrategy），其规则如下：
+1. 以 v 开头，不区分大小写。（必选）
+2. 紧跟着任意级版本数字，以 . 分隔，例如 1.0.0、2.4.13.8 或 2019.06.13 等。（必选）
+3. 指定脚本执行指令列表，以 - 为前缀，例如 -ATOMIC、-READ_COMMITTED 或 -REPEATABLE_READ 等。（可选）
+4. 添加脚本备注，以 ! 为前缀，例如 !add-some-column、!drop-useless-tables 等。（可选）
+5. 以 .sql 为后缀。（必选）
+
+命名例子：
+* v1.0.0.sql                                        // 只有版本号
+* v2.4.13.8-ATOMIC.sql                              // 版本号 + 一个指令
+* v2.4.13.8-ATOMIC-REPEATABLE_READ.sql              // 版本号 + 多个指令
+* v2019.06.13!drop-useless-tables.sql               // 版本号 + 备注
+* v2019.06.13-REPEATABLE_READ!init-admin-data.sql   // 版本号 + 指令 + 备注
+
+## 指令说明
+| 指令名称 | 指令含义 | 指令说明 | 缺省值 |
+| :------- | :------- | :------- | :----- |
+| ATOMIC | 原子性执行 | 当SQL脚本包含多条SQL语句时，将其置于同一个事务中执行。| 非原子性执行，即一条SQL语句一个事务。|
