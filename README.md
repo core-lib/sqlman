@@ -25,33 +25,48 @@
 ## 使用说明
 * 纯代码调用方式
 ```java
-JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);             // dataSource 为项目的数据源对象
-sqlman.setDialectSupport(new MySQLDialectSupport("schema_version"));        // MySQL 方言，表名为 schema_version
-sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));   // 加载 sqlman/**/*.sql 路径的脚本
-sqlman.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL));         // 使用 Druid SQL解析器
-sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));    // 采用 SLF4J 日志实现，日志级别为 INFO
-sqlman.upgrade();                                                           // 执行升级流程
+// dataSource 为项目的数据源对象
+JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);
+
+// MySQL 方言，表名为 sqlman_schema_version
+sqlman.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version"));
+
+// 加载 sqlman/**/*.sql 路径的脚本
+sqlman.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));
+
+// 使用 Druid SQL 解析器，方言为 MySQL，字符集为 UTF-8
+sqlman.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL, "UTF-8"));
+
+// 采用 SLF4J 日志实现，日志级别为 INFO
+sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));
+
+// 执行升级流程
+sqlman.upgrade();
 ```
 
 * 与 Spring-MVC 集成
 ```xml
-<!-- MySQL 数据库方言，表名为 schema_version -->
+<!-- MySQL 数据库方言，表名为 sqlman_schema_version -->
 <bean id="sqlDialectSupport" class="io.sqlman.dialect.MySQLDialectSupport">
-    <property name="table" value="schema_version"/>
+    <property name="table" value="sqlman_schema_version"/>
 </bean>
+
 <!-- 加载 sqlman/**/*.sql 路径的脚本 -->
 <bean id="sqlSourceProvider" class="io.sqlman.source.ClasspathSourceProvider">
     <property name="scriptLocation" value="scripts/**/*.sql"/>
 </bean>
+
 <!-- 使用 Druid SQL解析器，方言为 MySQL，字符集为 UTF-8 -->
 <bean id="sqlScriptResolver" class="io.sqlman.script.DruidScriptResolver">
     <property name="dialect" value="MySQL"/>
     <property name="charset" value="UTF-8"/>
 </bean>
+
 <!-- 采用 SLF4J 日志实现，日志级别为 INFO -->
 <bean id="sqlLoggerSupplier" class="io.sqlman.logger.Slf4jLoggerSupplier">
     <property name="level" value="INFO"/>
 </bean>
+
 <!-- 执行升级流程，注意这里需要有 init-method="upgrade" -->
 <bean id="sqlVersionManager" class="io.sqlman.version.JdbcVersionManager" init-method="upgrade">
     <property name="dataSource" ref="dataSource"/>

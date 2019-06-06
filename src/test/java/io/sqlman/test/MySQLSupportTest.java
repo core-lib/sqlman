@@ -29,7 +29,7 @@ public class MySQLSupportTest {
             manager = new JdbcVersionManager(dataSource);
             manager.setDataSource(dataSource);
             manager.setDialectSupport(new MySQLDialectSupport("sqlman_schema_version"));
-            manager.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL));
+            manager.setScriptResolver(new DruidScriptResolver(JdbcUtils.MYSQL, "UTF-8"));
             manager.setSourceProvider(new ClasspathSourceProvider("sqlman/**/*.sql"));
             manager.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));
             manager.upgrade();
