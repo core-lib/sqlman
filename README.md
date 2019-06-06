@@ -8,7 +8,7 @@
 
 ## 功能特性
 * 兼容主流数据库
-* 支持 DDL / DML / DCL
+* 支持全部 DDL / DML / DCL 语法
 * 支持多 SQL 语句脚本 one-by-one 或 atomic 执行方式
 * 可选脚本执行事务隔离级别
 * 支持 Spring 自动配置
@@ -23,7 +23,7 @@
 6. 释放数据库升级排它锁。
 
 ## 使用说明
-* 纯代码调用方式
+* 纯代码调用
 ```java
 // dataSource 为项目的数据源对象
 JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);
@@ -83,26 +83,40 @@ sqlman.upgrade();
 
 * Spring-Boot 集成
 ```yaml
+# SQLMan 配置
 sqlman:
-  manager: jdbc
-  data-source: dataSource
+  # 是否开启
   enabled: true
+  # 管理器实现方式，目前支持 jdbc
+  manager: jdbc
+  # 当项目有多个数据源时，指定对应的数据源 bean 名称
+  data-source: dataSource
+  # 方言配置
   dialect:
-    table: SCHEMA_VERSION
+    # 版本记录表表名
+    table: sqlman_schema_version
+    # 方言类型
     type: MySQL
+  # 脚本配置
   script:
+    # 脚本资源提供器
     provider: classpath
+    # 脚本位置的 ANT 路径表达式
     location: sqlman/**/*.sql
+    # 脚本解析器
     resolver: druid
+    # SQL脚本方言
     dialect: MySQL
+    # SQL脚本字符集
     charset: UTF-8
+    # 命名配置
     naming:
+      # SQL脚本命名策略
       strategy: standard
-      separator: /
-      splitter: "-"
-      delimiter: "!"
-      extension: .sql
+  # 日志配置
   logger:
+    # 日志提供器
     supplier: slf4j
+    # 日志级别
     level: INFO
 ```
