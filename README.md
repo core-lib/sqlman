@@ -40,8 +40,7 @@
     </dependency>
     ```
 
-## 使用说明
-* 纯代码调用
+## 代码调用
 ```java
 // dataSource 为项目的数据源对象
 JdbcVersionManager sqlman = new JdbcVersionManager(dataSource);
@@ -62,7 +61,7 @@ sqlman.setLoggerSupplier(new Slf4jLoggerSupplier(SqlLogger.Level.INFO));
 sqlman.upgrade();
 ```
 
-* Spring-MVC 集成
+## Spring-MVC 集成
 ```xml
 <!-- MySQL 数据库方言，表名为 sqlman_schema_version -->
 <bean id="sqlDialectSupport" class="io.sqlman.dialect.MySQLDialectSupport">
@@ -99,7 +98,7 @@ sqlman.upgrade();
 </bean>
 ```
 
-* Spring-Boot 集成
+## Spring-Boot 集成
 ```yaml
 # SQLMan 配置
 sqlman:
