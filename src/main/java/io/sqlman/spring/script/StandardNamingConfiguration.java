@@ -28,7 +28,7 @@ public class StandardNamingConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(SqlNamingStrategy.class)
-    public SqlNamingStrategy sqlmanBasicNamingStrategy() {
+    public SqlNamingStrategy sqlmanStandardNamingStrategy() {
         char separator = properties.getSeparator();
         String splitter = properties.getSplitter();
         String delimiter = properties.getDelimiter();

@@ -45,7 +45,7 @@ public class JdbcManagerConfiguration {
     @Bean
     @ConditionalOnMissingBean(SqlVersionManager.class)
     @ConditionalOnProperty(prefix = "sqlman", name = "enabled", havingValue = "true", matchIfMissing = true)
-    public JdbcVersionManager sqlmanBasicVersionManager(ApplicationContext applicationContext) throws SQLException {
+    public JdbcVersionManager sqlmanJdbcVersionManager(ApplicationContext applicationContext) throws SQLException {
         Map<String, DataSource> map = applicationContext.getBeansOfType(DataSource.class);
         if (map.isEmpty()) {
             throw new IllegalStateException("no dataSource found in application context");

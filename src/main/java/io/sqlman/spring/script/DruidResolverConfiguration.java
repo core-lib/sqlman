@@ -29,7 +29,7 @@ public class DruidResolverConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(SqlScriptResolver.class)
-    public DruidScriptResolver sqlmanBasicScriptResolver() {
+    public DruidScriptResolver sqlmanDruidScriptResolver() {
         String dialect = properties.getDialect();
         String charset = properties.getCharset();
         return new DruidScriptResolver(dialect, charset);

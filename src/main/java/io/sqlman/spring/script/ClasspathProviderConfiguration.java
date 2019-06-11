@@ -32,7 +32,7 @@ public class ClasspathProviderConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(SqlSourceProvider.class)
-    public ClasspathSourceProvider sqlmanBasicScriptProvider() {
+    public ClasspathSourceProvider sqlmanClasspathScriptProvider() {
         String location = properties.getLocation();
         return new ClasspathSourceProvider(location, sqlNamingStrategy);
     }
