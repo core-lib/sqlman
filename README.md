@@ -1,5 +1,5 @@
 # SQLMan [![](https://jitpack.io/v/core-lib/sqlman.svg)](https://jitpack.io/#core-lib/sqlman)
-#### &emsp;&emsp;基于Java语言的关系型数据库迭代升级版本化管理与自动化执行插件，兼容主流关系型数据库，支持其方言的所有 DDL / DML / DCL，旨在让SQL脚本成为项目代码的一部分，让数据库升级也纳入版本化管理之中。
+#### &emsp;&emsp;基于Java语言的关系型数据库迭代升级版本化管理与自动化执行插件，兼容主流关系型数据库，支持其方言的所有 DDL / DML / DCL 语法，旨在让SQL脚本成为项目代码的一部分，让数据库升级也纳入版本化管理之中。
 
 ## 适用场景
 &emsp;&emsp;项目开发中难免会伴随着数据库表结构的迭代升级和表数据更新维护，同时根据不同的开发时期又分为 LOCAL、ALPHA、BETA、PRE-PRODUCTION 以及 PRODUCTION 或更多阶段。
