@@ -1,11 +1,16 @@
 package io.sqlman.dialect;
 
-import io.sqlman.*;
+import io.sqlman.SqlDialectSupport;
+import io.sqlman.SqlScript;
+import io.sqlman.SqlSentence;
+import io.sqlman.SqlVersion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static io.sqlman.SqlUtils.*;
 
 /**
  * 抽象的数据库方言
@@ -94,16 +99,16 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
         dml.append("     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         PreparedStatement statement = connection.prepareStatement(dml.toString());
-        statement.setString(1, SqlUtils.truncate(version.getName(), 225));
-        statement.setString(2, SqlUtils.truncate(version.getVersion(), 24));
+        statement.setString(1, truncate(version.getName(), 225));
+        statement.setString(2, truncate(version.getVersion(), 24));
         statement.setInt(3, version.getOrdinal());
-        statement.setString(4, SqlUtils.truncate(version.getDescription(), 128));
+        statement.setString(4, truncate(version.getDescription(), 128));
         statement.setInt(5, version.getSqlQuantity());
         statement.setBoolean(6, version.getSuccess());
         statement.setInt(7, version.getRowEffected());
         statement.setInt(8, version.getErrorCode());
-        statement.setString(9, SqlUtils.truncate(version.getErrorState(), 255));
-        statement.setString(10, SqlUtils.truncate(version.getErrorMessage(), 255));
+        statement.setString(9, truncate(version.getErrorState(), 255));
+        statement.setString(10, truncate(version.getErrorMessage(), 255));
         statement.setTimestamp(11, version.getTimeExecuted());
 
         statement.executeUpdate();
@@ -126,18 +131,21 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
 
     @Override
     public void backup(Connection connection, SqlScript script, int ordinal) throws SQLException {
-        SqlSentence sentence = script.sentence(ordinal);
-        String table = sentence.table();
+        final SqlSentence sentence = script.sentence(ordinal);
+        final String schema = sentence.schema();
+        final String table = sentence.table();
+        final String name = isEmpty(schema) ? table : schema + "." + table;
         if (table == null || table.trim().isEmpty()) {
             return;
         }
         try {
-            connection.prepareStatement("SELECT COUNT(*) FROM " + table).executeQuery();
+            connection.prepareStatement("SELECT COUNT(*) FROM " + name).executeQuery();
         } catch (SQLException e) {
             return;
         }
-        table = table + "_bak_" + script.version().replace('.', '_') + "$" + ordinal;
-        connection.prepareStatement("CREATE TABLE " + table + " AS SELECT * FROM " + sentence.table()).executeUpdate();
+        final String backup = unwrap(table) + "_bak_" + script.version().replace('.', '_') + "$" + ordinal;
+        final String bak = isEmpty(schema) ? backup : schema + "." + backup;
+        connection.prepareStatement("CREATE TABLE " + bak + " AS SELECT * FROM " + name).executeUpdate();
     }
 
     public String getTable() {

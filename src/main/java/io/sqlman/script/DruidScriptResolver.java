@@ -59,16 +59,20 @@ public class DruidScriptResolver implements SqlScriptResolver {
                 while (sql.endsWith(suffix)) {
                     sql = sql.substring(0, sql.length() - 1);
                 }
+                String schema = null;
                 String table = null;
                 List<SQLObject> children = statement.getChildren();
                 for (SQLObject child : children) {
                     if (child instanceof SQLExprTableSource) {
                         SQLExprTableSource tableSource = (SQLExprTableSource) child;
-                        table = tableSource.getName().toString();
+                        String name = tableSource.getName().toString();
+                        String[] names = name.split("\\.");
+                        schema = names.length > 1 ? names[names.length - 2] : null;
+                        table = names[names.length - 1];
                         break;
                     }
                 }
-                SqlSentence sentence = new DruidSentence(index + 1, sql, table);
+                SqlSentence sentence = new DruidSentence(index + 1, sql, schema, table);
                 sentences.add(sentence);
             }
             return new DruidScript(source.name(), source.version(), source.parameters(), source.description(), sentences);

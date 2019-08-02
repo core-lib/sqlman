@@ -23,6 +23,13 @@ public interface SqlSentence {
     String value();
 
     /**
+     * 数据库名
+     *
+     * @return 数据库名
+     */
+    String schema();
+
+    /**
      * 操作表名
      *
      * @return 操作表名

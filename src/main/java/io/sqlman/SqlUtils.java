@@ -61,4 +61,33 @@ public class SqlUtils {
         return value == null || value.isEmpty() ? defaultValue : value;
     }
 
+    /**
+     * 判断字符串是否为{@code null} 或空字符串
+     *
+     * @param value 字符串
+     * @return 是否为{@code null} 或空字符串
+     */
+    public static boolean isEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
+
+    /**
+     * 去除"`"符号
+     *
+     * @param name 名称
+     * @return 去除"`"符号的名称
+     */
+    public static String unwrap(String name) {
+        return name.replace("`", "");
+    }
+
+    /**
+     * 加上"`"符号
+     *
+     * @param name 名称
+     * @return 加上"`"符号的名称
+     */
+    public static String wrap(String name) {
+        return '`' + name + "`";
+    }
 }
