@@ -155,7 +155,7 @@ SQL脚本需要遵循一定的命名规则以配合SQLMan进行版本高低的�
 插件内部提供了一个标准的SQL脚本资源命名策略解析器（StandardNamingStrategy），其规则如下：
 1. 以 v 开头，不区分大小写。（必选）
 2. 紧跟着任意级版本数字，以 . 分隔，例如 1.0.0、2.4.13.8 或 2019.06.13 等。（必选）
-3. 指定脚本执行指令列表，以 - 为前缀，例如 -ATOMIC、-READ_COMMITTED 或 -REPEATABLE_READ 等。（可选）
+3. 指定脚本执行指令列表，以 - 为前缀，例如 -ATOMIC、-READ_COMMITTED 或 -REPEATABLE_READ、-SAFETY、-DANGER 等。（可选）
 4. 添加脚本备注，以 ! 为前缀，例如 !add-some-column、!drop-useless-tables 等。（可选）
 5. 以 .sql 为后缀。（必选）
 
@@ -166,6 +166,8 @@ SQL脚本需要遵循一定的命名规则以配合SQLMan进行版本高低的�
 |  v1.0.0.sql                                        | 只有版本号 |
 |  v2.4.13.8-ATOMIC.sql                              | 版本号 + 一个指令 |
 |  v2.4.13.8-ATOMIC-REPEATABLE_READ.sql              | 版本号 + 多个指令 |
+|  v2.4.13.8-SAFETY.sql                              | 版本号 + 安全模式 |
+|  v2.4.13.8-DANGER!delete-data.sql                  | 版本号 + 危险模式 + 备注 |
 |  v2019.06.13!drop-useless-tables.sql               | 版本号 + 备注 |
 |  v2019.06.13-REPEATABLE_READ!init-admin-data.sql   | 版本号 + 指令 + 备注 |
 
@@ -191,7 +193,8 @@ SQL脚本需要遵循一定的命名规则以配合SQLMan进行版本高低的�
 | DANGER | 危险模式 | 当SQL脚本设置为安全模式，即每条SQL语句执行前不自动备份被操作的表 | 危险模式 |
 
 其中每个SQL脚本的隔离级别只能选取一种，通常情况下依赖隔离级别的脚本需要原子性执行即通过-ATOMIC指令来指定，缺省为one-by-one模式。
-同理执行模式也只能在危险模式中选取一种，备份表的名称为 原表名_bak_脚本_版_本_号$语句下标
+
+同理执行模式也只能在危险模式中选取一种，备份表的名称为：原表名_bak_脚本_版_本_号$语句下标
 
 ## 原子模式
 * 缺省模式的多SQL语句脚本在执行过程中，当其中某条SQL执行失败后，程序下次启动时将会从该脚本的**失败SQL**开始。
