@@ -11,8 +11,9 @@ import io.sqlman.SqlSentence;
 public class DruidSentence implements SqlSentence {
     private final int ordinal;
     private final String value;
+    private final String table;
 
-    public DruidSentence(int ordinal, String value) {
+    public DruidSentence(int ordinal, String value, String table) {
         if (ordinal < 1) {
             throw new IllegalArgumentException("ordinal must not lesser than 1");
         }
@@ -21,6 +22,7 @@ public class DruidSentence implements SqlSentence {
         }
         this.ordinal = ordinal;
         this.value = value;
+        this.table = table;
     }
 
     @Override
@@ -31,6 +33,11 @@ public class DruidSentence implements SqlSentence {
     @Override
     public String value() {
         return value;
+    }
+
+    @Override
+    public String table() {
+        return table;
     }
 
     @Override

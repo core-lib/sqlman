@@ -17,6 +17,17 @@ import java.util.Set;
  * 2019/5/22 16:15
  */
 public class JdbcVersionManager extends AbstractVersionManager implements SqlVersionManager, JdbcInstruction {
+
+    /**
+     * 缺省隔离界别
+     */
+    protected JdbcIsolation defaultIsolation;
+
+    /**
+     * 缺省模式
+     */
+    protected JdbcMode defaultMode = JdbcMode.DANGER;
+
     protected JdbcVersionManager() {
         super();
     }
@@ -33,6 +44,20 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
             SqlLoggerSupplier loggerSupplier
     ) {
         super(dataSource, sourceProvider, scriptResolver, dialectSupport, loggerSupplier);
+    }
+
+    public JdbcVersionManager(
+            DataSource dataSource,
+            SqlSourceProvider sourceProvider,
+            SqlScriptResolver scriptResolver,
+            SqlDialectSupport dialectSupport,
+            SqlLoggerSupplier loggerSupplier,
+            JdbcIsolation defaultIsolation,
+            JdbcMode defaultMode
+    ) {
+        super(dataSource, sourceProvider, scriptResolver, dialectSupport, loggerSupplier);
+        this.defaultIsolation = defaultIsolation;
+        this.defaultMode = defaultMode;
     }
 
     @Override
@@ -131,14 +156,35 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                     try {
                         Set<String> instructions = script.instructions();
                         JdbcIsolation isolation = JdbcIsolation.valueOf(instructions);
+                        if (isolation == null) {
+                            isolation = defaultIsolation;
+                        }
                         if (isolation != null && connection.getTransactionIsolation() != isolation.level) {
                             connection.setTransactionIsolation(isolation.level);
+                        }
+
+                        JdbcMode mode = JdbcMode.valueOf(instructions);
+                        if (mode == null) {
+                            mode = defaultMode;
+                        }
+                        if (mode == null) {
+                            mode = JdbcMode.DANGER;
+                        }
+                        if (mode == JdbcMode.SAFETY) {
+                            dialectSupport.backup(connection, script, ordinal);
                         }
 
                         SqlSentence sentence = script.sentence(ordinal);
                         String sql = sentence.value();
 
-                        logger.info("Executing sentence {}/{} of script version {} under {} transaction isolation level : {}", ordinal, script.sqls(), script.version(), isolation, sql.replaceAll("\\s+", " "));
+                        logger.info(
+                                "Executing sentence {}/{} of script version {} under {} transaction isolation level : {}",
+                                ordinal,
+                                script.sqls(),
+                                script.version(),
+                                isolation != null ? isolation : "default",
+                                sql.replaceAll("\\s+", " ")
+                        );
 
                         PreparedStatement statement = connection.prepareStatement(sql);
                         int rows = statement.executeUpdate();
@@ -174,4 +220,19 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
         }
     }
 
+    public JdbcIsolation getDefaultIsolation() {
+        return defaultIsolation;
+    }
+
+    public void setDefaultIsolation(JdbcIsolation defaultIsolation) {
+        this.defaultIsolation = defaultIsolation;
+    }
+
+    public JdbcMode getDefaultMode() {
+        return defaultMode;
+    }
+
+    public void setDefaultMode(JdbcMode defaultMode) {
+        this.defaultMode = defaultMode;
+    }
 }

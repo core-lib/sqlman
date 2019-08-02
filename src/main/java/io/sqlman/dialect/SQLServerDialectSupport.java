@@ -1,6 +1,8 @@
 package io.sqlman.dialect;
 
 import io.sqlman.SqlDialectSupport;
+import io.sqlman.SqlScript;
+import io.sqlman.SqlSentence;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -47,4 +49,19 @@ public class SQLServerDialectSupport extends AbstractDialectSupport implements S
         connection.prepareStatement(ddl.toString()).executeUpdate();
     }
 
+    @Override
+    public void backup(Connection connection, SqlScript script, int ordinal) throws SQLException {
+        SqlSentence sentence = script.sentence(ordinal);
+        String table = sentence.table();
+        if (table == null || table.trim().isEmpty()) {
+            return;
+        }
+        try {
+            connection.prepareStatement("SELECT COUNT(*) FROM " + table).executeQuery();
+        } catch (SQLException e) {
+            return;
+        }
+        table = table + "_bak_" + script.version().replace('.', '_') + "$" + ordinal;
+        connection.prepareStatement("SELECT * INTO " + table + " FROM " + sentence.table()).executeUpdate();
+    }
 }

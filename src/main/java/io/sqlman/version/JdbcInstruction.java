@@ -11,6 +11,17 @@ public interface JdbcInstruction {
      * 原子性执行：即整个脚本作为一个事务整体，不可分割。
      */
     String INSTRUCTION_ATOMIC = "ATOMIC";
+
+    /**
+     * 安全模式：备份被操作的表
+     */
+    String INSTRUCTION_SAFETY = "SAFETY";
+
+    /**
+     * 危险模式：不备份被操作的表
+     */
+    String INSTRUCTION_DANGER = "DANGER";
+
     /**
      * 隔离级别：读未提交
      */
@@ -27,5 +38,4 @@ public interface JdbcInstruction {
      * 隔离级别：串行执行
      */
     String INSTRUCTION_SERIALIZABLE = "SERIALIZABLE";
-
 }

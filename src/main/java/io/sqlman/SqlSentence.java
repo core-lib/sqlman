@@ -22,4 +22,10 @@ public interface SqlSentence {
      */
     String value();
 
+    /**
+     * 操作表名
+     *
+     * @return 操作表名
+     */
+    String table();
 }

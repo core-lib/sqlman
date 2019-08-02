@@ -1,6 +1,8 @@
 package io.sqlman.spring;
 
 import io.sqlman.*;
+import io.sqlman.version.JdbcIsolation;
+import io.sqlman.version.JdbcMode;
 import io.sqlman.version.JdbcVersionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,12 +56,16 @@ public class JdbcManagerConfiguration {
         if (dataSource == null) {
             throw new IllegalStateException("no dataSource found in application context named: " + properties.getDataSource());
         }
+        JdbcIsolation defaultIsolation = properties.getDefaultIsolation();
+        JdbcMode defaultMode = properties.getDefaultMode();
         JdbcVersionManager jdbcVersionManager = new JdbcVersionManager(
                 dataSource,
                 scriptProvider,
                 scriptResolver,
                 dialectSupport,
-                loggerSupplier
+                loggerSupplier,
+                defaultIsolation,
+                defaultMode
         );
         jdbcVersionManager.upgrade();
         return jdbcVersionManager;

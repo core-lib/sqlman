@@ -62,4 +62,14 @@ public interface SqlDialectSupport {
      */
     void unlock(Connection connection) throws SQLException;
 
+    /**
+     * 备份表
+     *
+     * @param connection 连接
+     * @param script     脚本
+     * @param ordinal    语句下标
+     * @throws SQLException SQL异常
+     */
+    void backup(Connection connection, SqlScript script, int ordinal) throws SQLException;
+
 }

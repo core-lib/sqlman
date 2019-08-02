@@ -1,8 +1,6 @@
 package io.sqlman.dialect;
 
-import io.sqlman.SqlDialectSupport;
-import io.sqlman.SqlUtils;
-import io.sqlman.SqlVersion;
+import io.sqlman.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -124,6 +122,22 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
     @Override
     public void unlock(Connection connection) throws SQLException {
         connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "_LOCK").executeUpdate();
+    }
+
+    @Override
+    public void backup(Connection connection, SqlScript script, int ordinal) throws SQLException {
+        SqlSentence sentence = script.sentence(ordinal);
+        String table = sentence.table();
+        if (table == null || table.trim().isEmpty()) {
+            return;
+        }
+        try {
+            connection.prepareStatement("SELECT COUNT(*) FROM " + table).executeQuery();
+        } catch (SQLException e) {
+            return;
+        }
+        table = table + "_bak_" + script.version().replace('.', '_') + "$" + ordinal;
+        connection.prepareStatement("CREATE TABLE " + table + " AS SELECT * FROM " + sentence.table()).executeUpdate();
     }
 
     public String getTable() {

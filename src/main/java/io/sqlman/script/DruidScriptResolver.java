@@ -1,7 +1,9 @@
 package io.sqlman.script;
 
 import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLObject;
 import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.alibaba.druid.sql.parser.ParserException;
 import com.alibaba.druid.util.JdbcUtils;
 import io.sqlman.*;
@@ -57,7 +59,16 @@ public class DruidScriptResolver implements SqlScriptResolver {
                 while (sql.endsWith(suffix)) {
                     sql = sql.substring(0, sql.length() - 1);
                 }
-                SqlSentence sentence = new DruidSentence(index + 1, sql);
+                String table = null;
+                List<SQLObject> children = statement.getChildren();
+                for (SQLObject child : children) {
+                    if (child instanceof SQLExprTableSource) {
+                        SQLExprTableSource tableSource = (SQLExprTableSource) child;
+                        table = tableSource.getName().toString();
+                        break;
+                    }
+                }
+                SqlSentence sentence = new DruidSentence(index + 1, sql, table);
                 sentences.add(sentence);
             }
             return new DruidScript(source.name(), source.version(), source.parameters(), source.description(), sentences);
