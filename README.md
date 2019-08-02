@@ -36,7 +36,7 @@
     <dependency>
         <groupId>com.github.core-lib</groupId>
         <artifactId>sqlman</artifactId>
-        <version>v1.0.6</version>
+        <version>v1.1.0</version>
     </dependency>
     ```
 ## Spring-Boot 集成
@@ -52,6 +52,10 @@ sqlman:
   manager: jdbc
   # 当项目有多个数据源时，指定对应的数据源 bean 名称
   data-source: dataSource
+  # 缺省事务隔离级别
+  default-isolation: REPEATABLE_READ
+  # 缺省执行模式
+  default-mode: DANGER
   # 方言配置
   dialect:
     # 版本记录表表名
@@ -183,12 +187,19 @@ SQL脚本需要遵循一定的命名规则以配合SQLMan进行版本高低的�
 | READ_COMMITTED | 读已提交隔离级别 | 设置SQL语句执行事务的隔离界别为读已提交 | 依赖数据源的事务隔离级别 |
 | REPEATABLE_READ | 可重复读隔离级别 | 设置SQL语句执行事务的隔离界别为可重复读 | 依赖数据源的事务隔离级别 |
 | SERIALIZABLE | 串行化隔离级别 | 设置SQL语句执行事务的隔离界别为串行化 | 依赖数据源的事务隔离级别 |
+| SAFETY | 安全模式 | 当SQL脚本设置为安全模式，即每条SQL语句执行前会自动备份被操作的表 | 危险模式 |
+| DANGER | 危险模式 | 当SQL脚本设置为安全模式，即每条SQL语句执行前不自动备份被操作的表 | 危险模式 |
 
 其中每个SQL脚本的隔离级别只能选取一种，通常情况下依赖隔离级别的脚本需要原子性执行即通过-ATOMIC指令来指定，缺省为one-by-one模式。
+同理执行模式也只能在危险模式中选取一种，备份表的名称为 原表名_bak_脚本_版_本_号$语句下标
 
 ## 原子模式
 * 缺省模式的多SQL语句脚本在执行过程中，当其中某条SQL执行失败后，程序下次启动时将会从该脚本的**失败SQL**开始。
 * 原子模式的多SQL语句脚本在执行过程中，当其中某条SQL执行失败后，程序下次启动时将会从该脚本的**首条SQL**开始。
+
+## 执行模式
+* 安全模式：即每条SQL语句执行前**会自动备份**被操作的表
+* 危险模式：即每条SQL语句执行前**不自动备份**被操作的表
 
 ## 注意事项 
 由于部分数据库不支持 DDL 语句的失败回滚，例如 MySQL ，所以当一个原子性多SQL语句脚本中包含有 DDL 语句时，
@@ -204,6 +215,8 @@ SQL脚本需要遵循一定的命名规则以配合SQLMan进行版本高低的�
 后续将会增加更多数据库的支持。
 
 ## 版本记录
+* v1.1.0
+    1. 支持表自动备份
 * v1.0.6
     1. Spring Bean 命名规范
 * v1.0.5
