@@ -182,7 +182,7 @@ public class JdbcVersionManager extends AbstractVersionManager implements SqlVer
                                 ordinal,
                                 script.sqls(),
                                 script.version(),
-                                isolation != null ? isolation : "default",
+                                isolation != null ? isolation.name : "default",
                                 sql.replaceAll("\\s+", " ")
                         );
 
