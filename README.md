@@ -37,7 +37,7 @@
     <dependency>
         <groupId>com.github.core-lib</groupId>
         <artifactId>sqlman</artifactId>
-        <version>v1.2.0</version>
+        <version>v1.2.1</version>
     </dependency>
     ```
 ## Spring-Boot 集成
@@ -219,6 +219,8 @@ SQL脚本需要遵循一定的命名规则以配合SQLMan进行版本高低的�
 后续将会增加更多数据库的支持。
 
 ## 版本记录
+* v1.2.1
+    1. 日志输出bug修复
 * v1.2.0
     1. 自动备份bug修复
 * v1.1.0
