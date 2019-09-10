@@ -12,6 +12,8 @@
 
     <modules>
         <module>sqlman-core</module>
+        <module>sqlman-git</module>
+        <module>sqlman-svn</module>
     </modules>
 
     <properties>
