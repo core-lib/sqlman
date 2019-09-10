@@ -24,13 +24,13 @@ public class VcsSourceProvider extends AbstractSourceProvider {
     protected VcsClientFactory clientFactory;
     protected File directory;
     protected String branch;
-    protected VcsUpdateStrategy strategy = VcsUpdateStrategy.CLEAN_TO_UPDATE;
+    protected VcsUpdateStrategy updateStrategy = VcsUpdateStrategy.CLEAN_TO_UPDATE;
     protected String scriptLocation = "**/*.sql";
 
     protected void update() {
         VcsClient vcsClient = clientFactory.produce();
         try {
-            strategy.update(vcsClient, directory, branch);
+            updateStrategy.update(vcsClient, directory, branch);
         } finally {
             clientFactory.release(vcsClient);
         }
@@ -106,12 +106,12 @@ public class VcsSourceProvider extends AbstractSourceProvider {
         this.branch = branch;
     }
 
-    public VcsUpdateStrategy getStrategy() {
-        return strategy;
+    public VcsUpdateStrategy getUpdateStrategy() {
+        return updateStrategy;
     }
 
-    public void setStrategy(VcsUpdateStrategy strategy) {
-        this.strategy = strategy;
+    public void setUpdateStrategy(VcsUpdateStrategy updateStrategy) {
+        this.updateStrategy = updateStrategy;
     }
 
     public String getScriptLocation() {

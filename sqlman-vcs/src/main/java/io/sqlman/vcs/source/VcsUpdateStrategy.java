@@ -3,6 +3,7 @@ package io.sqlman.vcs.source;
 import io.sqlman.vcs.VcsClient;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * 版本控制系统资源更新策略
@@ -17,8 +18,11 @@ public enum VcsUpdateStrategy {
      */
     CLEAR_TO_UPDATE {
         @Override
-        public void update(VcsClient vcsClient, File directory, String branch) {
+        public void update(VcsClient client, File directory, String branch) throws IOException {
 
+            client.init(directory);
+            client.checkout(branch);
+            client.pull();
         }
     },
 
@@ -27,8 +31,11 @@ public enum VcsUpdateStrategy {
      */
     CLEAN_TO_UPDATE {
         @Override
-        public void update(VcsClient vcsClient, File directory, String branch) {
-
+        public void update(VcsClient client, File directory, String branch) throws IOException {
+            client.init(directory);
+            client.clean();
+            client.checkout(branch);
+            client.pull();
         }
     },
 
@@ -37,16 +44,16 @@ public enum VcsUpdateStrategy {
      */
     NEVER_DO_UPDATE {
         @Override
-        public void update(VcsClient vcsClient, File directory, String branch) {
-
+        public void update(VcsClient client, File directory, String branch) {
+            // do nothing!!!
         }
     };
 
     /**
      * 更新本地库
      *
-     * @param vcsClient VCS客户端
+     * @param client VCS客户端
      */
-    public abstract void update(VcsClient vcsClient, File directory, String branch);
+    public abstract void update(VcsClient client, File directory, String branch) throws IOException;
 
 }
