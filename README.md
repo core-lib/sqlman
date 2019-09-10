@@ -93,32 +93,32 @@ SQLMan 与 Spring-MVC 集成核心的 bean 为最后面的 SqlVersionManager 并
 
 ```xml
 <!-- MySQL 数据库方言，表名为 schema_version -->
-<bean id="sqlDialectSupport" class="io.sqlman.dialect.MySQLDialectSupport">
+<bean id="sqlDialectSupport" class="io.sqlman.core.dialect.MySQLDialectSupport">
     <property name="table" value="schema_version"/>
 </bean>
 
 <!-- 标准SQL脚本命名策略 -->
-<bean id="sqlNamingStrategy" class="io.sqlman.naming.StandardNamingStrategy"/>
+<bean id="sqlNamingStrategy" class="io.sqlman.core.naming.StandardNamingStrategy"/>
 
 <!-- 加载 sqlman/**/*.sql 路径的脚本，使用标准SQL脚本命名策略 -->
-<bean id="sqlSourceProvider" class="io.sqlman.source.ClasspathSourceProvider">
+<bean id="sqlSourceProvider" class="io.sqlman.core.source.ClasspathSourceProvider">
     <property name="scriptLocation" value="sqlman/**/*.sql"/>
     <property name="namingStrategy" ref="sqlNamingStrategy"/>
 </bean>
 
 <!-- 使用 Druid SQL解析器，方言为 MySQL，字符集为 UTF-8 -->
-<bean id="sqlScriptResolver" class="io.sqlman.script.DruidScriptResolver">
+<bean id="sqlScriptResolver" class="io.sqlman.core.script.DruidScriptResolver">
     <property name="dialect" value="MySQL"/>
     <property name="charset" value="UTF-8"/>
 </bean>
 
 <!-- 采用 SLF4J 日志实现，日志级别为 INFO -->
-<bean id="sqlLoggerSupplier" class="io.sqlman.logger.Slf4jLoggerSupplier">
+<bean id="sqlLoggerSupplier" class="io.sqlman.core.logger.Slf4jLoggerSupplier">
     <property name="level" value="INFO"/>
 </bean>
 
 <!-- 执行升级流程，注意这里需要有 init-method="upgrade" -->
-<bean id="sqlVersionManager" class="io.sqlman.version.JdbcVersionManager" init-method="upgrade">
+<bean id="sqlVersionManager" class="io.sqlman.core.version.JdbcVersionManager" init-method="upgrade">
     <property name="dataSource" ref="dataSource"/>
     <property name="dialectSupport" ref="sqlDialectSupport"/>
     <property name="sourceProvider" ref="sqlSourceProvider"/>

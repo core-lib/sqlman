@@ -1,0 +1,10 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.sqlman.core.spring.JdbcManagerConfiguration,\
+  io.sqlman.core.spring.script.ClasspathProviderConfiguration,\
+  io.sqlman.core.spring.script.StandardNamingConfiguration,\
+  io.sqlman.core.spring.script.DruidResolverConfiguration,\
+  io.sqlman.core.spring.logger.Slf4jLoggerConfiguration,\
+  io.sqlman.core.spring.dialect.MySQLDialectConfiguration,\
+  io.sqlman.core.spring.dialect.SQLiteDialectConfiguration,\
+  io.sqlman.core.spring.dialect.OracleDialectConfiguration,\
+  io.sqlman.core.spring.dialect.SQLServerDialectConfiguration
