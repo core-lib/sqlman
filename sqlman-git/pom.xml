@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>io.sqlman</groupId>
-            <artifactId>sqlman-core</artifactId>
+            <artifactId>sqlman-vcs</artifactId>
             <version>v1.2.1</version>
         </dependency>
         <dependency>
