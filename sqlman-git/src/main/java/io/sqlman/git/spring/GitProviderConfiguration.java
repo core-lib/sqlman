@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 @Configuration
 @EnableConfigurationProperties(ClasspathProviderProperties.class)
 @ConditionalOnClass(ClasspathSourceProvider.class)
-@ConditionalOnProperty(prefix = "sqlman.script", name = "provider", havingValue = "git", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "sqlman.script", name = "provider", havingValue = "git")
 public class GitProviderConfiguration {
 
     @Resource
