@@ -1,16 +1,12 @@
 package io.sqlman.git;
 
 import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.util.FS;
 
 import java.io.File;
 import java.util.Collection;
 
 public class GitCloneConfig {
-    CredentialsProvider credentialsProvider;
-    int timeout;
-    String uri;
     File gitDir;
     boolean bare;
     FS fs;
@@ -20,30 +16,6 @@ public class GitCloneConfig {
     boolean cloneSubmodules;
     boolean noCheckout;
     Collection<String> branchesToClone;
-
-    public CredentialsProvider getCredentialsProvider() {
-        return credentialsProvider;
-    }
-
-    public void setCredentialsProvider(CredentialsProvider credentialsProvider) {
-        this.credentialsProvider = credentialsProvider;
-    }
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
 
     public File getGitDir() {
         return gitDir;

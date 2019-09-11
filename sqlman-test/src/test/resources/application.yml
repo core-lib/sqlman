@@ -13,4 +13,7 @@ spring:
 sqlman:
   script:
     provider: git
-    location: "*/*"
+    location: "**/*.sql"
+    uri: https://new.xiniuboss.com:27480/Juniu/nwhs.git
+    username: ycp
+    password: 123456

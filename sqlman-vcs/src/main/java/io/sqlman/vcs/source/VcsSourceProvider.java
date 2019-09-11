@@ -43,6 +43,9 @@ public abstract class VcsSourceProvider extends AbstractSourceProvider {
     protected void update() throws IOException {
         VcsClient vcsClient = clientFactory.produce();
         try {
+            if (!directory.exists() && !directory.mkdirs() && !directory.exists()) {
+                throw new IOException("could not make directories for " + directory);
+            }
             updateStrategy.update(vcsClient, directory, branch);
         } finally {
             clientFactory.release(vcsClient);

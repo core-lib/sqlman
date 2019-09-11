@@ -15,10 +15,46 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "sqlman.script")
 public class GitProviderProperties extends VcsProviderProperties {
+    private String uri;
+    private String username;
+    private String password;
+    private int timeout;
     private GitCloneConfig clone;
     private GitCheckoutConfig checkout;
     private GitCleanConfig clean;
     private GitPullConfig pull;
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
 
     public GitCloneConfig getClone() {
         return clone;

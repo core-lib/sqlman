@@ -5,6 +5,7 @@ import io.sqlman.core.SqlSourceProvider;
 import io.sqlman.git.GitClientFactory;
 import io.sqlman.git.GitConfig;
 import io.sqlman.git.source.GitSourceProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -35,7 +36,14 @@ public class GitProviderConfiguration {
     @Bean
     @ConditionalOnMissingBean(SqlSourceProvider.class)
     public GitSourceProvider sqlmanGitScriptProvider() {
+        UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
+                properties.getUsername(),
+                properties.getPassword()
+        );
         GitConfig config = new GitConfig(
+                properties.getUri(),
+                credentialsProvider,
+                properties.getTimeout(),
                 properties.getClone(),
                 properties.getCheckout(),
                 properties.getClean(),
