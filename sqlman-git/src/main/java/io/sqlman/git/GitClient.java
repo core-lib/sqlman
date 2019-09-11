@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class GitClient implements VcsClient {
     private final GitConfig config;
-    private Git git;
+    private volatile Git git;
 
     public GitClient(GitConfig config) {
         this.config = config;
