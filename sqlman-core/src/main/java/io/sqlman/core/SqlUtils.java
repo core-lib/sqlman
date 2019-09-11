@@ -1,6 +1,7 @@
 package io.sqlman.core;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -89,5 +90,28 @@ public class SqlUtils {
      */
     public static String wrap(String name) {
         return '`' + name + "`";
+    }
+
+    /**
+     * 删除文件/目录
+     *
+     * @param file        文件/目录
+     * @param recursively 是否递归删除
+     * @return {@code true} 删除成功 {@code false} 删除失败
+     */
+    public static boolean delete(File file, boolean recursively) {
+        if (!file.exists()) {
+            return true;
+        }
+        if (file.isDirectory() && recursively) {
+            boolean deleted = true;
+            File[] files = file.listFiles();
+            for (int i = 0; files != null && i < files.length; i++) {
+                deleted = deleted && delete(files[i], true);
+            }
+            return deleted;
+        } else {
+            return file.delete();
+        }
     }
 }

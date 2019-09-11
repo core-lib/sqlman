@@ -1,5 +1,6 @@
 package io.sqlman.vcs.source;
 
+import io.sqlman.core.SqlUtils;
 import io.sqlman.vcs.VcsClient;
 
 import java.io.File;
@@ -19,7 +20,7 @@ public enum VcsUpdateStrategy {
     CLEAR_TO_UPDATE {
         @Override
         public void update(VcsClient client, File directory, String branch) throws IOException {
-
+            SqlUtils.delete(directory, true);
             client.init(directory);
             client.checkout(branch);
             client.pull();

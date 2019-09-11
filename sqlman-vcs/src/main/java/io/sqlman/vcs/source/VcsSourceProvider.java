@@ -27,7 +27,7 @@ public class VcsSourceProvider extends AbstractSourceProvider {
     protected VcsUpdateStrategy updateStrategy = VcsUpdateStrategy.CLEAN_TO_UPDATE;
     protected String scriptLocation = "**/*.sql";
 
-    protected void update() {
+    protected void update() throws IOException {
         VcsClient vcsClient = clientFactory.produce();
         try {
             updateStrategy.update(vcsClient, directory, branch);
