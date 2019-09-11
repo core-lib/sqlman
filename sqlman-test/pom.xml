@@ -16,13 +16,11 @@
             <groupId>io.sqlman</groupId>
             <artifactId>sqlman-core</artifactId>
             <version>v1.2.1</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.sqlman</groupId>
             <artifactId>sqlman-git</artifactId>
             <version>v1.2.1</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

@@ -2,8 +2,6 @@ package io.sqlman.git.spring;
 
 import io.sqlman.core.SqlNamingStrategy;
 import io.sqlman.core.SqlSourceProvider;
-import io.sqlman.core.source.ClasspathSourceProvider;
-import io.sqlman.core.spring.script.ClasspathProviderProperties;
 import io.sqlman.git.GitClientFactory;
 import io.sqlman.git.GitConfig;
 import io.sqlman.git.source.GitSourceProvider;
@@ -23,8 +21,8 @@ import javax.annotation.Resource;
  * 2019/9/11 16:17
  */
 @Configuration
-@EnableConfigurationProperties(ClasspathProviderProperties.class)
-@ConditionalOnClass(ClasspathSourceProvider.class)
+@EnableConfigurationProperties(GitProviderProperties.class)
+@ConditionalOnClass(GitSourceProvider.class)
 @ConditionalOnProperty(prefix = "sqlman.script", name = "provider", havingValue = "git")
 public class GitProviderConfiguration {
 
