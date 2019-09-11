@@ -3,6 +3,7 @@ package io.sqlman.vcs.source;
 import io.loadkit.Loaders;
 import io.loadkit.Resource;
 import io.sqlman.core.SqlNaming;
+import io.sqlman.core.SqlNamingStrategy;
 import io.sqlman.core.SqlSource;
 import io.sqlman.core.exception.DuplicatedVersionException;
 import io.sqlman.core.exception.MalformedNameException;
@@ -20,12 +21,24 @@ import java.util.*;
  * @author Payne 646742615@qq.com
  * 2019/9/10 13:25
  */
-public class VcsSourceProvider extends AbstractSourceProvider {
+public abstract class VcsSourceProvider extends AbstractSourceProvider {
     protected VcsClientFactory clientFactory;
-    protected File directory;
+    protected File directory = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
     protected String branch;
     protected VcsUpdateStrategy updateStrategy = VcsUpdateStrategy.CLEAN_TO_UPDATE;
     protected String scriptLocation = "**/*.sql";
+
+    public VcsSourceProvider() {
+    }
+
+    public VcsSourceProvider(VcsClientFactory clientFactory) {
+        this.clientFactory = clientFactory;
+    }
+
+    public VcsSourceProvider(SqlNamingStrategy namingStrategy, VcsClientFactory clientFactory) {
+        super(namingStrategy);
+        this.clientFactory = clientFactory;
+    }
 
     protected void update() throws IOException {
         VcsClient vcsClient = clientFactory.produce();
