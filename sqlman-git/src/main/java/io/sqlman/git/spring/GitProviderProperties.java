@@ -1,6 +1,9 @@
 package io.sqlman.git.spring;
 
-import io.sqlman.git.GitConfig;
+import io.sqlman.git.GitCheckoutConfig;
+import io.sqlman.git.GitCleanConfig;
+import io.sqlman.git.GitCloneConfig;
+import io.sqlman.git.GitPullConfig;
 import io.sqlman.vcs.spring.VcsProviderProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -12,40 +15,40 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "sqlman.script")
 public class GitProviderProperties extends VcsProviderProperties {
-    private GitConfig.Clone clone;
-    private GitConfig.Checkout checkout;
-    private GitConfig.Clean clean;
-    private GitConfig.Pull pull;
+    private GitCloneConfig clone;
+    private GitCheckoutConfig checkout;
+    private GitCleanConfig clean;
+    private GitPullConfig pull;
 
-    public GitConfig.Clone getClone() {
+    public GitCloneConfig getClone() {
         return clone;
     }
 
-    public void setClone(GitConfig.Clone clone) {
+    public void setClone(GitCloneConfig clone) {
         this.clone = clone;
     }
 
-    public GitConfig.Checkout getCheckout() {
+    public GitCheckoutConfig getCheckout() {
         return checkout;
     }
 
-    public void setCheckout(GitConfig.Checkout checkout) {
+    public void setCheckout(GitCheckoutConfig checkout) {
         this.checkout = checkout;
     }
 
-    public GitConfig.Clean getClean() {
+    public GitCleanConfig getClean() {
         return clean;
     }
 
-    public void setClean(GitConfig.Clean clean) {
+    public void setClean(GitCleanConfig clean) {
         this.clean = clean;
     }
 
-    public GitConfig.Pull getPull() {
+    public GitPullConfig getPull() {
         return pull;
     }
 
-    public void setPull(GitConfig.Pull pull) {
+    public void setPull(GitPullConfig pull) {
         this.pull = pull;
     }
 }

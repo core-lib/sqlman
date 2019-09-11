@@ -15,6 +15,7 @@
         <module>sqlman-git</module>
         <module>sqlman-svn</module>
         <module>sqlman-vcs</module>
+        <module>sqlman-test</module>
     </modules>
 
     <properties>
