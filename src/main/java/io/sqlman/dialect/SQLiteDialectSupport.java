@@ -17,14 +17,14 @@ public class SQLiteDialectSupport extends AbstractDialectSupport implements SqlD
     }
 
     public SQLiteDialectSupport(String table) {
-        super(table.toUpperCase());
+        super(table);
     }
 
     @Override
     public void create(Connection connection) throws SQLException {
         StringBuilder ddl = new StringBuilder();
 
-        ddl.append(" CREATE TABLE IF NOT EXISTS ").append(table.toUpperCase()).append(" (");
+        ddl.append(" CREATE TABLE IF NOT EXISTS ").append(table).append(" (");
         ddl.append("     ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,");
         ddl.append("     NAME VARCHAR(225) NOT NULL,");
         ddl.append("     VERSION VARCHAR(24) NOT NULL,");
