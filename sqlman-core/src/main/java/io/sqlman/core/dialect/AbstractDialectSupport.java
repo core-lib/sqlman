@@ -49,9 +49,9 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
         dql.append("     ERROR_MESSAGE AS errorMessage,");
         dql.append("     TIME_EXECUTED AS timeExecuted");
         dql.append(" FROM");
-        dql.append("     ").append(table.toUpperCase());
+        dql.append("     ").append(table);
         dql.append(" WHERE");
-        dql.append("     ID = (SELECT MAX(ID) FROM ").append(table.toUpperCase()).append(")");
+        dql.append("     ID = (SELECT MAX(ID) FROM ").append(table).append(")");
 
         PreparedStatement statement = connection.prepareStatement(dql.toString());
         ResultSet result = statement.executeQuery();
@@ -82,7 +82,7 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
     public void update(Connection connection, SqlVersion version) throws SQLException {
         StringBuilder dml = new StringBuilder();
 
-        dml.append(" INSERT INTO ").append(table.toUpperCase()).append(" (");
+        dml.append(" INSERT INTO ").append(table).append(" (");
         dml.append("     NAME,");
         dml.append("     VERSION,");
         dml.append("     ORDINAL,");
@@ -116,17 +116,17 @@ public abstract class AbstractDialectSupport implements SqlDialectSupport {
 
     @Override
     public void remove(Connection connection) throws SQLException {
-        connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "").executeUpdate();
+        connection.prepareStatement("DROP TABLE " + table + "").executeUpdate();
     }
 
     @Override
     public void lockup(Connection connection) throws SQLException {
-        connection.prepareStatement("CREATE TABLE " + table.toUpperCase() + "_LOCK (NIL INTEGER)").executeUpdate();
+        connection.prepareStatement("CREATE TABLE " + table + "_LOCK (NIL INTEGER)").executeUpdate();
     }
 
     @Override
     public void unlock(Connection connection) throws SQLException {
-        connection.prepareStatement("DROP TABLE " + table.toUpperCase() + "_LOCK").executeUpdate();
+        connection.prepareStatement("DROP TABLE " + table + "_LOCK").executeUpdate();
     }
 
     @Override

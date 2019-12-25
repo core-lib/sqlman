@@ -19,7 +19,7 @@ public class SQLServerDialectSupport extends AbstractDialectSupport implements S
     }
 
     public SQLServerDialectSupport(String table) {
-        super(table.toUpperCase());
+        super(table);
     }
 
     @Override
@@ -29,9 +29,9 @@ public class SQLServerDialectSupport extends AbstractDialectSupport implements S
         ddl.append(" IF NOT EXISTS(");
         ddl.append("     SELECT *");
         ddl.append("     FROM SYSOBJECTS");
-        ddl.append("     WHERE ID = OBJECT_ID('").append(table.toUpperCase()).append("')");
+        ddl.append("     WHERE ID = OBJECT_ID('").append(table).append("')");
         ddl.append(" )");
-        ddl.append(" CREATE TABLE ").append(table.toUpperCase()).append(" (");
+        ddl.append(" CREATE TABLE ").append(table).append(" (");
         ddl.append("   ID            INT          NOT NULL PRIMARY KEY IDENTITY(1, 1),");
         ddl.append("   NAME          VARCHAR(255) NOT NULL,");
         ddl.append("   VERSION       VARCHAR(24)  NOT NULL,");

@@ -26,11 +26,11 @@ public class OracleDialectSupport extends AbstractDialectSupport implements SqlD
 
         ddl.append(" DECLARE EXISTED NUMBER;");
         ddl.append(" BEGIN");
-        ddl.append("   SELECT COUNT(1) INTO EXISTED FROM USER_TABLES WHERE TABLE_NAME = UPPER('").append(table.toUpperCase()).append("');");
+        ddl.append("   SELECT COUNT(1) INTO EXISTED FROM USER_TABLES WHERE TABLE_NAME = UPPER('").append(table).append("');");
         ddl.append("   IF EXISTED = 0");
         ddl.append("   THEN");
         ddl.append("     EXECUTE IMMEDIATE");
-        ddl.append("     'CREATE TABLE ").append(table.toUpperCase()).append(" (");
+        ddl.append("     'CREATE TABLE ").append(table).append(" (");
         ddl.append("       ID            INT          NOT NULL PRIMARY KEY,");
         ddl.append("       NAME          VARCHAR(255) NOT NULL,");
         ddl.append("       VERSION       VARCHAR(24)  NOT NULL,");
@@ -45,19 +45,19 @@ public class OracleDialectSupport extends AbstractDialectSupport implements SqlD
         ddl.append("       TIME_EXECUTED DATE         NOT NULL");
         ddl.append("     )';");
         ddl.append("     EXECUTE IMMEDIATE");
-        ddl.append("     'CREATE SEQUENCE ").append(table.toUpperCase()).append("_SEQUENCE");
+        ddl.append("     'CREATE SEQUENCE ").append(table).append("_SEQUENCE");
         ddl.append("       INCREMENT BY 1");
         ddl.append("       START WITH 1");
         ddl.append("       NOMAXVALUE");
         ddl.append("       NOMINVALUE");
         ddl.append("       NOCACHE';");
         ddl.append("     EXECUTE IMMEDIATE");
-        ddl.append("     'CREATE OR REPLACE TRIGGER ").append(table.toUpperCase()).append("_TRIGGER");
+        ddl.append("     'CREATE OR REPLACE TRIGGER ").append(table).append("_TRIGGER");
         ddl.append("       BEFORE INSERT");
-        ddl.append("       ON ").append(table.toUpperCase());
+        ddl.append("       ON ").append(table);
         ddl.append("       FOR EACH ROW");
         ddl.append("       BEGIN");
-        ddl.append("         SELECT ").append(table.toUpperCase()).append("_SEQUENCE.NEXTVAL INTO :NEW.ID FROM DUAL;");
+        ddl.append("         SELECT ").append(table).append("_SEQUENCE.NEXTVAL INTO :NEW.ID FROM DUAL;");
         ddl.append("       END;';");
         ddl.append("   END IF;");
         ddl.append(" END;");
@@ -67,8 +67,8 @@ public class OracleDialectSupport extends AbstractDialectSupport implements SqlD
 
     @Override
     public void remove(Connection connection) throws SQLException {
-        connection.prepareStatement("DROP TRIGGER " + table.toUpperCase() + "_TRIGGER").executeUpdate();
-        connection.prepareStatement("DROP SEQUENCE " + table.toUpperCase() + "_SEQUENCE").executeUpdate();
+        connection.prepareStatement("DROP TRIGGER " + table + "_TRIGGER").executeUpdate();
+        connection.prepareStatement("DROP SEQUENCE " + table + "_SEQUENCE").executeUpdate();
         super.remove(connection);
     }
 }
